@@ -71,3 +71,7 @@ deploy:
   type: git
   repo : https://github.com/idindrakusuma/idindrakusuma.github.io.git
   branch: master
+
+# Read More text
+excerpt_link: Read More
+excerpt_num: 120
