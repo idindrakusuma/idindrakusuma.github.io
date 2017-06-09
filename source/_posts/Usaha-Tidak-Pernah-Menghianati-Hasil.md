@@ -5,12 +5,13 @@ tags:
 - Lomba
 - Startup
 - Prestasi
-categories: Story
+categories: story
 thumbnail: https://3.bp.blogspot.com/-0JZzBl4MU04/WCqPe4pZ4nI/AAAAAAAADUE/B-ceG0fj6t4lEyYt8Jv8Lkvh_wZKfA45wCLcB/s1600/photo_2016-11-15_11-30-29.jpg
 ---
 ![Lomba Cfest 2016](https://3.bp.blogspot.com/-0JZzBl4MU04/WCqPe4pZ4nI/AAAAAAAADUE/B-ceG0fj6t4lEyYt8Jv8Lkvh_wZKfA45wCLcB/s1600/photo_2016-11-15_11-30-29.jpg)
 
 Sudah lama sekali saya tidak memberikan artikel atau berita apapun di blog saya ini. Mulai dari awal oktober kemarin sampai detik ini, banyak sekali kegiatan yang datang silir berganti. Pada bulan oktober kemarin selepas acara FLS 2016, kami melanjutkan beberapa proyek kecil - kecilan agar hasil pertemuan kami tidak sia - sia di FLS.
+<!-- more -->
 
 Dimotori oleh mas Jamal, kami memiliki proyek Startup yang kami beri nama **Markir**. Tim kami terdiri dari 3 orang, yaitu saya sendiri selaku CTO, mas Jamal selaku CEO dan mas Afka selaku CMO. Markir merupakan sebuah aplikasi Mobile Payment untuk retibusi parkir. Banyak hal yang mendasari kami buat membentuk startup ini.
 
