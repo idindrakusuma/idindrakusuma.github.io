@@ -5,7 +5,7 @@
 # Site
 title: Indra Kusuma
 subtitle: Student
-description: I'm Student!
+description: Seorang Mahasiswa Teknik Informatika UDINUS yang menyukai Web Development dan aktif sebagai aktivis kepemudaan FLS.
 author: Indra Kusuma
 language: en
 timezone:
@@ -71,7 +71,3 @@ deploy:
   type: git
   repo : https://github.com/idindrakusuma/idindrakusuma.github.io.git
   branch: master
-
-# Read More text
-excerpt_link: Read More
-excerpt_num: 120
