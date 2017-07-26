@@ -3,7 +3,7 @@ node_js:
 - "5"
 branches:
   only:
-  - master
+  - source-code
 before_install:
 - npm install -g hexo
 install:
