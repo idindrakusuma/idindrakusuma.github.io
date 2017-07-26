@@ -1,13 +1,13 @@
 language: node_js
+node_js:
+- "5"
 branches:
   only:
-  - source-code
+  - master
 before_install:
 - npm install -g hexo
-- npm install
 install:
-- hexo generate
-
+- npm install
 before_script:
 - git config --global user.name 'Indra Kusuma via Travis CI'
 - git config --global user.email 'indrakusuma.udinus@gmail.com'
@@ -23,3 +23,12 @@ after_success:
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git add -A .; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git commit -m 'Site updated'; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git push --force --quiet origin master; fi
+
+# - mkdir .deploy
+# - cd .deploy
+# - git init
+# - git remote add origin $DEPLOY_REPO
+# - cp -r ../public/* .
+# - git add -A .
+# - git commit -m 'Site updated'
+# - git push --force --quiet origin master
