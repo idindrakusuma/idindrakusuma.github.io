@@ -1,0 +1,25 @@
+language: node_js
+branches:
+  only:
+  - source-code
+before_install:
+- npm install -g hexo
+- npm install
+install:
+- hexo generate
+
+before_script:
+- git config --global user.name 'Indra Kusuma via Travis CI'
+- git config --global user.email 'indrakusuma.udinus@gmail.com'
+script:
+- hexo clean
+- hexo generate
+after_success:
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mkdir .deploy; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then cd .deploy; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git init; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git remote add origin $DEPLOY_REPO; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then cp -r ../public/* .; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git add -A .; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git commit -m 'Site updated'; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git push --force --quiet origin master; fi
