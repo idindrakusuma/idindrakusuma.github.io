@@ -3,7 +3,7 @@ node_js:
 - "5"
 branches:
   only:
-  - source-code
+  - source
 before_install:
 - npm install -g hexo
 - npm i hexo-generator-json-content -g
