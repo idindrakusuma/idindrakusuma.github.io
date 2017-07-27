@@ -6,6 +6,7 @@ branches:
   - source-code
 before_install:
 - npm install -g hexo
+- npm i hexo-generator-json-content -g
 install:
 - npm install
 before_script:
@@ -20,7 +21,7 @@ after_success:
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git init; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git remote add origin $DEPLOY_REPO; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then cp -r ../public/* .; fi
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ls .; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ls .; fig
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git add * .; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git commit -m 'Site updated'; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git push --force --quiet origin master; fi
