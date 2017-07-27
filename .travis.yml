@@ -18,11 +18,11 @@ after_success:
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mkdir .deploy; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then cd .deploy; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git init; fi
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git remote add -t master origin $DEPLOY_REPO; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git remote add -t origin $DEPLOY_REPO; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then rm -rf ./*; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then cp -r ../public/* .; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git add -A .; fi
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git commit -m 'Site updated'; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git commit -m 'Situs Diperbaharui'; fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git push --force --quiet origin master; fi
 
 # - mkdir .deploy
