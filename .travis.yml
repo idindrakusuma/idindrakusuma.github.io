@@ -22,7 +22,7 @@ node_js:
 # Only create a new version on pushes to certain branches.
 branches:
   only:
-  - master
+  - source-code
 
 before_install:
 - npm install -g hexo
