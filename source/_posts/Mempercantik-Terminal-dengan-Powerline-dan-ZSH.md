@@ -11,6 +11,7 @@ categories:
 thumbnail: https://user-images.githubusercontent.com/10141928/27104334-0d197556-50b6-11e7-9b72-e83883f6ab77.png
 ---
 
+![Mempercantik Terminal dengan Powerline dan ZSH](https://user-images.githubusercontent.com/10141928/28688363-e931618c-733b-11e7-8ce0-866a560bae8b.png)
 Jika kamu merupakan pengguna sistem opeasi linux entah apapun distro yang kamu pakai, pasti kamu sudah tidak asing lagi dengan `terminal` atau `bash`. Bash di Linux menjadi kebutuhan primer (menurut saya) untuk melakukan berbagai operasi, sebut saja yang paling dasar seperti perintah `sudo apt-get update` untuk memperbaharui repositori dan `sudo apt-get purge` untuk menghapus aplikasi / program yang terinstal di sistem. <!-- more -->
 
 Karena saya seorang programmer, penggunaan bash tidak cukup sampai disitu saja, banyak kegiatan lainya seperti pengoperasian **GIT** untuk _version control_ dari program yang saya kembangkan. 

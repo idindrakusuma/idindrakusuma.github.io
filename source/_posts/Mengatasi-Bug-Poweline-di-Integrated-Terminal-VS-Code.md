@@ -10,7 +10,6 @@ tags:
 - vscode
 thumbnail: https://user-images.githubusercontent.com/10141928/27112062-aa809f4a-50de-11e7-81d5-605fe57b7b4f.png
 ---
-
 Pada artikel sebelumnya saya sudah mempublikasikan artikel bagaimana cara [Mempercantik Terminal dengan Powerline dan ZSH](https://idindrakusuma.github.io/2017/06/14/Mempercantik-Terminal-dengan-Powerline-dan-ZSH/). Tentu jika kalian pengguna **Microsoft Visual Studio Code**, kalian akan buka terminal melalui _integrated terminal_ dari vscode bukan ? alesanya karena lebih simple dan cepat. 
 
 Tetapi, ketika saya buka _integrated terminal_ vscode terdapat sebuah #bug kecil yang menggangu. Ya, **powerline** tidak berkerja seperti pada terminal biasanya. Bugnya seperti gambar dibawah ini : <!--more-->

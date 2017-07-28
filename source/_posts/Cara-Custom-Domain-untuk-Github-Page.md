@@ -4,9 +4,9 @@ categories: Tutorial
 tags:
 - github
 - website
-thumbnail: https://user-images.githubusercontent.com/10141928/27169756-665e5abc-51d5-11e7-986a-31ff193c70a2.jpg
+thumbnail: https://user-images.githubusercontent.com/10141928/28688098-eb57e040-733a-11e7-9e42-449b2f18c075.png
 ---
-
+![Cara Custom Domain untuk Github Pages](https://user-images.githubusercontent.com/10141928/28688098-eb57e040-733a-11e7-9e42-449b2f18c075.png)
 Salah satu platform blog maupun web yang populer dikalangan programmer adalah [Github Pages](https://pages.github.com/). Github Pages merupakan salah satu layanan dari [Github](http://github.com/) yang memungkinkan programmer untuk memiliki _web page_ pribadi. Layanan ini dihost langsung dari github repositori langsung dengan aturan penamaan repositori _username.github.io_ maka secara otomatis kamu akan punya _github pages_ mu sendiri. Keren bukan ? <!-- more -->
 
 Banyak proyek _opensource_ yang memanfaatkan github pages, salah satunya blog yang penulis gunakan ini. penulis menggunakan platform **HEXO** untuk membangun blog ini dengan template dari **PPOffice**.
