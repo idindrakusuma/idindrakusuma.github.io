@@ -3,8 +3,11 @@ title: Kesan dan Pesan Menjadi Rangers FLS 2016
 date: 2017-06-10 21:55:39
 tags:
 - FLS
+- Rangers
 thumbnail: https://1.bp.blogspot.com/-zFTNjlmI3Jo/WAQ8Ye2OMJI/AAAAAAAADK8/K2R_m7ADvggvT7OavbK0R88DiXMolx8MwCLcB/s1600/MENGENAL.png
-categories: story
+categories: 
+- story
+- Organisasi
 ---
 
 ![IT Creative FLS 2017](https://3.bp.blogspot.com/-lQ2rkEaVOWA/WARCZq1MAbI/AAAAAAAADLM/vBocS2pKUD4Qxzd_6z_WWeW_lppp83vywCLcB/s1600/indra%2Bfls%2B5.jpg)

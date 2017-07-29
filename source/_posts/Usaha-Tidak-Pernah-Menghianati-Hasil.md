@@ -5,7 +5,9 @@ tags:
 - Lomba
 - Startup
 - Prestasi
-categories: story
+categories: 
+- story
+- Lomba
 thumbnail: https://3.bp.blogspot.com/-0JZzBl4MU04/WCqPe4pZ4nI/AAAAAAAADUE/B-ceG0fj6t4lEyYt8Jv8Lkvh_wZKfA45wCLcB/s1600/photo_2016-11-15_11-30-29.jpg
 ---
 ![Lomba Cfest 2016](https://3.bp.blogspot.com/-0JZzBl4MU04/WCqPe4pZ4nI/AAAAAAAADUE/B-ceG0fj6t4lEyYt8Jv8Lkvh_wZKfA45wCLcB/s1600/photo_2016-11-15_11-30-29.jpg)
