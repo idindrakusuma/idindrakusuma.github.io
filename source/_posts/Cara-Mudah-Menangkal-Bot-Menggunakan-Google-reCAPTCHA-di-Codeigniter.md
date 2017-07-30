@@ -24,10 +24,10 @@ generasi kedua ini mudah untuk manusia dan sulit untuk bot. Untuk lebih lengkapn
 
 2. Untuk instalasi pada codeigniter, silahkan buka di 
     ```
-    [https://github.com/appleboy/CodeIgniter-reCAPTCHA/blob/master/README.md](https://github.com/appleboy/CodeIgniter-reCAPTCHA/blob/master/README.md)
+    https://github.com/appleboy/CodeIgniter-reCAPTCHA/blob/master/README.md
     ```
 3. Untuk hasilnya, kalian bisa buka dilink github saya, di 
     ```
-    [https://github.com/idindrakusuma/ci-recaptcha](https://github.com/idindrakusuma/ci-recaptcha)
+    https://github.com/idindrakusuma/ci-recaptcha](https://github.com/idindrakusuma/ci-recaptcha
     ```
 Selama penulis coba tidak ada masalah yang ditemui. Semoga bermanfaat dan terima kasih!
