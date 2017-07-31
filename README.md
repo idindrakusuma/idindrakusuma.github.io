@@ -13,7 +13,7 @@ Halo gaes! Selamat datang di personal blogku. Saya bangun blog ini dari [Hexo Fr
     more : [https://hexo.io/docs/](https://hexo.io/docs/)
 - Install Theme Icarus
     ```
-    please visit [https://github.com/ppoffice/hexo-theme-icarus/wiki/Installation](https://github.com/ppoffice/hexo-theme-icarus/wiki/Installation)
+    please visit https://github.com/ppoffice/hexo-theme-icarus/wiki/Installation
     ```
 - Done
 
