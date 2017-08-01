@@ -13,6 +13,7 @@
     "hexo-generator-cname3": "^1.0.1",
     "hexo-generator-index": "^0.2.0",
     "hexo-generator-json-content": "^3.0.1",
+    "hexo-generator-sitemap": "^1.2.0",
     "hexo-generator-tag": "^0.2.0",
     "hexo-renderer-ejs": "^0.2.0",
     "hexo-renderer-marked": "^0.2.10",
