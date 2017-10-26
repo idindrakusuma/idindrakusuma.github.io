@@ -1,7 +1,7 @@
 ---
 title: Kisah Menarik Dalam AFG 2017
 date: 2017-08-01 14:36:05
-tags: 
+tags:
 - dncc
 - AFG
 categories:
@@ -9,10 +9,13 @@ categories:
 - Organisasi
 thumbnail: https://2.bp.blogspot.com/-GU14pA9UR7A/WPB6HGXlr3I/AAAAAAAAFdQ/52JWoD1J9a4QguJZeNrnH2u0fzLAljEXgCLcB/s320/2017.png
 ---
-![AFG DNCC 2017](https://2.bp.blogspot.com/-GU14pA9UR7A/WPB6HGXlr3I/AAAAAAAAFdQ/52JWoD1J9a4QguJZeNrnH2u0fzLAljEXgCLcB/s1600/2017.png)
 Nah, pada artikel ini, penulis akan mencoba menceritakan kembali mengenai pengalaman yang penulis dapatkan ketika mengikuti kegiatan DNCC Semarang pada 7 - 9 April 2017 kemarin.
 
-Acara yang penulis ikuti adalah AFG dan penulis sudah mengikuti 2 kali acara ini dan kemaren yang ketiga kalinya. Tentunya sudah tidak asing lagi bagi penulis. <!-- more -->Sedikit flashback, pada tahun 2015 penulis mengikuti AFG sebagai Peserta dan sempat dinobatkan sebagai peserta terbaik lho, hehe dan pada tahun 2016 penulis ikut serta sebagai panitia, dulu sebagai perlengkapan dan merangkap sebagai korlap (koordinator lapangan) dan pada tahun ini, penulis ikut serta sebagai pendamping kelompok Ruby.
+Acara yang penulis ikuti adalah AFG dan penulis sudah mengikuti 2 kali acara ini dan kemaren yang ketiga kalinya. Tentunya sudah tidak asing lagi bagi penulis. <!-- more -->
+
+![AFG DNCC 2017](https://2.bp.blogspot.com/-GU14pA9UR7A/WPB6HGXlr3I/AAAAAAAAFdQ/52JWoD1J9a4QguJZeNrnH2u0fzLAljEXgCLcB/s1600/2017.png)
+
+Sedikit flashback, pada tahun 2015 penulis mengikuti AFG sebagai Peserta dan sempat dinobatkan sebagai peserta terbaik lho, hehe dan pada tahun 2016 penulis ikut serta sebagai panitia, dulu sebagai perlengkapan dan merangkap sebagai korlap (koordinator lapangan) dan pada tahun ini, penulis ikut serta sebagai pendamping kelompok Ruby.
 
 ## Enakan mana ? Peserta, Panitia, atau Pendamping ?
 ![Gaya Kita - AFG 2017](https://3.bp.blogspot.com/-QWAQOZAYQ8U/WPB-7n6qd4I/AAAAAAAAFeA/ggNHC6WOskAsubgKxeCHO0UKirP6sowHQCLcB/s400/IMG_20170408_074134.jpg)
@@ -51,4 +54,4 @@ kelompok kami, gabungan dari haskel dan ruby merupakan kelompok paling ramai dan
 
 ![Paling Akrab dan Selalu Ramai!](https://2.bp.blogspot.com/-Wlb2cuiTVNY/WPB-lmAcGWI/AAAAAAAAFd4/ymkQtlDGetYBgj2_LecScuz7W5tCW4rqwCLcB/s400/IMG-20170409-WA0034.jpg)
 
-dan masih banyak kisah menarik lain yang tidak bisa penulis ungkapkan dengan tulisan. Keren, memorable dan superb ! Terima kasih ya temen2 :) Sukses buat kepengurusan selanjutnya :) 
+dan masih banyak kisah menarik lain yang tidak bisa penulis ungkapkan dengan tulisan. Keren, memorable dan superb ! Terima kasih ya temen2 :) Sukses buat kepengurusan selanjutnya :)

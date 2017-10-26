@@ -8,10 +8,9 @@ categories:
 - Portofolio
 thumbnail: https://user-images.githubusercontent.com/10141928/30630360-80bbdaf2-9e0a-11e7-852f-9c05073bec0c.png
 ---
-![My Contribution for FLS 2017 [Part 1]](https://user-images.githubusercontent.com/10141928/30630360-80bbdaf2-9e0a-11e7-852f-9c05073bec0c.png)
-
 _**My Contribution for FLS 2017 [Part 1]**_ - Alhamdulillah, [Future Leader Summit 2017](https://futureleadersummit.org) berhasil dilaksanakan dengan lancar. Merupakan suatu kehormatan bisa bergabung dan turut berkontribusi dalam acara konferensi yang paling ditunggu - tunggu pemuda inspiratif dari seluruh Indonesia.
 <!-- more -->
+![My Contribution for FLS 2017 [Part 1]](https://user-images.githubusercontent.com/10141928/30630360-80bbdaf2-9e0a-11e7-852f-9c05073bec0c.png)
 
 FLS 2017 dihadiri oleh 240 Delegasi yang dipilih dari [__25.512__](https://www.instagram.com/p/BWWaXm7DwOh/?taken-by=flsummit) __yang telah mendaftar__. Wow! peningkatan yang cukup drastis dari FLS 2016 yang pendaftarnya hanya sekitar 1500an.
 

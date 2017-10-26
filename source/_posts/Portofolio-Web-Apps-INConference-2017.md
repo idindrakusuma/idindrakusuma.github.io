@@ -10,10 +10,12 @@ tags:
 categories: portofolio
 thumbnail: https://user-images.githubusercontent.com/10141928/27474768-24dc343e-582d-11e7-9937-f3483f054f02.png
 ---
-![[Portofolio] Web Apps INConference 2017](https://user-images.githubusercontent.com/10141928/27474768-24dc343e-582d-11e7-9937-f3483f054f02.png)
+
 
 Sebelum lebaran tahun 2017, alkhamdulillah dapet kepercayaan dari rekan saya Yezki untuk mengerjakan Website Landing Page, Form Registrasi dan Sistem E-Ticketingnya. Alkhamdulillah saya kerjaan selesai dalam satu bulan. berikut merupakan screenshot dari web apps yang saya buat.
 <!-- more -->
+
+![[Portofolio] Web Apps INConference 2017](https://user-images.githubusercontent.com/10141928/27474768-24dc343e-582d-11e7-9937-f3483f054f02.png)
 
 Screenshot :
 ![Web Apps INConference 2017 - Form Registrasi](https://user-images.githubusercontent.com/10141928/27474783-330ba030-582d-11e7-86e8-a9073a764415.png)
