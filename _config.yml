@@ -4,8 +4,8 @@
 
 # Site
 title: Indra Kusuma
-subtitle: Student
-description: Seorang Mahasiswa Teknik Informatika UDINUS yang menyukai Web Development dan aktif sebagai aktivis kepemudaan FLS.
+subtitle: Web Developer & Student
+description: Seorang Web Developer, Mahasiswa dan juga Santri yang suka dengan ilmu pengetahuan dan suka membagikan pengalaman melalui sharing maupun tulisan diblog indrakusuma.web.id
 author: Indra Kusuma
 language: id
 timezone:
@@ -65,7 +65,7 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 theme: icarus
 
-cname: indrakusuma.web.id
+cname: blog.indrakusuma.web.id
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:

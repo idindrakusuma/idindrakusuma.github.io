@@ -9,19 +9,19 @@ tags:
 - project
 thumbnail: https://user-images.githubusercontent.com/10141928/33050012-3c8b5900-ce95-11e7-9ba3-a19cf19a8e56.jpg
 ---
-Sebenarnya beberapa hari yang lalu saya ingin mempublikasikan artikel ini, tapi karena diberi sedikit ujian sama Allah, jadi selama 3 hari tidak bisa mengoperasikan laptop sama sekali. Alhamdulillah, sekarang sudah baik kondisi badan saya dan semoga sakit kemaren merupakan salah satu cara Allah menghapus dosa - dosa saya, Amiin ya robbal allamin :) Nah, pada kesempatan ini saya ingin membagikan informasi mengenai sebuah `tools` yang sangat berguna untuk managemen pekerjaan Anda ataupun Tim Anda, mari kita simak pembahasan artikel berikut ini.
+Sebenarnya beberapa hari yang lalu saya ingin mempublikasikan artikel ini, tapi karena diberi sedikit ujian sama Allah, jadi selama 3 hari tidak bisa mengoperasikan laptop sama sekali. Alhamdulillah, sekarang sudah baik kondisi badan saya dan semoga sakit kemaren merupakan salah satu cara Allah menghapus dosa - dosa saya, Amiin ya robbal allamin :) Nah, pada kesempatan ini saya ingin membagikan informasi mengenai sebuah _tools_ yang sangat berguna untuk manajemen pekerjaan Anda ataupun Tim Anda, mari kita simak pembahasan artikel berikut ini.
 <!-- more -->
 
 ## Trello ?
 ![Trello Loggo](https://upload.wikimedia.org/wikipedia/commons/a/a5/Trello_logo.png)
 
-Dari judul artikel ini kita sudah tau bahwa `tools` yang akan kita bahas adalah **Trello**. Tapi yang jadi pertanyaan bagi sebagian orang adalah, `Apa sih trello itu ?` 
+Dari judul artikel ini kita sudah tau bahwa _tools_ yang akan kita bahas adalah **Trello**. Tapi yang jadi pertanyaan bagi sebagian orang adalah, **Apa sih trello itu ?** 
 
-Berdasarkan apa yang saya rasakan, [Trello](https://trello.com) itu merupakan salah satu `tools` kolaborasi yang berfungsi untuk managemen pekerjaan (_Task Management_) yang bisa diakses melalui internet baik dari Android, iOS ataupun Web. 
+> Berdasarkan apa yang saya rasakan, [Trello](https://trello.com) itu merupakan salah satu _tools_ kolaborasi yang berfungsi untuk managemen pekerjaan (_Task Management_) yang bisa diakses melalui internet baik dari Android, iOS ataupun Web. 
 
-Saat ini, Trello merupakan `tools task management` yang sangat populer dan banyak digunakan oleh perusahaan besar seperti redhat, Adobe, PIXAR, Google, KickStarter dan perusahaan yang saya tempati sekarang.
+Saat ini, Trello merupakan _tools task management_ yang sangat populer dan banyak digunakan oleh perusahaan besar seperti redhat, Adobe, PIXAR, Google, KickStarter dan perusahaan yang saya tempati sekarang.
 
-Kalau saya sendiri, mengenal trello sejak tahun 2014 waktu ikut jadi developer `jadi-jadian` di TealinuxOS Dinus Open Source Community, tapi waktu itu saya belum bener-bener memenfaatkanya dengan baik.
+Kalau saya sendiri, mengenal trello sejak tahun 2014 waktu ikut jadi developer _"jadi-jadian"_ di TealinuxOS Dinus Open Source Community, tapi waktu itu saya belum bener-bener memenfaatkanya dengan baik.
 
 ## Fitur Trello ?
 Secara `default`, Anda akan mendapatkan fitur `Trello's Board` yang bisa kamu isi dengan `list` dan `card`.
