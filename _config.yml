@@ -65,7 +65,7 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 theme: icarus
 
-# cname: blog.indrakusuma.web.id
+cname: idindrakusuma.github.io
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
