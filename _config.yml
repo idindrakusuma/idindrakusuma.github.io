@@ -12,7 +12,7 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://indrakusuma.web.id
+url: https://blog.indrakusuma.web.id
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -65,7 +65,7 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 theme: icarus
 
-cname: blog.indrakusuma.web.id
+# cname: blog.indrakusuma.web.id
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
