@@ -7,7 +7,7 @@ tags:
 - github
 - project
 - developer
-thumbnail:
+thumbnail: https://user-images.githubusercontent.com/10141928/35209755-13feaaaa-ff82-11e7-84a9-d91d11d8c6a2.jpg
 ---
 Alih - alih mau publikasi artikel mengenai **Cara Membuat Blog menggunakan Hexo Framework**, saya lebih memilih untuk mempublikasi artikel mengenai **Ayo Maksimalkan Github Student Pack Mu!**. Karena menurut saya, hal ini jauh lebih penting untuk temen - temen ketahui terlebih dulu. Mari kita bahas, Apasih dan bagaimana cara memaksimalkan Github Student Pack ?
 <!-- more -->
