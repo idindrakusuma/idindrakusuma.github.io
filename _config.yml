@@ -64,6 +64,8 @@ pagination_dir: page
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
 theme: icarus
+stylus:
+  compress: true
 
 cname: idindrakusuma.github.io
 # Deployment
