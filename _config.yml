@@ -67,7 +67,7 @@ theme: icarus
 stylus:
   compress: true
 
-cname: idindrakusuma.github.io
+cname: blog.indrakusuma.web.id
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:

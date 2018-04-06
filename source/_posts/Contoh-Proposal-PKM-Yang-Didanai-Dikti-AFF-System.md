@@ -4,7 +4,7 @@ date: 2017-04-02 23:54:57
 tags:
 - pkm
 categories:
-- Kuliah
+- kuliah
 - pkm
 thumbnail: https://4.bp.blogspot.com/-pur3LEACBjk/WBBLY2RAwGI/AAAAAAAADNk/AQEK32h4TwUomaZPV_UQqfaMRDOWDTjVwCLcB/s1600/MATERI%2BDOWNLOAD.png
 ---
