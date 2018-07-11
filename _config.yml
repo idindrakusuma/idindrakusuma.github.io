@@ -79,4 +79,4 @@ deploy:
   ## Docs https://github.com/hexojs/hexo-generator-sitemap
 sitemap:
     path: sitemap.xml
-    template: ./sitemap_template.xml
+    template: ./sitemap_template_default.xml
