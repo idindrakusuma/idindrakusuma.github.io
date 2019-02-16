@@ -4,8 +4,8 @@
 
 # Site
 title: Indra Kusuma
-subtitle: Web Developer & Student
-description: Seorang Web Developer, Mahasiswa dan juga Santri yang suka dengan ilmu pengetahuan dan suka membagikan pengalaman melalui sharing maupun tulisan diblog indrakusuma.web.id
+subtitle: Web Developer
+description: Seorang Web Developer yang sangat menyukai dengan ilmu pengetahuan dan suka membagikan pengalaman melalui lisan dan tulisan.
 author: Indra Kusuma
 language: id
 timezone:
@@ -72,11 +72,11 @@ cname: indrakusuma.web.id
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo : https://github.com/idindrakusuma/idindrakusuma.github.io.git
+  repo: https://github.com/idindrakusuma/idindrakusuma.github.io.git
   branch: master
 
 ## Sitemap generator
-  ## Docs https://github.com/hexojs/hexo-generator-sitemap
+## Docs https://github.com/hexojs/hexo-generator-sitemap
 sitemap:
-    path: sitemap.xml
-    template: ./sitemap_template_default.xml
+  path: sitemap.xml
+  template: ./sitemap_template_default.xml
