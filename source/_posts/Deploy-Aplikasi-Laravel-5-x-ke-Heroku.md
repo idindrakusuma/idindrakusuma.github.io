@@ -6,8 +6,8 @@ tags:
 - project
 - heroku
 categories:
-- Tutorial
-- Laravel
+- tutorial
+- laravel
 thumbnail: https://user-images.githubusercontent.com/10141928/32060590-66730034-ba99-11e7-99d3-7d4ae342ff33.png
 ---
 Dua hari ini saya mengalami masalah saat melakukan `deploy` aplikasi yang saya bangun dengan framework [Laravel](https://laravel.com) ke server [Heroku](https://heroku.com). Masalah yang saya alami adalah tidak teruploadnya database yang saya buat di server Heroku. Anda mengalami hal tersebut ? Alkhamdulillah barusan saya mendapat pencerahan dari rekan saya [@mnirfan](https://github.com/mnirfan) dan saya coba berhasil!

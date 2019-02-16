@@ -2,8 +2,8 @@
 title: Mengatasi Bug Poweline di Integrated Terminal VS Code
 date: 2017-06-14 08:24:48
 categories:
-- Tutorial
-- Linux
+- tutorial
+- linux
 tags:
 - zsh
 - terminal

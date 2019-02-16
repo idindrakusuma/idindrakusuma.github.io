@@ -6,8 +6,8 @@ tags:
 - zsh
 - terminal
 categories:
-- Tutorial
-- Linux
+- tutorial
+- linux
 thumbnail: https://user-images.githubusercontent.com/10141928/27104334-0d197556-50b6-11e7-9b72-e83883f6ab77.png
 ---
 

@@ -5,7 +5,7 @@ tags:
 - programmer
 - apidocjs
 - API
-- JavaScript
+- javascript
 categories: development
 thumbnail: https://user-images.githubusercontent.com/10141928/32482323-bf6f7e40-c3c9-11e7-9be3-3c0acf14ab2c.png
 ---

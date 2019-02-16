@@ -5,7 +5,7 @@ tags:
 - website
 - codeigniter
 - e-ticket
-- Panel Admin
+- panel-admin
 - Form
 categories: portofolio
 thumbnail: https://user-images.githubusercontent.com/10141928/27474768-24dc343e-582d-11e7-9937-f3483f054f02.png

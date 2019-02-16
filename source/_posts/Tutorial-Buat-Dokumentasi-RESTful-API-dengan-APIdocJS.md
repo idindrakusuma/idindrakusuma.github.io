@@ -5,9 +5,8 @@ tags:
 - programmer
 - apidocjs
 - API
-- JavaScript
-categories:
-- Tutorial
+- javascript
+categories: tutorial
 thumbnail: https://user-images.githubusercontent.com/10141928/32606224-1689a854-c587-11e7-9c53-fb432a3be6c8.png
 ---
 Seperti janji saya pada artikel [Cara Cepat Membuat Dokumentasi API dengan APIDOCjs](https://indrakusuma.web.id/2017/11/07/Cara-Mudah-Membuat-Dokumentasi-API-dengan-apidocjs/), bahwa saya akan membagikan tutorial mengenai bagaimana cara membuat **Dokumentasi RESTful API dengan APIdocJS**. Bagaimana ? kamu tertarik untuk mencobanya ? mari kita simak tutorial berikut ini.

@@ -2,12 +2,12 @@
 title: Cara Mudah Menangkal Bot Menggunakan Google reCAPTCHA di Codeigniter
 date: 2017-07-29 11:23:32
 tags:
-- Codeigniter
+- codeigniter
 - reCAPTCHA
 - apps
 categories:
-- Tutorial
-- Codeigniter
+- tutorial
+- codeigniter
 thumbnail: https://user-images.githubusercontent.com/10141928/28240305-7e6da568-69a9-11e7-9a8c-771c334cb28a.png
 ---
 
