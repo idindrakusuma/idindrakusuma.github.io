@@ -72,7 +72,7 @@ cname: indrakusuma.web.id
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/idindrakusuma/idindrakusuma.github.io.git
+  repo: git@github.com:idindrakusuma/idindrakusuma.github.io.git
   branch: master
 
 ## Sitemap generator
