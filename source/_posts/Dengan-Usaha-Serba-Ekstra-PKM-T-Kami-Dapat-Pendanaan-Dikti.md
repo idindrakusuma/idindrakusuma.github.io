@@ -5,8 +5,8 @@ tags:
 - PKM
 - prestasi
 categories:
-- story
 - kuliah
+- pkm
 thumbnail: https://1.bp.blogspot.com/-WhUwBB-0cvY/V-W5_YvAT-I/AAAAAAAADII/6tLw96FQH40WQbnIV3WIyPxS8Ma1Ti2AgCLcB/s1600/2019%2B%25285%2529.png
 ---
 

@@ -4,7 +4,7 @@ date: 2017-07-30 22:12:59
 tags:
 - framework
 - programmer
-categories: Development
+categories: development
 thumbnail: https://user-images.githubusercontent.com/10141928/28560794-2a83bd9e-7146-11e7-8001-60491e5c3e81.png
 ---
 

@@ -6,7 +6,6 @@ categories:
 tags:
 - tokopedia
 - programmer
-- tips
 thumbnail: https://ecs7.tokopedia.net/assets-tokopoints/prod/images/2018/08/toped-01%402x.png
 ---
 

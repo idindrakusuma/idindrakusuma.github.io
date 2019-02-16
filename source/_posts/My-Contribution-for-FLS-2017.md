@@ -4,8 +4,7 @@ date: 2017-09-17 12:42:43
 tags:
 - FLS
 - project
-categories:
-- Portofolio
+categories: portofolio
 thumbnail: https://user-images.githubusercontent.com/10141928/30630360-80bbdaf2-9e0a-11e7-852f-9c05073bec0c.png
 ---
 _**My Contribution for FLS 2017 [Part 1]**_ - Alhamdulillah, [Future Leader Summit 2017](https://futureleadersummit.org) berhasil dilaksanakan dengan lancar. Merupakan suatu kehormatan bisa bergabung dan turut berkontribusi dalam acara konferensi yang paling ditunggu - tunggu pemuda inspiratif dari seluruh Indonesia.

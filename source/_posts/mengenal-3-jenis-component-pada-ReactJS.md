@@ -1,8 +1,7 @@
 ---
 title: Mengenal 3 Jenis Component pada ReactJS
 date: 2019-02-16 20:25:14
-categories:
-- Development
+categories: development
 tags:
 - belajar-reactjs
 - programmer

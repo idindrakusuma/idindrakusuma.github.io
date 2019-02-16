@@ -6,8 +6,7 @@ tags:
 - apidocjs
 - API
 - JavaScript
-categories:
-- Development
+categories: development
 thumbnail: https://user-images.githubusercontent.com/10141928/32482323-bf6f7e40-c3c9-11e7-9be3-3c0acf14ab2c.png
 ---
 Jika kamu seorang **back-end developer** pasti familiar dengan API (*Application Programming Interface*). Dan biasanya, ketika kita men*develop* API dari program yang kita bangun, kita wajib menyediakan dokumentasi APInya kan ? minimal kita menyediakan link, *method* dan deskripsi singkat mengenai fungsi dari API tersebut. Biasanya kita tulis di file `.txt` atau `markdown`. apakah kamu masih seperti itu ?

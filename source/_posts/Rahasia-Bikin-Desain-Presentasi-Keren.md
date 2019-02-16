@@ -2,12 +2,11 @@
 title: Rahasia Bikin Desain Presentasi Keren
 date: 2017-07-29 12:22:38
 tags:
-- Canva
-- Presentasi
+- canva
+- presentasi
 - apps
 categories:
-- Tips
-- Presentasi
+- tips
 thumbnail: https://user-images.githubusercontent.com/10141928/28365051-2ca946c8-6cb1-11e7-9d83-30fc6e73e037.png
 ---
 

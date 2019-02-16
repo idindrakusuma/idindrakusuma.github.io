@@ -1,11 +1,9 @@
 ---
 title: Memanfaatkan Trello untuk Task Management
 date: 2017-11-20 12:50:51
-categories:
-- Development
+categories: development
 tags:
 - trello
-- tips
 - project
 thumbnail: https://user-images.githubusercontent.com/10141928/33050012-3c8b5900-ce95-11e7-9ba3-a19cf19a8e56.jpg
 ---
