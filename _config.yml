@@ -100,6 +100,7 @@ pwa:
         - src: /assets/images/logo-512x512.png
           sizes: 512x512
           type: image/png
+      start_url: '/index.html'
       theme_color: '#3498db'
       background_color: '#fff'
       display: standalone
