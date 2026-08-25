@@ -6,13 +6,9 @@ import { NAV_ITEMS } from '@/lib/site-data';
 const SECTION_IDS = NAV_ITEMS.map((item) => item.id);
 
 /**
- * The fixed page chrome: scroll-progress bar + floating island nav.
- *
- * Both react to the same scroll position, so they share one passive listener
- * throttled to a frame.
+ * The fixed page chrome: floating island nav.
  */
 export default function SiteChrome() {
-  const progressRef = useRef<HTMLDivElement>(null);
   const linksRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLSpanElement>(null);
   const [activeId, setActiveId] = useState<string>(SECTION_IDS[0]);
@@ -24,7 +20,7 @@ export default function SiteChrome() {
   const highlightRef = useRef(highlightId);
   highlightRef.current = highlightId;
 
-  const positionIndicator = useCallback((id: string) => {
+  const positionIndicator = useCallback((id: string, scrollIntoView = false) => {
     const links = linksRef.current;
     const indicator = indicatorRef.current;
     if (!links || !indicator) return;
@@ -35,11 +31,19 @@ export default function SiteChrome() {
     indicator.style.width = `${link.offsetWidth}px`;
     indicator.style.transform = `translateX(${link.offsetLeft}px)`;
     indicator.style.opacity = '1';
+
+    if (scrollIntoView && links.scrollWidth > links.clientWidth) {
+      const maxScroll = links.scrollWidth - links.clientWidth;
+      const target = link.offsetLeft - (links.clientWidth - link.offsetWidth) / 2;
+      const left = Math.max(0, Math.min(target, maxScroll));
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      links.scrollTo({ left, behavior });
+    }
   }, []);
 
   useEffect(() => {
-    positionIndicator(highlightId);
-  }, [highlightId, positionIndicator]);
+    positionIndicator(highlightId, hoveredId === null);
+  }, [highlightId, hoveredId, positionIndicator]);
 
   useEffect(() => {
     let frame = 0;
@@ -47,10 +51,6 @@ export default function SiteChrome() {
     const read = () => {
       frame = 0;
       const doc = document.documentElement;
-
-      const scrollable = doc.scrollHeight - doc.clientHeight;
-      const progress = scrollable > 0 ? (doc.scrollTop / scrollable) * 100 : 0;
-      if (progressRef.current) progressRef.current.style.width = `${progress}%`;
 
       // A section counts as active once its top passes 35% down the viewport.
       const mid = doc.scrollTop + window.innerHeight * 0.35;
@@ -117,13 +117,6 @@ export default function SiteChrome() {
 
   return (
     <>
-      <div
-        ref={progressRef}
-        aria-hidden="true"
-        className="fixed top-0 left-0 z-60 h-[3px] w-0 transition-[width] duration-100 ease-linear"
-        style={{ background: 'linear-gradient(90deg,var(--a1),var(--a2),var(--a3))' }}
-      />
-
       <nav className="fixed top-4 right-0 left-0 z-50 flex justify-center px-4">
         <div
           className="ik-island-cap border-line relative flex items-center gap-2.5 rounded-full border py-2 pr-2 pl-2.5 backdrop-blur-[20px]"

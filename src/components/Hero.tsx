@@ -74,7 +74,7 @@ export default function Hero() {
   return (
     <header className="isolate overflow-x-clip px-6 pt-[150px] pb-[90px]">
       <div className="ik-hero relative z-1 mx-auto grid max-w-[1160px] grid-cols-[1.2fr_1fr] items-center gap-[52px]">
-        <div>
+        <div className="ik-hero-copy">
           <Reveal as="p" delay={60} className="font-mono mb-3.5 text-sm tracking-[.02em]">
             <span className="ik-gradient-text font-medium">Fullstack Engineer · AI-Native</span>
           </Reveal>

@@ -408,6 +408,16 @@ body {
   .ik-hero {
     grid-template-columns: 1fr;
   }
+  .ik-hero-copy {
+    text-align: center;
+  }
+  .ik-hero-copy p {
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .ik-hero-copy > div {
+    justify-content: center;
+  }
   .ik-hero-media {
     order: -1;
     margin: 0 auto 4px;
