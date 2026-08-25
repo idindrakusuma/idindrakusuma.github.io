@@ -43,12 +43,9 @@ export type Role = {
 
 export type Experience = {
   company: string;
-  /** Fallback initials, shown if the logo file is missing. */
-  badge: string;
   /**
-   * Company mark. Real logos come from assets/logos/ via
-   * scripts/prepare-company-logos.mjs; the rest are initials placeholders from
-   * scripts/generate-company-logos.mjs until real assets land.
+   * Company mark, built from assets/logos/ by
+   * scripts/prepare-company-logos.mjs.
    */
   logo: string;
   /** Drives the pulsing ring on the timeline badge. */
@@ -60,7 +57,6 @@ export type Experience = {
 export const EXPERIENCES: Experience[] = [
   {
     company: 'ByteDance',
-    badge: 'BD',
     logo: '/logos/companies/bytedance.webp',
     isCurrent: true,
     award: 'GEC Spot Bonus · Q2 2024',
@@ -80,7 +76,6 @@ export const EXPERIENCES: Experience[] = [
   },
   {
     company: 'Tokopedia',
-    badge: 'TP',
     logo: '/logos/companies/tokopedia.webp',
     award: 'Focus on Consumer · Make it Happen',
     roles: [
@@ -118,8 +113,7 @@ export const EXPERIENCES: Experience[] = [
   },
   {
     company: 'Invitato',
-    badge: 'IN',
-    logo: '/logos/companies/invitato.svg',
+    logo: '/logos/companies/invitato.webp',
     roles: [
       {
         title: 'Co-Founder & Tech Advisor',
@@ -137,7 +131,6 @@ export const EXPERIENCES: Experience[] = [
   },
   {
     company: 'Skill Academy by Ruangguru',
-    badge: 'SA',
     logo: '/logos/companies/ruangguru.webp',
     roles: [
       {
@@ -153,8 +146,7 @@ export const EXPERIENCES: Experience[] = [
   },
   {
     company: 'Suara Merdeka Group',
-    badge: 'SM',
-    logo: '/logos/companies/suara-merdeka.svg',
+    logo: '/logos/companies/suara-merdeka.webp',
     roles: [
       {
         title: 'Software Engineer',
@@ -170,8 +162,7 @@ export const EXPERIENCES: Experience[] = [
   },
   {
     company: 'Universitas Dian Nuswantoro',
-    badge: 'UD',
-    logo: '/logos/companies/dinus.svg',
+    logo: '/logos/companies/udinus.webp',
     roles: [
       {
         title: 'Web Developer — Career Center',

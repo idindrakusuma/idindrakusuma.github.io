@@ -64,10 +64,9 @@ Three generator scripts keep `public/` reproducible. Re-run them after changing 
 source file or bumping `simple-icons`:
 
 ```bash
-node scripts/generate-icons.mjs          # tech logos → public/logos/skills
-node scripts/prepare-company-logos.mjs   # assets/logos/* → public/logos/companies
-node scripts/generate-company-logos.mjs  # initials placeholders for the rest
-node scripts/optimize-profile.mjs        # assets/profile-source.png → public/profile.{webp,jpg}
+node scripts/generate-icons.mjs         # tech logos → public/logos/skills
+node scripts/prepare-company-logos.mjs  # assets/logos/* → public/logos/companies
+node scripts/optimize-profile.mjs       # assets/profile-source.png → public/profile.{webp,jpg}
 ```
 
 **Company logos.** To add one, drop the image in `assets/logos/` named after the
@@ -76,16 +75,16 @@ company (`tokopedia.jpeg`, `bytedance.png`, …) and run
 `public/logos/companies/`; point the `logo` field in `src/lib/site-data.ts` at the
 new file if the name changed.
 
-The script handles the two shapes of source differently, deciding by the corner
-pixel: a mark sitting on a white card gets its surrounding white trimmed and a
-consistent margin added back (otherwise the source's own margin stacks with the
-badge's and the mark reads tiny), while a full-bleed brand tile is left to fill the
-badge edge to edge.
+Badges are 40 CSS px, which is unforgiving, so the script classifies each source
+and treats it accordingly:
 
-Companies without a real logo fall back to initials placeholders from
-`generate-company-logos.mjs` — currently Invitato, Suara Merdeka and Universitas
-Dian Nuswantoro. That script never overwrites an existing file, so it is always safe
-to re-run.
+| Source | Detected by | Treatment |
+| --- | --- | --- |
+| Mark on a white card | Light corner pixel | White trimmed off, consistent margin added back — otherwise the source's own margin stacks with the badge's and the mark reads tiny |
+| Full-bleed brand tile | Dark/coloured corner pixel | Left alone to fill the badge edge to edge; trimming would eat the tile and leave a floating wordmark |
+| Horizontal wordmark | Trimmed aspect ratio > 2 | Side margin dropped so it uses the full width, since it is already starved for height |
+
+All six companies currently have real logos.
 
 **Tech logos.** Pulled from the `simple-icons` package and rendered as flat
 silhouettes tinted by the `--logo-filter` token. Any slug missing from the package

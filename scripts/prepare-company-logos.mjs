@@ -29,6 +29,12 @@ const SIZE = 80;
 const MARGIN = 0.1;
 /** Corner luminance (0-255) at or above which a source counts as a mark on a card. */
 const LIGHT_CORNER = 235;
+/**
+ * Above this width-to-height ratio a mark is a horizontal wordmark. Those are
+ * already starved for height in a square badge, so they give up their side margin
+ * and run the full width of the tile.
+ */
+const WORDMARK_RATIO = 2;
 
 const TRANSPARENT = { r: 0, g: 0, b: 0, alpha: 0 };
 
@@ -60,25 +66,33 @@ for (const file of sources) {
   const dest = join(outDir, `${name}.webp`);
 
   const onCard = await cornerIsLight(source);
-  let pipeline = sharp(source);
+  let shape;
 
   if (onCard) {
-    const inner = Math.round(SIZE * (1 - MARGIN * 2));
-    const pad = Math.round((SIZE - inner) / 2);
-    pipeline = pipeline
-      // `threshold` is generous enough to also take the soft drop shadow some of
-      // these marks sit on.
-      .trim({ threshold: 15 })
-      .resize(inner, inner, { fit: 'contain', background: TRANSPARENT })
-      .extend({ top: pad, bottom: pad, left: pad, right: pad, background: TRANSPARENT });
+    // `threshold` is generous enough to also take the soft drop shadow some of
+    // these marks sit on. Trimming first so the aspect ratio measured below is the
+    // mark's own, not the source canvas's.
+    const trimmed = await sharp(source).trim({ threshold: 15 }).png().toBuffer();
+    const { width, height } = await sharp(trimmed).metadata();
+
+    const wordmark = width / height > WORDMARK_RATIO;
+    const sideMargin = wordmark ? 0 : MARGIN;
+    const innerW = Math.round(SIZE * (1 - sideMargin * 2));
+    const innerH = Math.round(SIZE * (1 - MARGIN * 2));
+    const padX = Math.round((SIZE - innerW) / 2);
+    const padY = Math.round((SIZE - innerH) / 2);
+
+    shape = wordmark ? 'wordmark' : 'trimmed mark';
+    await sharp(trimmed)
+      .resize(innerW, innerH, { fit: 'contain', background: TRANSPARENT })
+      .extend({ top: padY, bottom: padY, left: padX, right: padX, background: TRANSPARENT })
+      .webp({ quality: 90, effort: 6 })
+      .toFile(dest);
   } else {
-    pipeline = pipeline.resize(SIZE, SIZE, { fit: 'cover' });
+    shape = 'full-bleed tile';
+    await sharp(source).resize(SIZE, SIZE, { fit: 'cover' }).webp({ quality: 90, effort: 6 }).toFile(dest);
   }
 
-  await pipeline.webp({ quality: 90, effort: 6 }).toFile(dest);
-
   const { size } = await stat(dest);
-  console.log(
-    `${file.padEnd(18)} -> ${name}.webp  ${(onCard ? 'trimmed mark' : 'full-bleed tile').padEnd(16)} ${(size / 1024).toFixed(1)} KB`,
-  );
+  console.log(`${file.padEnd(20)} -> ${`${name}.webp`.padEnd(22)} ${shape.padEnd(16)} ${(size / 1024).toFixed(1)} KB`);
 }
