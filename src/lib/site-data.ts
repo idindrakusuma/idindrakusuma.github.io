@@ -54,15 +54,12 @@ export type Stat = {
  */
 export const STATS: Stat[] = [
   { value: '100M+', label: 'Monthly users', context: 'Tokopedia & TikTok Shop' },
-  // 10s → 3s is a 3.3x speed-up. The multiple reads far better than the equivalent
-  // "70% reduction", while the context line keeps the Core Web Vitals credential and
-  // the p75 qualifier that makes it credible.
-  { value: '3.3×', label: 'Faster page load', context: 'LCP 10s → 3s at p75' },
-  // Six is exact and every one is named in the timeline below: Cart, Checkout,
-  // Order History and Promo at Tokopedia, Homepage and Flash Sale at TikTok Shop.
-  // The count already implies more than the four listed, so no trailing "etc".
-  { value: '6', label: 'Core commerce surfaces', context: 'Checkout, Flash Sale, Homepage, Order History' },
-  { value: '$0', label: 'Backend cost', context: 'Invitato, serverless by design' },
+  // The timeline keeps the detailed LCP/p75 proof while this stat stays compact.
+  { value: '3×', label: 'Faster page load', context: 'in Web Tiktok Seller Center' },
+  // The stat highlights the named high-traffic surfaces while leaving room for
+  // adjacent commerce work covered in the timeline below.
+  { value: '6+', label: 'Core commerce surfaces', context: 'Homepage, Flash Sale, Checkout, and more' },
+  { value: '4+', label: 'International teams', context: 'US, China, Singapore, India, and more' },
 ];
 
 export type Role = {
@@ -152,7 +149,6 @@ export const EXPERIENCES: Experience[] = [
         title: 'Co-Founder & Tech Advisor',
         period: 'Oct 2021 — Now',
         location: 'Remote',
-        current: true,
         points: [
           'Built the foundation for the Wedding Website Template.',
           'Built core foundations for Internal Tools, a Digital Guestbook App and a Client Dashboard App, enhancing the user experience.',

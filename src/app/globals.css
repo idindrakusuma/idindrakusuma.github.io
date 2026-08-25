@@ -439,6 +439,21 @@ body {
   .ik-island-cap {
     max-width: calc(100vw - 24px);
   }
+  .ik-footer {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+  .ik-timeline {
+    padding-left: 0;
+  }
+  .ik-timeline-item {
+    padding-left: 52px;
+  }
+  .ik-timeline-badge,
+  .ik-timeline-ping {
+    left: 0 !important;
+  }
   /* The prototype only collapsed the hero; the about grid needs it too. */
   .ik-about {
     grid-template-columns: 1fr;

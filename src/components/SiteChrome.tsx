@@ -20,7 +20,7 @@ export default function SiteChrome() {
   const highlightRef = useRef(highlightId);
   highlightRef.current = highlightId;
 
-  const positionIndicator = useCallback((id: string, scrollIntoView = false) => {
+  const positionIndicator = useCallback((id: string, scrollIntoView = false, scrollBehavior?: ScrollBehavior) => {
     const links = linksRef.current;
     const indicator = indicatorRef.current;
     if (!links || !indicator) return;
@@ -36,7 +36,9 @@ export default function SiteChrome() {
       const maxScroll = links.scrollWidth - links.clientWidth;
       const target = link.offsetLeft - (links.clientWidth - link.offsetWidth) / 2;
       const left = Math.max(0, Math.min(target, maxScroll));
-      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : (scrollBehavior ?? 'smooth');
       links.scrollTo({ left, behavior });
     }
   }, []);
@@ -44,6 +46,23 @@ export default function SiteChrome() {
   useEffect(() => {
     positionIndicator(highlightId, hoveredId === null);
   }, [highlightId, hoveredId, positionIndicator]);
+
+  const scrollToSection = (id: string) => {
+    const section = document.getElementById(id);
+    if (!section) return;
+
+    const offset = window.matchMedia('(max-width: 860px)').matches ? 112 : 96;
+    const top = window.scrollY + section.getBoundingClientRect().top - offset;
+    const distance = Math.abs(top - window.scrollY);
+    const longJump = distance > window.innerHeight * 1.35;
+    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches || longJump ? 'auto' : 'smooth';
+
+    setHoveredId(null);
+    setActiveId(id);
+    positionIndicator(id, true, 'auto');
+    window.history.pushState(null, '', `#${id}`);
+    window.scrollTo({ top: Math.max(0, top), behavior });
+  };
 
   useEffect(() => {
     let frame = 0;
@@ -142,6 +161,10 @@ export default function SiteChrome() {
                 href={item.href}
                 data-nav={item.id}
                 aria-current={activeId === item.id ? 'true' : undefined}
+                onClick={(event) => {
+                  event.preventDefault();
+                  scrollToSection(item.id);
+                }}
                 onMouseEnter={() => setHoveredId(item.id)}
                 className="relative z-1 rounded-full px-[15px] py-[9px] text-sm font-semibold no-underline transition-colors"
                 style={{ color: highlightId === item.id ? '#fff' : 'var(--muted)' }}

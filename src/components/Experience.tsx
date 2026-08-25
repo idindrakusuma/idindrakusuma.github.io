@@ -16,22 +16,22 @@ export default function Experience() {
         Where I&apos;ve made an impact
       </Reveal>
 
-      <div className="relative pl-1.5">
+      <div className="ik-timeline relative pl-1.5">
         <TimelineLine />
 
         {EXPERIENCES.map((exp) => (
-          <Reveal key={exp.company} data-timeline-item="" className="relative mb-[26px] pl-16">
+          <Reveal key={exp.company} data-timeline-item="" className="ik-timeline-item relative mb-[26px] pl-16">
             {exp.isCurrent && (
               <span
                 aria-hidden="true"
-                className="bg-primary absolute top-1 left-1.5 z-1 h-10 w-10 rounded-[11px]"
+                className="ik-timeline-ping bg-primary absolute top-1 left-1.5 z-1 h-10 w-10 rounded-[11px]"
                 style={{ animation: 'ik-ping 2s cubic-bezier(0,0,.2,1) infinite' }}
               />
             )}
 
             <div
               data-timeline-badge=""
-              className="border-line-2 shadow-card-sm absolute top-1 left-1.5 z-2 h-10 w-10 overflow-hidden rounded-[11px] border bg-white"
+              className="ik-timeline-badge border-line-2 shadow-card-sm absolute top-1 left-1.5 z-2 h-10 w-10 overflow-hidden rounded-[11px] border bg-white"
             >
               <Image
                 src={exp.logo}
@@ -54,16 +54,18 @@ export default function Experience() {
 
               {exp.roles.map((role) => (
                 <div key={role.title} className="border-line border-t py-3.5">
-                  <div className="mb-2.5 flex flex-wrap items-baseline gap-x-3.5 gap-y-2">
-                    <span className="text-ink text-[15.5px] font-semibold">{role.title}</span>
-                    {role.current && (
-                      <span
-                        className="rounded-full px-[9px] py-[3px] text-[11px] font-semibold"
-                        style={{ color: '#34c77b', background: 'rgb(52 199 123 / 0.12)' }}
-                      >
-                        CURRENT
-                      </span>
-                    )}
+                  <div className="mb-2.5">
+                    <span className="text-ink text-[15.5px] font-semibold">
+                      {role.title}
+                      {role.current && (
+                        <span
+                          className="ml-2 inline-flex translate-y-[-1px] rounded-full px-[9px] py-[3px] text-[11px] font-semibold"
+                          style={{ color: '#34c77b', background: 'rgb(52 199 123 / 0.12)' }}
+                        >
+                          CURRENT
+                        </span>
+                      )}
+                    </span>
                   </div>
 
                   <div className="font-mono text-faint mb-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs">
