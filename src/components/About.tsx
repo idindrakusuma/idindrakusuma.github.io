@@ -26,7 +26,9 @@ export default function About() {
               <div className="ik-gradient-text font-display mb-1.5 text-3xl leading-none font-bold">
                 {stat.value}
               </div>
-              <div className="text-muted text-[12.5px] leading-[1.35]">{stat.label}</div>
+              <div className="text-ink text-[12.5px] leading-[1.35] font-semibold">{stat.label}</div>
+              {/* Attribution, set back so the card still reads value-first at a glance. */}
+              <div className="text-faint mt-1 text-[11px] leading-[1.3]">{stat.context}</div>
             </div>
           ))}
         </Reveal>

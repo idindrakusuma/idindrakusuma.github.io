@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { YEARS_EXPERIENCE } from '@/lib/site-data';
 import Reveal from './Reveal';
 
 /**
@@ -95,8 +96,9 @@ export default function Hero() {
             delay={160}
             className="text-muted mb-[34px] max-w-[540px] text-[clamp(16px,2.2vw,19px)]"
           >
-            7+ years building end-to-end — from top-traffic commerce frontends to Go services and AI-native
-            tooling. Currently at <strong className="text-ink font-semibold">ByteDance</strong>, previously{' '}
+            {YEARS_EXPERIENCE}+ years building end-to-end — from top-traffic commerce frontends to Go
+            services and AI-native tooling. Currently at{' '}
+            <strong className="text-ink font-semibold">ByteDance</strong>, previously{' '}
             <strong className="text-ink font-semibold">Tokopedia</strong>.
           </Reveal>
 

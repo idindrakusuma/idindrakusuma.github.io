@@ -4,14 +4,24 @@
  * from Indra's LinkedIn profile.
  */
 
+/** First professional role — Universitas Dian Nuswantoro, January 2016. */
+export const CAREER_START_YEAR = 2016;
+
+/**
+ * Whole years since CAREER_START_YEAR, resolved when the site is built rather than
+ * written down. The figure was hard-coded as "7+" (carried over from a LinkedIn
+ * summary written around 2023) and had drifted three years behind the timeline
+ * directly below it.
+ */
+export const YEARS_EXPERIENCE = new Date().getFullYear() - CAREER_START_YEAR;
+
 export const SITE = {
   name: 'Indra Kusuma',
   role: 'Fullstack Engineer · AI-Native',
   location: 'Jakarta, Indonesia',
   url: 'https://indrakusuma.web.id',
   email: 'id.indrakusuma@gmail.com',
-  description:
-    '7+ years building end-to-end — from top-traffic commerce frontends to Go services and AI-native tooling. Currently at ByteDance, previously Tokopedia.',
+  description: `${YEARS_EXPERIENCE}+ years building end-to-end — from top-traffic commerce frontends to Go services and AI-native tooling. Currently at ByteDance, previously Tokopedia.`,
 } as const;
 
 export type NavItem = { id: string; href: string; label: string };
@@ -24,13 +34,32 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'contact', href: '#contact', label: 'Contact' },
 ];
 
-export type Stat = { value: string; label: string };
+export type Stat = {
+  value: string;
+  label: string;
+  /** Attribution line. Keep it short — the cards are narrow. */
+  context: string;
+};
 
+/**
+ * Four outcomes across four dimensions: reach, impact, scope, economics.
+ *
+ * Each figure is attributed on the card. An unqualified "100M+ users" is the most
+ * discounted claim on an engineering portfolio; naming the surface is what makes it
+ * land — and keeps every number defensible if someone asks about it in an interview.
+ *
+ * The reach figure is deliberately platform-level: Tokopedia and TikTok Shop each
+ * exceed 100M monthly users, which is a statement about where the work shipped, not
+ * a claim that any one module was touched by that many people.
+ */
 export const STATS: Stat[] = [
-  { value: '7+', label: 'Years building for the web' },
-  { value: '70%', label: 'LCP cut on TikTok Seller Center' },
-  { value: '5+', label: 'Product companies shipped for' },
-  { value: '$0', label: 'Infra cost via serverless design' },
+  { value: '100M+', label: 'Monthly users', context: 'Tokopedia & TikTok Shop' },
+  // 10s → 3s is a 3.3x speed-up. The multiple reads far better than the equivalent
+  // "70% reduction", while the context line keeps the Core Web Vitals credential and
+  // the p75 qualifier that makes it credible.
+  { value: '3.3×', label: 'Faster page load', context: 'LCP 10s → 3s at p75' },
+  { value: '6', label: 'Core commerce surfaces', context: 'Checkout, Flash Sale, Homepage' },
+  { value: '$0', label: 'Backend cost', context: 'Invitato, serverless by design' },
 ];
 
 export type Role = {
@@ -69,6 +98,7 @@ export const EXPERIENCES: Experience[] = [
         points: [
           'Improved page performance by reducing LCP by 70% (10s → 3s at p75) on the ‘Manage Product’ page, one of the top-3 highest-traffic modules in TikTok Seller Center.',
           'Building scalable end-user interfaces using Lynx, focusing on native-like performance and cross-platform compatibility.',
+          'Delivered end-user surfaces on TikTok Shop, including the Homepage and Flash Sale modules.',
           'Reduced engineering complexity by ~30% by developing internal tools that automated and simplified the migration of the Tokopedia Web Platform to the ByteDance ecosystem.',
         ],
       },
