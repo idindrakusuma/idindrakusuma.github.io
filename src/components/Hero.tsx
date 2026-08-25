@@ -59,13 +59,19 @@ function AtomBackdrop() {
 }
 
 export default function Hero() {
-  // The header uses `isolate` rather than the prototype's `relative overflow-hidden`.
-  // The atom backdrop is taller than the header, so clipping cut the orbits off
-  // mid-fade — a hard horizontal edge about 90px below the portrait. Isolating makes
-  // the header a non-positioned stacking context instead: the atom can overhang, but
-  // still paints beneath every section that follows.
+  // The atom backdrop is wider and taller than the header, and the two axes need
+  // opposite treatment:
+  //
+  //   vertically   it must overhang, or the orbits get cut off mid-fade — the
+  //                prototype's `overflow: hidden` left a hard edge below the portrait
+  //   horizontally it must be clipped, or on a phone the overflow makes the browser
+  //                widen the layout viewport and shrink the whole page to fit
+  //
+  // `overflow-x: clip` does exactly that; `hidden` would force overflow-y to `auto`
+  // and reintroduce the vertical cut. `isolate` keeps the overhang painting beneath
+  // the sections that follow, which dropping the clip would otherwise break.
   return (
-    <header className="isolate px-6 pt-[150px] pb-[90px]">
+    <header className="isolate overflow-x-clip px-6 pt-[150px] pb-[90px]">
       <div className="ik-hero relative z-1 mx-auto grid max-w-[1160px] grid-cols-[1.2fr_1fr] items-center gap-[52px]">
         <div>
           <Reveal as="p" delay={60} className="font-mono mb-3.5 text-sm tracking-[.02em]">

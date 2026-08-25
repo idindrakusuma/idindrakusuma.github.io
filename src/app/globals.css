@@ -345,6 +345,11 @@ body {
 .ik-logos {
   -webkit-mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
   mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  /* The rows are `width: max-content` and run far wider than the page. The mask only
+     fades them, it does not clip, so without this the document overflows and mobile
+     browsers widen the layout viewport to fit. `clip` rather than `hidden` so the
+     tooltips above the top row are still free to overhang vertically. */
+  overflow-x: clip;
 }
 .ik-logos img {
   filter: var(--logo-filter);
