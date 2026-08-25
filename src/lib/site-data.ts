@@ -58,7 +58,10 @@ export const STATS: Stat[] = [
   // "70% reduction", while the context line keeps the Core Web Vitals credential and
   // the p75 qualifier that makes it credible.
   { value: '3.3×', label: 'Faster page load', context: 'LCP 10s → 3s at p75' },
-  { value: '6', label: 'Core commerce surfaces', context: 'Checkout, Flash Sale, Homepage' },
+  // Six is exact and every one is named in the timeline below: Cart, Checkout,
+  // Order History and Promo at Tokopedia, Homepage and Flash Sale at TikTok Shop.
+  // The count already implies more than the four listed, so no trailing "etc".
+  { value: '6', label: 'Core commerce surfaces', context: 'Checkout, Flash Sale, Homepage, Order History' },
   { value: '$0', label: 'Backend cost', context: 'Invitato, serverless by design' },
 ];
 
