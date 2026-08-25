@@ -11,6 +11,13 @@ const SECTION_IDS = NAV_ITEMS.map((item) => item.id);
 export default function SiteChrome() {
   const linksRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLSpanElement>(null);
+  // The scroll spy is muted while a tap-driven scroll is in flight, so the pill
+  // stays on the item the visitor picked instead of flickering through every
+  // section the page passes on the way there.
+  const spyLockedRef = useRef(false);
+  const spySettleRef = useRef(0);
+  const spyStalledRef = useRef(0);
+  const unlockSpyRef = useRef<() => void>(() => {});
   const [activeId, setActiveId] = useState<string>(SECTION_IDS[0]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
@@ -57,6 +64,10 @@ export default function SiteChrome() {
     const longJump = distance > window.innerHeight * 1.35;
     const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches || longJump ? 'auto' : 'smooth';
 
+    spyLockedRef.current = true;
+    // Nothing to settle if the page never moves, so lift the lock on its own.
+    window.clearTimeout(spyStalledRef.current);
+    spyStalledRef.current = window.setTimeout(() => unlockSpyRef.current(), 400);
     setHoveredId(null);
     setActiveId(id);
     positionIndicator(id, true, 'auto');
@@ -69,6 +80,7 @@ export default function SiteChrome() {
 
     const read = () => {
       frame = 0;
+      if (spyLockedRef.current) return;
       const doc = document.documentElement;
 
       // A section counts as active once its top passes 35% down the viewport.
@@ -81,9 +93,30 @@ export default function SiteChrome() {
       setActiveId(current);
     };
 
+    const unlockSpy = () => {
+      if (!spyLockedRef.current) return;
+      spyLockedRef.current = false;
+      window.clearTimeout(spySettleRef.current);
+      window.clearTimeout(spyStalledRef.current);
+      read();
+    };
+    unlockSpyRef.current = unlockSpy;
+
     const onScroll = () => {
+      if (spyLockedRef.current) {
+        // Push the settle deadline out for as long as the page keeps moving, so
+        // the lock outlasts a smooth scroll of any length and then lifts once it
+        // comes to rest on the section that was asked for.
+        window.clearTimeout(spyStalledRef.current);
+        window.clearTimeout(spySettleRef.current);
+        spySettleRef.current = window.setTimeout(unlockSpy, 150);
+        return;
+      }
       if (!frame) frame = requestAnimationFrame(read);
     };
+
+    // Scrolling by hand outranks the tap that is still in flight.
+    const onManualScroll = () => unlockSpy();
 
     // Fonts shift link widths, so re-measure once they have settled.
     const onResize = () => positionIndicator(highlightRef.current);
@@ -91,12 +124,20 @@ export default function SiteChrome() {
     read();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize, { passive: true });
+    window.addEventListener('wheel', onManualScroll, { passive: true });
+    window.addEventListener('touchstart', onManualScroll, { passive: true });
+    window.addEventListener('keydown', onManualScroll);
     document.fonts?.ready.then(onResize).catch(() => {});
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
+      window.clearTimeout(spySettleRef.current);
+      window.clearTimeout(spyStalledRef.current);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('wheel', onManualScroll);
+      window.removeEventListener('touchstart', onManualScroll);
+      window.removeEventListener('keydown', onManualScroll);
     };
   }, [positionIndicator]);
 
