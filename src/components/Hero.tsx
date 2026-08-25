@@ -118,7 +118,15 @@ export default function Hero() {
           </Reveal>
         </div>
 
-        <Reveal delay={140} className="ik-hero-media relative w-[min(400px,84vw)] justify-self-center">
+        <Reveal
+          delay={140}
+          // The cap is the desktop size; the middle term governs phones. It was
+          // min(400px, 84vw), where the 84vw branch always won below ~476px — so the
+          // portrait stayed at 84% of the screen on every phone and pushed the
+          // opening paragraph off the first viewport. 400px was a desktop decision
+          // that mobile inherited when the grid collapses to one column.
+          className="ik-hero-media relative w-[clamp(200px,60vw,400px)] justify-self-center"
+        >
           <AtomBackdrop />
 
           {/* Glowing halo behind the portrait. */}
