@@ -46,9 +46,9 @@ export type Experience = {
   /** Fallback initials, shown if the logo file is missing. */
   badge: string;
   /**
-   * Company mark. These are initials placeholders (see
-   * scripts/generate-company-logos.mjs) apart from ByteDance — drop a real logo
-   * at the same path to replace one.
+   * Company mark. Real logos come from assets/logos/ via
+   * scripts/prepare-company-logos.mjs; the rest are initials placeholders from
+   * scripts/generate-company-logos.mjs until real assets land.
    */
   logo: string;
   /** Drives the pulsing ring on the timeline badge. */
@@ -61,7 +61,7 @@ export const EXPERIENCES: Experience[] = [
   {
     company: 'ByteDance',
     badge: 'BD',
-    logo: '/logos/companies/bytedance.svg',
+    logo: '/logos/companies/bytedance.webp',
     isCurrent: true,
     award: 'GEC Spot Bonus · Q2 2024',
     roles: [
@@ -81,7 +81,7 @@ export const EXPERIENCES: Experience[] = [
   {
     company: 'Tokopedia',
     badge: 'TP',
-    logo: '/logos/companies/tokopedia.svg',
+    logo: '/logos/companies/tokopedia.webp',
     award: 'Focus on Consumer · Make it Happen',
     roles: [
       {
@@ -138,7 +138,7 @@ export const EXPERIENCES: Experience[] = [
   {
     company: 'Skill Academy by Ruangguru',
     badge: 'SA',
-    logo: '/logos/companies/ruangguru.svg',
+    logo: '/logos/companies/ruangguru.webp',
     roles: [
       {
         title: 'Course Instructor',

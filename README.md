@@ -52,7 +52,7 @@ src/
   lib/site-data.ts    All copy and content
 scripts/              Asset generators (see below)
 public/               Generated assets, CNAME, .nojekyll
-assets/               Source files that are never served
+assets/               Logo and photo masters — never served, only built from
 ```
 
 Content is deliberately separated from presentation: to update a job, an award or
@@ -65,16 +65,27 @@ source file or bumping `simple-icons`:
 
 ```bash
 node scripts/generate-icons.mjs          # tech logos → public/logos/skills
-node scripts/generate-company-logos.mjs  # timeline badges → public/logos/companies
+node scripts/prepare-company-logos.mjs   # assets/logos/* → public/logos/companies
+node scripts/generate-company-logos.mjs  # initials placeholders for the rest
 node scripts/optimize-profile.mjs        # assets/profile-source.png → public/profile.{webp,jpg}
 ```
 
-**Company logos.** Everything except ByteDance is an initials placeholder. To use
-a real logo, drop the file over the placeholder at the same path — the badge renders
-it `object-fit: contain` on a white tile, so a square mark with a transparent
-background works best. If the file extension differs, update the `logo` field in
-`src/lib/site-data.ts`. Note that `generate-company-logos.mjs` overwrites the
-placeholders, so don't re-run it after swapping in real assets.
+**Company logos.** To add one, drop the image in `assets/logos/` named after the
+company (`tokopedia.jpeg`, `bytedance.png`, …) and run
+`node scripts/prepare-company-logos.mjs`. It emits an 80px WebP into
+`public/logos/companies/`; point the `logo` field in `src/lib/site-data.ts` at the
+new file if the name changed.
+
+The script handles the two shapes of source differently, deciding by the corner
+pixel: a mark sitting on a white card gets its surrounding white trimmed and a
+consistent margin added back (otherwise the source's own margin stacks with the
+badge's and the mark reads tiny), while a full-bleed brand tile is left to fill the
+badge edge to edge.
+
+Companies without a real logo fall back to initials placeholders from
+`generate-company-logos.mjs` — currently Invitato, Suara Merdeka and Universitas
+Dian Nuswantoro. That script never overwrites an existing file, so it is always safe
+to re-run.
 
 **Tech logos.** Pulled from the `simple-icons` package and rendered as flat
 silhouettes tinted by the `--logo-filter` token. Any slug missing from the package
