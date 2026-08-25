@@ -1,0 +1,414 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+   Ported from the Claude Design prototype (design/project/Personal Website.dc.html).
+   Light is the base; `[data-theme="dark"]` on <html> swaps the whole palette.
+   The theme attribute is written by the inline script in layout.tsx before paint,
+   so there is no flash on load.
+--------------------------------------------------------------------------- */
+:root {
+  --bg: #e9eef7;
+  --surface: #ffffff;
+  --surface-2: #f3f6fc;
+  --surface-3: #eaf0fb;
+  --text: #0a1224;
+  --muted: #55648a;
+  --faint: #8b98b5;
+  --border: #e2e8f5;
+  --border-2: #d6def0;
+  --primary: #c0203f;
+  --primary-2: #e0627a;
+  --primary-3: #8a1c50;
+  --primary-ink: #ffffff;
+  --glow: rgb(192 32 63 / 0.2);
+  --ring: rgb(192 32 63 / 0.28);
+  --grid: rgb(120 30 45 / 0.05);
+  --nav: rgb(255 255 255 / 0.7);
+  --shadow: 0 18px 50px -22px rgb(96 24 40 / 0.26);
+  --shadow-sm: 0 6px 20px -10px rgb(96 24 40 / 0.2);
+  /* Aurora / gradient accents. --a1 tracks --primary; --a2/--a3 are its lighter
+     and deeper companions, used across every gradient on the page. */
+  --a1: #c0203f;
+  --a2: #e6647c;
+  --a3: #8a1c50;
+  /* Tech logos are drawn as flat silhouettes, tinted to match the theme. */
+  --logo-filter: brightness(0);
+}
+
+:root[data-theme='dark'] {
+  --bg: #05070e;
+  --surface: #0b1220;
+  --surface-2: #0f1826;
+  --surface-3: #141f33;
+  --text: #eaf0fb;
+  --muted: #93a3c4;
+  --faint: #5f708f;
+  --border: #1b2740;
+  --border-2: #26375a;
+  --primary: #ff5c76;
+  --primary-2: #ff89a0;
+  --primary-3: #c8477f;
+  --primary-ink: #1a0510;
+  --glow: rgb(255 92 118 / 0.32);
+  --ring: rgb(255 92 118 / 0.42);
+  --grid: rgb(220 150 160 / 0.06);
+  --nav: rgb(18 9 12 / 0.62);
+  --shadow: 0 24px 70px -24px rgb(0 0 0 / 0.72);
+  --shadow-sm: 0 8px 26px -12px rgb(0 0 0 / 0.6);
+  --a1: #f0455f;
+  --a2: #ff7d97;
+  --a3: #b83a86;
+  --logo-filter: brightness(0) invert(1);
+}
+
+/* Expose the tokens to Tailwind so utilities like `bg-surface`, `text-muted` and
+   `border-line` resolve to the live custom properties (and therefore re-theme). */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--border);
+  --color-line-2: var(--border-2);
+  --color-primary: var(--primary);
+  --color-primary-2: var(--primary-2);
+  --color-primary-3: var(--primary-3);
+  --color-primary-ink: var(--primary-ink);
+
+  --font-display: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, monospace;
+
+  --shadow-card: var(--shadow);
+  --shadow-card-sm: var(--shadow-sm);
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  /* Sections are anchored below the floating island nav. */
+  scroll-padding-top: 96px;
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  /* The aurora layer paints this same colour, but body needs it too so overscroll
+     and rubber-banding do not reveal the blank canvas. */
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  position: relative;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--primary);
+  color: var(--primary-ink);
+}
+
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-2);
+  border-radius: 9px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* ---------------------------------------------------------------------------
+   Keyframes
+--------------------------------------------------------------------------- */
+@keyframes ik-aur1 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(9vw, 7vh) scale(1.28);
+  }
+}
+@keyframes ik-aur2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1.15);
+  }
+  50% {
+    transform: translate(-8vw, -6vh) scale(0.85);
+  }
+}
+@keyframes ik-aur3 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(6vw, -8vh) scale(1.22);
+  }
+}
+@keyframes ik-drift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes ik-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+@keyframes ik-ping {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  70%,
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+@keyframes ik-shine {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+@keyframes ik-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes ik-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll reveal
+   Elements start hidden and animate in when they first intersect the viewport.
+   Without JS the `no-js` fallback below keeps everything visible.
+--------------------------------------------------------------------------- */
+.ik-reveal {
+  opacity: 0;
+}
+.ik-reveal[data-visible='true'] {
+  animation: ik-reveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------------------------------------------------------------------------
+   Theme toggle icons
+   Swapped in CSS rather than from React state so the correct glyph is painted
+   on the very first frame, alongside the pre-paint theme script.
+--------------------------------------------------------------------------- */
+.ik-icon-sun {
+  display: none;
+}
+:root[data-theme='dark'] .ik-icon-sun {
+  display: block;
+}
+:root[data-theme='dark'] .ik-icon-moon {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Gradient helpers
+--------------------------------------------------------------------------- */
+.ik-gradient-text {
+  background: linear-gradient(135deg, var(--a1), var(--a3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* The headline word: a wider gradient that slides across on a loop. */
+.ik-gradient-shine {
+  background: linear-gradient(100deg, var(--a1), var(--a2), var(--a3), var(--a1));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: ik-shine 6s linear infinite;
+}
+
+/* Section eyebrow rule — brand red fading out to the right. */
+.ik-divider {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--primary), transparent);
+  opacity: 0.5;
+}
+
+/* ---------------------------------------------------------------------------
+   Award cards
+   Solid primary fill on hover with a soft highlight that tracks the cursor.
+   --mx/--my are written by the mousemove handler in AwardCard.
+--------------------------------------------------------------------------- */
+.ik-award {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.5s ease,
+    box-shadow 0.5s ease;
+}
+.ik-award::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--primary);
+  opacity: 0;
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 0;
+}
+.ik-award::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), var(--a2), transparent 62%);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  z-index: 1;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.ik-award > div {
+  position: relative;
+  z-index: 2;
+}
+.ik-award:hover {
+  transform: translateY(-6px);
+  border-color: var(--primary);
+  box-shadow: 0 26px 50px -18px var(--glow);
+}
+.ik-award:hover::before {
+  opacity: 1;
+}
+.ik-award:hover::after {
+  opacity: 0.9;
+}
+.ik-award:hover h3,
+.ik-award:hover p {
+  color: #fff;
+}
+
+/* Contact icon buttons pick up the brand glow as they fill. */
+.ik-social:hover {
+  box-shadow: 0 14px 30px -12px var(--glow);
+}
+
+/* ---------------------------------------------------------------------------
+   Skills marquee
+--------------------------------------------------------------------------- */
+.ik-logos {
+  -webkit-mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.ik-logos img {
+  filter: var(--logo-filter);
+  opacity: 0.6;
+  transition:
+    opacity 0.25s,
+    filter 0.25s;
+}
+.ik-logo:hover img {
+  opacity: 1;
+}
+.ik-logo:hover .ik-tip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ---------------------------------------------------------------------------
+   Responsive
+--------------------------------------------------------------------------- */
+@media (max-width: 860px) {
+  .ik-hero {
+    grid-template-columns: 1fr;
+  }
+  .ik-hero-media {
+    order: -1;
+    margin: 0 auto 4px;
+  }
+  /* Nav links stay visible on mobile and scroll sideways rather than collapsing
+     into a hamburger — the behaviour landed on during design review. */
+  .ik-island-links {
+    overflow-x: auto;
+    max-width: 100%;
+    scrollbar-width: none;
+  }
+  .ik-island-links::-webkit-scrollbar {
+    display: none;
+  }
+  .ik-island-links a {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .ik-island-cap {
+    max-width: calc(100vw - 24px);
+  }
+  /* The prototype only collapsed the hero; the about grid needs it too. */
+  .ik-about {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .ik-reveal {
+    opacity: 1 !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
