@@ -85,6 +85,16 @@
 
   --shadow-card: var(--shadow);
   --shadow-card-sm: var(--shadow-sm);
+
+  /* Motion.
+     One curve for the whole page. It was already in use by the award cards and the
+     nav pill, while everything else fell back to Tailwind's default — two motion
+     systems side by side, which is what made the buttons read as rough next to the
+     cards. Setting the two --default-* keys means every bare `transition-*` utility
+     emits this curve, so components only state a duration when they differ. */
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --default-transition-timing-function: var(--ease-smooth);
+  --default-transition-duration: 260ms;
 }
 
 /* ---------------------------------------------------------------------------
@@ -231,7 +241,7 @@ body {
   opacity: 0;
 }
 .ik-reveal[data-visible='true'] {
-  animation: ik-reveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: ik-reveal 0.8s var(--ease-smooth) both;
 }
 
 /* ---------------------------------------------------------------------------
@@ -287,10 +297,12 @@ body {
 .ik-award {
   position: relative;
   overflow: hidden;
+  /* Slowest tier: the largest hover surface on the page. All three properties share
+     the curve so the lift, the border and the shadow arrive together. */
   transition:
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.5s ease,
-    box-shadow 0.5s ease;
+    transform 0.5s var(--ease-smooth),
+    border-color 0.5s var(--ease-smooth),
+    box-shadow 0.5s var(--ease-smooth);
 }
 .ik-award::before {
   content: '';
@@ -334,6 +346,26 @@ body {
   color: #fff;
 }
 
+/* ---------------------------------------------------------------------------
+   Buttons
+   The gradient and shadow live here rather than in an inline style: an inline
+   style cannot carry a :hover, which is why the primary button used to rise with
+   a fixed shadow — a lift with no depth cue, which reads as a jump.
+--------------------------------------------------------------------------- */
+.ik-btn-primary {
+  background: linear-gradient(135deg, var(--a1), var(--primary));
+  box-shadow: 0 12px 28px -12px var(--glow);
+}
+.ik-btn-primary:hover {
+  box-shadow: 0 20px 40px -14px var(--glow);
+}
+
+.ik-btn-secondary:hover {
+  /* The outline button gains depth as it lifts too, instead of only recolouring
+     its border. */
+  box-shadow: var(--shadow-sm);
+}
+
 /* Contact icon buttons pick up the brand glow as they fill. */
 .ik-social:hover {
   box-shadow: 0 14px 30px -12px var(--glow);
@@ -363,7 +395,10 @@ body {
 }
 .ik-logo:hover .ik-tip {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  /* Must move `translate`, not `transform`: the resting offset comes from Tailwind's
+     -translate-x-1/2, which writes `translate`. Setting `transform` here applied on
+     top of it and shifted the tooltip half its own width off-centre. */
+  translate: -50% 0;
 }
 
 /* ---------------------------------------------------------------------------

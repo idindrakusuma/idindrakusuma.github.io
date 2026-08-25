@@ -42,7 +42,7 @@ export default function Experience() {
               />
             </div>
 
-            <div className="bg-surface border-line shadow-card-sm hover:border-line-2 hover:shadow-card rounded-[18px] border px-[26px] py-6 transition-[transform,border-color,box-shadow] duration-250 hover:-translate-y-1">
+            <div className="bg-surface border-line shadow-card-sm hover:border-line-2 hover:shadow-card rounded-[18px] border px-[26px] py-6 transition-[translate,border-color,box-shadow] duration-400 hover:-translate-y-[4px]">
               <div className="mb-[18px] flex flex-wrap items-center justify-between gap-2.5">
                 <h3 className="font-display m-0 text-xl font-semibold">{exp.company}</h3>
                 {exp.award && (

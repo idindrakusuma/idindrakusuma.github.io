@@ -26,7 +26,7 @@ function LogoItem({ slug, name, desc, hidden }: { slug: string; name: string; de
       )}
 
       <span
-        className="ik-tip shadow-card-sm pointer-events-none absolute bottom-[calc(100%+14px)] left-1/2 z-6 -translate-x-1/2 translate-y-[5px] rounded-[9px] px-[11px] py-[7px] text-center whitespace-nowrap opacity-0 transition-[opacity,transform] duration-200"
+        className="ik-tip shadow-card-sm pointer-events-none absolute bottom-[calc(100%+14px)] left-1/2 z-6 -translate-x-1/2 translate-y-[5px] rounded-[9px] px-[11px] py-[7px] text-center whitespace-nowrap opacity-0 transition-[opacity,translate] duration-200"
         style={{ background: 'var(--text)', color: 'var(--bg)' }}
       >
         <span className="font-display block text-[12.5px] font-bold">{name}</span>

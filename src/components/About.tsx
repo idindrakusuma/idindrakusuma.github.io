@@ -21,7 +21,7 @@ export default function About() {
           {STATS.map((stat) => (
             <div
               key={stat.label}
-              className="bg-surface border-line hover:border-primary rounded-2xl border px-4 py-[18px] transition-[transform,border-color] duration-250 hover:-translate-y-1"
+              className="bg-surface border-line hover:border-primary rounded-2xl border px-4 py-[18px] transition-[translate,border-color] duration-400 hover:-translate-y-[4px]"
             >
               <div className="ik-gradient-text font-display mb-1.5 text-3xl leading-none font-bold">
                 {stat.value}

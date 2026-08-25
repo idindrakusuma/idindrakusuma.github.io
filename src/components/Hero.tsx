@@ -105,17 +105,13 @@ export default function Hero() {
           <Reveal delay={220} className="flex flex-wrap gap-[13px]">
             <a
               href="#experience"
-              className="rounded-[13px] px-[26px] py-3.5 text-[15px] font-semibold text-white no-underline transition-[transform,box-shadow] duration-200 hover:-translate-y-[3px]"
-              style={{
-                background: 'linear-gradient(135deg,var(--a1),var(--primary))',
-                boxShadow: '0 12px 28px -12px var(--glow)',
-              }}
+              className="ik-btn-primary rounded-[13px] px-[26px] py-3.5 text-[15px] font-semibold text-white no-underline transition-[translate,box-shadow] hover:-translate-y-[3px]"
             >
               View experience
             </a>
             <a
               href="#contact"
-              className="bg-surface text-ink border-line hover:border-primary rounded-[13px] border px-[26px] py-3.5 text-[15px] font-semibold no-underline transition-[transform,border-color] duration-200 hover:-translate-y-[3px]"
+              className="ik-btn-secondary bg-surface text-ink border-line hover:border-primary rounded-[13px] border px-[26px] py-3.5 text-[15px] font-semibold no-underline transition-[translate,border-color,box-shadow] hover:-translate-y-[3px]"
             >
               Get in touch
             </a>

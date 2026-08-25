@@ -70,7 +70,7 @@ export default function Contact() {
                 {...(social.href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}
                 aria-label={social.label}
                 title={social.title}
-                className="ik-social bg-surface-2 text-ink border-line hover:border-primary hover:bg-primary grid h-14 w-14 place-items-center rounded-2xl border no-underline transition-[transform,border-color,color,background,box-shadow] duration-200 hover:-translate-y-1 hover:text-white"
+                className="ik-social bg-surface-2 text-ink border-line hover:border-primary hover:bg-primary grid h-14 w-14 place-items-center rounded-2xl border no-underline transition-[translate,border-color,color,background,box-shadow] hover:-translate-y-[3px] hover:text-white"
               >
                 {ICONS[social.label]}
               </a>

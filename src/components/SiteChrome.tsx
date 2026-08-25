@@ -137,7 +137,7 @@ export default function SiteChrome() {
             <span
               ref={indicatorRef}
               aria-hidden="true"
-              className="absolute top-0 bottom-0 left-0 z-0 w-0 rounded-full opacity-0 transition-[transform,width] duration-[380ms] ease-[cubic-bezier(.22,1,.36,1)]"
+              className="absolute top-0 bottom-0 left-0 z-0 w-0 rounded-full opacity-0 transition-[transform,width] duration-[380ms] ease-smooth"
               style={{
                 background: 'linear-gradient(135deg,var(--a1),var(--primary) 55%,var(--a3))',
                 boxShadow: '0 8px 20px -8px var(--glow)',
@@ -150,7 +150,7 @@ export default function SiteChrome() {
                 data-nav={item.id}
                 aria-current={activeId === item.id ? 'true' : undefined}
                 onMouseEnter={() => setHoveredId(item.id)}
-                className="relative z-1 rounded-full px-[15px] py-[9px] text-sm font-semibold no-underline transition-colors duration-250"
+                className="relative z-1 rounded-full px-[15px] py-[9px] text-sm font-semibold no-underline transition-colors"
                 style={{ color: highlightId === item.id ? '#fff' : 'var(--muted)' }}
               >
                 {item.label}
@@ -162,7 +162,7 @@ export default function SiteChrome() {
             type="button"
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="border-line bg-surface text-ink hover:border-primary grid h-9 w-9 flex-none cursor-pointer place-items-center rounded-full border transition-[border-color,transform] duration-200 hover:rotate-[20deg]"
+            className="border-line bg-surface text-ink hover:border-primary grid h-9 w-9 flex-none cursor-pointer place-items-center rounded-full border transition-[border-color,rotate] hover:rotate-[20deg]"
           >
             <svg
               className="ik-icon-sun"
