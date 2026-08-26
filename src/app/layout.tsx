@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { JetBrains_Mono, Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
+import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import { SITE } from '@/lib/site-data';
 import './globals.css';
 
@@ -86,7 +87,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <style>{`.ik-reveal{opacity:1!important}`}</style>
         </noscript>
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <GoogleAnalytics />
+      </body>
     </html>
   );
 }
