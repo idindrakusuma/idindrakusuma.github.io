@@ -264,37 +264,44 @@ export const SKILL_ROWS: SkillRow[] = [
   },
 ];
 
-export type Award = { title: string; org: string; desc: string };
+/** `year` drives the display order; the array order below is not significant. */
+export type Award = { title: string; org: string; desc: string; year: number };
 
 export const AWARDS: Award[] = [
   {
     title: 'GEC Spot Bonus Award',
     org: 'ByteDance · 2024',
+    year: 2024,
     desc: 'Recognized for outstanding impact on TikTok Seller Center web performance.',
   },
   {
     title: 'Make it Happen, Make it Better',
     org: 'Tokopedia · 2021 & 2022',
+    year: 2022,
     desc: 'Awarded twice for shipping high-impact platform improvements end to end.',
   },
   {
     title: 'Focus on Consumer',
     org: 'Tokopedia · 2019 & 2021',
+    year: 2021,
     desc: 'Honored for consistently putting customer experience first in delivery.',
   },
   {
     title: '1st Place — Startup Business',
-    org: 'UDINUS Competition',
+    org: 'UDINUS Competition · 2017',
+    year: 2017,
     desc: 'Won the university-wide startup competition with an original product concept.',
   },
   {
     title: '2nd Place — Startup Prototype',
     org: 'Creativepreneur Festival · 2016',
+    year: 2016,
     desc: 'Runner-up for Markir, a QR-code parking-payment prototype (PoC).',
   },
   {
     title: 'Best Graduate & PKM Research Grant',
-    org: 'Academic Honors',
+    org: 'Academic Honors · 2017',
+    year: 2017,
     desc: 'Top graduate recognition plus a funded student research project (automatic fish feeder).',
   },
 ];

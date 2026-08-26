@@ -291,39 +291,31 @@ body {
 
 /* ---------------------------------------------------------------------------
    Award cards
-   Solid primary fill on hover with a soft highlight that tracks the cursor.
+   A soft highlight tracks the cursor across the card while it lifts.
+   The card no longer flips to a solid primary fill. The cards now drift past
+   continuously in the marquee, and recolouring every one the pointer crossed
+   read as flashing rather than as a hover.
    --mx/--my are written by the mousemove handler in AwardCard.
 --------------------------------------------------------------------------- */
 .ik-award {
   position: relative;
   overflow: hidden;
-  /* Slowest tier: the largest hover surface on the page. All three properties share
-     the curve so the lift, the border and the shadow arrive together. */
+  /* The lift keeps the slow curve; the border catches up sooner, so the outline
+     is what reads as responding to the pointer. */
   transition:
     transform 0.5s var(--ease-smooth),
-    border-color 0.5s var(--ease-smooth),
-    box-shadow 0.5s var(--ease-smooth);
-}
-.ik-award::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--primary);
-  opacity: 0;
-  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  z-index: 0;
+    border-color 0.35s ease,
+    box-shadow 0.5s ease;
 }
 .ik-award::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), var(--a2), transparent 62%);
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 62%);
   opacity: 0;
   transition: opacity 0.45s ease;
   z-index: 1;
-  mix-blend-mode: screen;
   pointer-events: none;
 }
 .ik-award > div {
@@ -335,15 +327,32 @@ body {
   border-color: var(--primary);
   box-shadow: 0 26px 50px -18px var(--glow);
 }
-.ik-award:hover::before {
+.ik-award:hover::after {
   opacity: 1;
 }
-.ik-award:hover::after {
-  opacity: 0.9;
+
+/* ---------------------------------------------------------------------------
+   Awards marquee
+   Same recipe as the skills rows below: the track is `width: max-content` and
+   runs far wider than the page, so it needs clipping as well as the fade, or the
+   document overflows and mobile browsers widen the layout viewport to fit.
+   `clip` rather than `hidden` so the cards' hover lift stays free vertically.
+
+   Note the mask is the tighter constraint, not the overflow: it paints only
+   within this element's box, so a hover shadow reaching past the padding is cut
+   off in a hard line however `overflow-y` is set. The vertical padding on
+   .ik-awrap is what actually gives that shadow room.
+--------------------------------------------------------------------------- */
+.ik-awrap {
+  -webkit-mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  overflow-x: clip;
+  cursor: grab;
+  /* Claim horizontal gestures for the drag; leave vertical ones to the page. */
+  touch-action: pan-y;
 }
-.ik-award:hover h3,
-.ik-award:hover p {
-  color: #fff;
+.ik-awrap:active {
+  cursor: grabbing;
 }
 
 /* ---------------------------------------------------------------------------

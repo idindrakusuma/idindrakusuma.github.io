@@ -1,7 +1,10 @@
 import { AWARDS } from '@/lib/site-data';
-import AwardCard from './AwardCard';
+import AwardsMarquee from './AwardsMarquee';
 import Reveal from './Reveal';
 import SectionEyebrow from './SectionEyebrow';
+
+/** Newest first. The source array is ordered for reading, not for display. */
+const SORTED_AWARDS = [...AWARDS].sort((a, b) => b.year - a.year);
 
 export default function Awards() {
   return (
@@ -20,11 +23,11 @@ export default function Awards() {
         Tokopedia to student innovation and startup competitions.
       </Reveal>
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-4">
-        {AWARDS.map((award) => (
-          <AwardCard key={award.title} award={award} />
-        ))}
-      </div>
+      {/* The reveal sits here rather than on the cards: it animates `transform`,
+          which the marquee track needs for itself. */}
+      <Reveal>
+        <AwardsMarquee awards={SORTED_AWARDS} />
+      </Reveal>
     </section>
   );
 }
