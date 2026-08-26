@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { JetBrains_Mono, Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
-import { GoogleAnalytics } from '@/components/GoogleAnalytics';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { SITE } from '@/lib/site-data';
 import './globals.css';
 
@@ -89,7 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         {children}
-        <GoogleAnalytics />
+        <GoogleAnalytics gaId="G-BTNT9P4VS1" />
       </body>
     </html>
   );
