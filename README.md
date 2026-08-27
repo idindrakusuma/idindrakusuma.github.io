@@ -61,7 +61,7 @@ the skills marquee, edit `src/lib/site-data.ts` only.
 
 ## Assets
 
-Four generator scripts keep the shipped assets reproducible. Re-run them after
+Five generator scripts keep the shipped assets reproducible. Re-run them after
 changing a source file or bumping `simple-icons`:
 
 ```bash
@@ -69,6 +69,7 @@ node scripts/generate-icons.mjs         # tech logos → public/logos/skills
 node scripts/prepare-company-logos.mjs  # assets/logos/* → public/logos/companies
 node scripts/optimize-profile.mjs       # assets/profile-source.png → public/profile.{webp,jpg}
 node scripts/generate-favicon.mjs       # assets/favicon-source.png → src/app/{icon,icon1,apple-icon}.png
+node scripts/generate-logo.mjs          # assets/logo-source.png → public/logo.svg + src/components/LogoMark.tsx
 ```
 
 **Company logos.** To add one, drop the image in `assets/logos/` named after the
@@ -94,6 +95,25 @@ falls back to a text wordmark — currently only Lynx.
 
 **Profile photo.** `assets/profile-source.png` is the 1000×1000 master and is not
 served; the hero uses an 800px WebP (15 KB).
+
+**Logo mark.** `assets/logo-source.png` is the raster master of the flat iK mark. There
+is no tracing tool in the toolchain, so `generate-logo.mjs` does the vectorising itself:
+it classifies pixels into red and ink, splits them into connected components, walks each
+component's boundary edges into closed loops, simplifies them, then rounds the gently
+turning vertices so the curves come out smooth while the corners stay mitred. Gradients
+are least-squares fitted to the artwork's own shading.
+
+It writes two artefacts from the same trace so they cannot drift: `public/logo.svg` for
+standalone use (it carries its own theme CSS) and `src/components/LogoMark.tsx` for
+inline use. The footer uses the inline one — an `<img>` is its own document and cannot
+see `data-theme` on `<html>`, so it would stick to the OS colour scheme whenever that
+disagrees with the site's toggle.
+
+The mark's ink halves are near-white and would vanish on the light background, so they
+render through `--logo-ink` / `--logo-ink-shade` and flip to the ink navy in light mode.
+The red halves read on either background and keep their sampled gradients. The two
+tokens stay one step apart in both themes, so the fold shading inverts rather than
+flattening out.
 
 **Favicon.** `assets/favicon-source.png` is the 1254×1254 logo master. The master
 has transparent padding and a drop shadow, so the script trims it, re-centres a

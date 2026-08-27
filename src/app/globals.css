@@ -34,6 +34,11 @@
   --a3: #8a1c50;
   /* Tech logos are drawn as flat silhouettes, tinted to match the theme. */
   --logo-filter: brightness(0);
+  /* The iK mark's ink halves (see scripts/generate-logo.mjs). They are near-white in
+     the artwork, so light mode flips them onto the ink navy; --logo-ink-shade carries
+     the fold shading and stays one step off the base in both themes. */
+  --logo-ink: #0b1325;
+  --logo-ink-shade: #182032;
 }
 
 :root[data-theme='dark'] {
@@ -60,6 +65,8 @@
   --a2: #ff7d97;
   --a3: #b83a86;
   --logo-filter: brightness(0) invert(1);
+  --logo-ink: #fefefe;
+  --logo-ink-shade: #f1f1f4;
 }
 
 /* Expose the tokens to Tailwind so utilities like `bg-surface`, `text-muted` and
@@ -410,6 +417,14 @@ body {
   translate: -50% 0;
 }
 
+/* The iK mark above the footer copyright. Desktop keeps the footer a single tidy
+   row, so the mark only appears once the footer stacks at the mobile breakpoint. */
+.ik-footer-mark {
+  display: none;
+  width: 34px;
+  height: auto;
+}
+
 /* ---------------------------------------------------------------------------
    Responsive
 --------------------------------------------------------------------------- */
@@ -452,6 +467,9 @@ body {
     flex-direction: column;
     justify-content: center;
     text-align: center;
+  }
+  .ik-footer-mark {
+    display: block;
   }
   .ik-timeline {
     padding-left: 0;
