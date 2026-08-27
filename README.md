@@ -69,7 +69,7 @@ node scripts/generate-icons.mjs         # tech logos → public/logos/skills
 node scripts/prepare-company-logos.mjs  # assets/logos/* → public/logos/companies
 node scripts/optimize-profile.mjs       # assets/profile-source.png → public/profile.{webp,jpg}
 node scripts/generate-favicon.mjs       # assets/favicon-source.png → src/app/{icon,icon1,apple-icon}.png
-node scripts/generate-logo.mjs          # assets/logo-source.png → public/logo.svg + src/components/LogoMark.tsx
+node scripts/generate-logo.mjs          # assets/logo-{light,dark}-source.png → public/logo-{light,dark}.webp
 ```
 
 **Company logos.** To add one, drop the image in `assets/logos/` named after the
@@ -96,24 +96,18 @@ falls back to a text wordmark — currently only Lynx.
 **Profile photo.** `assets/profile-source.png` is the 1000×1000 master and is not
 served; the hero uses an 800px WebP (15 KB).
 
-**Logo mark.** `assets/logo-source.png` is the raster master of the flat iK mark. There
-is no tracing tool in the toolchain, so `generate-logo.mjs` does the vectorising itself:
-it classifies pixels into red and ink, splits them into connected components, walks each
-component's boundary edges into closed loops, simplifies them, then rounds the gently
-turning vertices so the curves come out smooth while the corners stay mitred. Gradients
-are least-squares fitted to the artwork's own shading.
+**Logo mark.** The mark ships as two artworks rather than one file recoloured by CSS:
+`assets/logo-light-source.png` is drawn for light surfaces and `assets/logo-dark-source.png`
+for dark ones, each with its own art-directed gradients. The two masters differ in canvas
+size and transparent padding, so `generate-logo.mjs` trims each to its artwork and
+letterboxes both into one shared box — otherwise the mark would shift and resize on every
+theme change.
 
-It writes two artefacts from the same trace so they cannot drift: `public/logo.svg` for
-standalone use (it carries its own theme CSS) and `src/components/LogoMark.tsx` for
-inline use. The footer uses the inline one — an `<img>` is its own document and cannot
-see `data-theme` on `<html>`, so it would stick to the OS colour scheme whenever that
-disagrees with the site's toggle.
-
-The mark's ink halves are near-white and would vanish on the light background, so they
-render through `--logo-ink` / `--logo-ink-shade` and flip to the ink navy in light mode.
-The red halves read on either background and keep their sampled gradients. The two
-tokens stay one step apart in both themes, so the fold shading inverts rather than
-flattening out.
+`.ik-mark` paints the result as a background rather than an `<img>`, so only the variant
+matching `data-theme` is ever fetched; a pair of `<img>` tags downloads both, and a single
+one cannot see `data-theme` to choose. It appears in two places: the right half of the
+contact card from the `lg` breakpoint up, and above the footer copyright below the mobile
+breakpoint. Both are decorative.
 
 **Favicon.** `assets/favicon-source.png` is the 1254×1254 logo master. The master
 has transparent padding and a drop shadow, so the script trims it, re-centres a

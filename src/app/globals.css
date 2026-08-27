@@ -34,11 +34,6 @@
   --a3: #8a1c50;
   /* Tech logos are drawn as flat silhouettes, tinted to match the theme. */
   --logo-filter: brightness(0);
-  /* The iK mark's ink halves (see scripts/generate-logo.mjs). They are near-white in
-     the artwork, so light mode flips them onto the ink navy; --logo-ink-shade carries
-     the fold shading and stays one step off the base in both themes. */
-  --logo-ink: #0b1325;
-  --logo-ink-shade: #182032;
 }
 
 :root[data-theme='dark'] {
@@ -65,8 +60,6 @@
   --a2: #ff7d97;
   --a3: #b83a86;
   --logo-filter: brightness(0) invert(1);
-  --logo-ink: #fefefe;
-  --logo-ink-shade: #f1f1f4;
 }
 
 /* Expose the tokens to Tailwind so utilities like `bg-surface`, `text-muted` and
@@ -417,12 +410,27 @@ body {
   translate: -50% 0;
 }
 
-/* The iK mark above the footer copyright. Desktop keeps the footer a single tidy
-   row, so the mark only appears once the footer stacks at the mobile breakpoint. */
+/* The iK mark. It ships as two artworks — one drawn for dark surfaces, one for light —
+   rather than one file recoloured by CSS, so each keeps its own art-directed gradients.
+   Painted as a background rather than an <img> because only the matching variant is then
+   ever fetched: a pair of <img> tags downloads both, and a single one cannot see
+   [data-theme] to choose. Purely decorative at both call sites, so there is nothing to
+   put in the accessibility tree either way. The aspect ratio is the shared box that
+   scripts/generate-logo.mjs normalises both variants into — re-run it if the sources
+   change and the ratio moves. */
+.ik-mark {
+  aspect-ratio: 440 / 430;
+  background: center / contain no-repeat url('/logo-light.webp');
+}
+:root[data-theme='dark'] .ik-mark {
+  background-image: url('/logo-dark.webp');
+}
+
+/* Above the footer copyright. Desktop keeps the footer a single tidy row, so the mark
+   only appears once the footer stacks at the mobile breakpoint. */
 .ik-footer-mark {
   display: none;
   width: 34px;
-  height: auto;
 }
 
 /* ---------------------------------------------------------------------------

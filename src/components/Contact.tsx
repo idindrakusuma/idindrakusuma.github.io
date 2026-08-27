@@ -77,6 +77,14 @@ export default function Contact() {
             ))}
           </div>
         </div>
+
+        {/* Fills the empty right half of the card, from `lg` up — narrower than that and
+            the card has no room to spare beside the 640px copy column. Absolute inside
+            the card's own overflow-hidden box, so it can never push the page wide. */}
+        <span
+          aria-hidden="true"
+          className="ik-mark absolute top-1/2 right-[clamp(32px,6vw,64px)] hidden w-[clamp(150px,15vw,210px)] -translate-y-1/2 lg:block"
+        />
       </Reveal>
     </section>
   );
