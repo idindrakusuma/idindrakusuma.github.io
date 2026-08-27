@@ -45,7 +45,8 @@ src/
     layout.tsx        Fonts, metadata, pre-paint theme script
     page.tsx          Section composition
     globals.css       Design tokens, keyframes, component styles
-    icon.svg          Favicon (IK monogram)
+    icon*.png         Favicon (iK logo, 32px + 192px)
+    apple-icon.png    iOS home-screen icon (180px)
     robots.ts         robots.txt
     sitemap.ts        sitemap.xml
   components/         One file per section, plus shared behaviour
@@ -60,13 +61,14 @@ the skills marquee, edit `src/lib/site-data.ts` only.
 
 ## Assets
 
-Three generator scripts keep `public/` reproducible. Re-run them after changing a
-source file or bumping `simple-icons`:
+Four generator scripts keep the shipped assets reproducible. Re-run them after
+changing a source file or bumping `simple-icons`:
 
 ```bash
 node scripts/generate-icons.mjs         # tech logos → public/logos/skills
 node scripts/prepare-company-logos.mjs  # assets/logos/* → public/logos/companies
 node scripts/optimize-profile.mjs       # assets/profile-source.png → public/profile.{webp,jpg}
+node scripts/generate-favicon.mjs       # assets/favicon-source.png → src/app/{icon,icon1,apple-icon}.png
 ```
 
 **Company logos.** To add one, drop the image in `assets/logos/` named after the
@@ -92,6 +94,12 @@ falls back to a text wordmark — currently only Lynx.
 
 **Profile photo.** `assets/profile-source.png` is the 1000×1000 master and is not
 served; the hero uses an 800px WebP (15 KB).
+
+**Favicon.** `assets/favicon-source.png` is the 1254×1254 logo master. The master
+has transparent padding and a drop shadow, so the script trims it, re-centres a
+square crop and emits the icons into `src/app/`, where Next.js picks them up by file
+convention — no `<link>` tags to maintain. The Apple icon is flattened onto the
+logo's own background because iOS masks the corners itself.
 
 ## Theming
 
