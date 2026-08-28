@@ -21,6 +21,11 @@ _Avoid_: header, navbar
 A fade-and-slide applied to an element the first time it enters the viewport.
 _Avoid_: animation, transition
 
+**Post**:
+One blog entry, addressed by its slug at `/blog/{slug}`. A Post is a route of its
+own, not a Section.
+_Avoid_: article, entry, page
+
 ### Marquee
 
 **Marquee**:
@@ -48,6 +53,7 @@ _Avoid_: autoplay, scroll
 - A **Marquee** renders `copies` of its **Set**, derived from the **Wrap width** and the viewport
 - A **Marquee** **Drifts** unless it is hovered, dragged, or the visitor asked for reduced motion
 - Skills and Awards are each a **Marquee**; they differ only in rendering, not in looping
+- **Posts** live outside the Section sequence — the homepage has Sections, `/blog` has Posts
 
 ## Example dialogue
 
@@ -62,3 +68,6 @@ _Avoid_: autoplay, scroll
   `Experience` Section component. Unresolved; they are distinct concepts.
 - Section 04's eyebrow reads "Honors" while its nav label reads "Awards". The two
   are maintained separately and have drifted.
+- **Site Chrome**'s nav assumes every entry is a **Section** on the current page:
+  `NAV_ITEMS` entries are hashes and drive the scroll spy. A **Post** is a route,
+  so the nav cannot address one without changing what a nav entry means.

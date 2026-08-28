@@ -42,23 +42,54 @@ npm run build && npx serve out
 
 ```
 src/
-  app/
+  app/                Routes only
     layout.tsx        Fonts, metadata, pre-paint theme script
-    page.tsx          Section composition
+    page.tsx          Homepage — section composition
     globals.css       Design tokens, keyframes, component styles
+    not-found.tsx     404
     icon*.png         Favicon (iK logo, 32px + 192px)
     apple-icon.png    iOS home-screen icon (180px)
     robots.ts         robots.txt
     sitemap.ts        sitemap.xml
-  components/         One file per section, plus shared behaviour
-  lib/site-data.ts    All copy and content
+    blog/             Blog index, and the parked post route (see below)
+  components/         Markup — one file per section, plus shared pieces
+  hooks/              React and DOM glue
+  lib/                Framework-free logic and content
+    site-data.ts      All homepage copy and content
+    marquee.ts        Marquee geometry — pure, no React, no DOM
+    posts.ts          Blog content seam
 scripts/              Asset generators (see below)
 public/               Generated assets, CNAME, .nojekyll
 assets/               Logo and photo masters — never served, only built from
 ```
 
+The three `src/` layers are ordered by what they are allowed to touch: `lib/` uses
+neither React nor the DOM, `hooks/` adds both, `components/` adds markup.
+Dependencies only ever point that way. The marquee is the worked example — its
+geometry is `lib/marquee.ts`, its DOM work is `hooks/useMarquee.ts`, and its two
+callers in `components/` supply nothing but rendering.
+
 Content is deliberately separated from presentation: to update a job, an award or
 the skills marquee, edit `src/lib/site-data.ts` only.
+
+## Blog
+
+Scaffolding, not yet live. `src/lib/posts.ts` is the seam: it returns an empty
+list, and where posts actually come from — MDX in the repo, plain Markdown, a
+CMS — is deliberately undecided. `/blog` renders an empty state today, and
+`sitemap.ts` already reads the same `getPosts`, so a published post can never be
+reachable but unlisted.
+
+`src/app/blog/[slug]/page.tsx.template` is written and verified but **parked**.
+A static export refuses a dynamic route whose `generateStaticParams` returns an
+empty array — with no posts there are no URLs to emit, and Next reports it as
+"missing generateStaticParams()" even though it is right there. Rename it to
+`page.tsx` alongside the first post. While parked it is outside the route tree
+and outside `tsc`, so it will not be typechecked.
+
+One thing to settle before building this out: `SiteChrome` is a scroll spy over
+the homepage's sections and every `NAV_ITEMS` entry is a hash, so it cannot serve
+a second route as-is. The blog pages carry a plain back-link instead of the nav.
 
 ## Assets
 

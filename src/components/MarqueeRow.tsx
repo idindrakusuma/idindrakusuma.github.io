@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useRef } from 'react';
 import type { SkillLogo, SkillRow } from '@/lib/site-data';
-import useMarquee from './useMarquee';
+import useMarquee from '@/hooks/useMarquee';
 
 /** Scroll speed in CSS pixels per second. */
 const SPEED = 13.2;

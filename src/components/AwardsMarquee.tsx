@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 import type { Award } from '@/lib/site-data';
 import AwardCard from './AwardCard';
-import useMarquee from './useMarquee';
+import useMarquee from '@/hooks/useMarquee';
 
 /** Drift speed in CSS pixels per second. */
 const SPEED = 28;
