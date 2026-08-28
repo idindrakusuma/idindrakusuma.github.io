@@ -6,9 +6,9 @@
   "scripts": {
     "preinstall": "node scripts/only-pnpm.mjs",
     "dev": "next dev",
-    "build": "next build",
+    "build": "oxlint --deny-warnings && next build",
     "start": "next start",
-    "lint": "eslint .",
+    "lint": "oxlint --deny-warnings",
     "typecheck": "tsc --noEmit",
     "assets": "pnpm assets:icons && pnpm assets:logos && pnpm assets:profile && pnpm assets:favicon && pnpm assets:mark",
     "assets:icons": "node scripts/generate-icons.mjs",
@@ -24,13 +24,11 @@
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.1.13",
     "@types/node": "^24.5.2",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
-    "eslint": "^9.36.0",
-    "eslint-config-next": "^15.5.4",
+    "oxlint": "^1.80.0",
     "sharp": "^0.35.3",
     "simple-icons": "^16.28.0",
     "tailwindcss": "^4.1.13",

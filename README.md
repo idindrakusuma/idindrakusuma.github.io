@@ -25,9 +25,34 @@ pnpm for months while the committed lockfile was npm's.
 | --- | --- |
 | `pnpm dev` | Dev server on :3000 |
 | `pnpm build` | Static export into `out/` |
-| `pnpm lint` | ESLint |
+| `pnpm lint` | oxlint |
 | `pnpm typecheck` | `tsc --noEmit` |
 | `pnpm assets` | Rebuild every generated asset |
+
+## Linting
+
+[oxlint](https://oxc.rs) replaces ESLint here, configured in `.oxlintrc.json`
+with the `nextjs`, `react`, `jsx-a11y`, `import` and `typescript` plugins.
+Coverage was checked rule by rule against the `next/core-web-vitals` config it
+replaced: 68 of its 71 active rules have an oxlint equivalent — including all 21
+`@next/next` rules, one for one — and the three that do not are inert here
+(`jsx-uses-react` and `jsx-uses-vars` belong to the old JSX transform,
+`require-render-return` to class components).
+
+`rules-of-hooks` is listed explicitly in `rules` because it is not in oxlint's
+default `correctness` category. Without that line only `exhaustive-deps` fires,
+which is the more forgiving half of the pair — verified both ways.
+
+Linting is a build step (`oxlint --deny-warnings && next build`) rather than
+something Next runs for us, so it still gates the Netlify deploy now that
+`next build` no longer lints. Warnings are fatal: a gate that only reports is a
+gate nobody reads.
+
+Two suppressions, both in `.oxlintrc.json` with the reason next to them:
+`Reveal.tsx` passes a ref object into `createElement` (it never reads `.current`)
+and sets state in an effect as an `IntersectionObserver` fallback, and
+`generate-icons.mjs` looks up icons by computed key, which is the whole point of
+deriving an export name from a slug.
 
 ## Layout
 
