@@ -66,20 +66,40 @@ const unquote = (v) => v.trim().replace(/^['"](.*)['"]$/, '$1');
 const asList = (v) => (Array.isArray(v) ? v : v ? [v] : []);
 
 /**
- * Everything before `<!-- more -->` is the excerpt Hexo showed on the index.
- * Kept as the post's own words rather than rewritten — this is a migration.
+ * Splits a post into its lead and the rest.
+ *
+ * Everything before `<!-- more -->` is what Hexo showed on the index, and it is
+ * also the post's opening — so it is lifted out rather than copied. The article
+ * renders it as the lead paragraph above the body; leaving it in place as well
+ * printed it twice.
+ *
+ * Kept as the post's own words rather than rewritten: this is a migration.
  */
 function splitExcerpt(body) {
   const marker = /<!--\s*more\s*-->/;
   const at = body.search(marker);
-  const lead = at === -1 ? body : body.slice(0, at);
-  const text = lead
+
+  // Without a marker, the first paragraph stands in as the lead.
+  const cut = at === -1 ? body.trimStart().indexOf('\n\n') : at;
+  const [lead, rest] =
+    cut === -1
+      ? [body, '']
+      : [body.slice(0, at === -1 ? cut : at), body.slice(at === -1 ? cut : at).replace(marker, '')];
+
+  const excerpt = lead
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/[*_`#>]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
-  return { excerpt: text, body: at === -1 ? body : body.replace(marker, '').trim() };
+
+  // Eight posts open with an image and only then the lead paragraph. Lifting the
+  // lead out must not take the picture with it, so any image in it is carried
+  // over to the top of the body.
+  const leadImages = lead.match(/^!\[[^\]]*\]\([^)]*\)\s*$/gm) ?? [];
+  const carried = leadImages.length ? `${leadImages.join('\n\n')}\n\n` : '';
+
+  return { excerpt, body: (carried + rest).trim(), full: body };
 }
 
 /**
@@ -109,7 +129,7 @@ const written = [];
 for (const file of files) {
   const raw = git('show', `${BRANCH}:${file}`);
   const { data, body: full } = parseFrontmatter(raw);
-  const { excerpt, body } = splitExcerpt(full);
+  const { excerpt, body, full: whole } = splitExcerpt(full);
 
   // Hexo took the slug from the filename, which was mixed-case for most posts.
   // Netlify lowercases request paths and 301s to match, so a cased URL would
@@ -129,7 +149,8 @@ for (const file of files) {
     `tags: [${asList(data.tags).map((t) => yamlString(t)).join(', ')}]`,
     `thumbnail: ${yamlString(data.thumbnail)}`,
     `excerpt: ${yamlString(excerpt)}`,
-    `readingMinutes: ${readingMinutes(body)}`,
+    // Measured on the whole post, lead included — that is what gets read.
+    `readingMinutes: ${readingMinutes(whole)}`,
     // Only when it differs — the old permalink carried the original casing and
     // the redirect has to reproduce it exactly.
     ...(legacySlug === slug ? [] : [`legacySlug: ${yamlString(legacySlug)}`]),
