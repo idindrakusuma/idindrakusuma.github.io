@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import useTheme from '@/hooks/useTheme';
 import { NAV_ITEMS } from '@/lib/site-data';
 
 const SECTION_IDS = NAV_ITEMS.map((item) => item.id);
@@ -20,6 +21,7 @@ export default function SiteChrome() {
   const unlockSpyRef = useRef<() => void>(() => {});
   const [activeId, setActiveId] = useState<string>(SECTION_IDS[0]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const { toggle } = useTheme();
 
   // The pill follows the hovered link, and snaps back to the active section on leave.
   const highlightId = hoveredId ?? activeId;
@@ -141,40 +143,6 @@ export default function SiteChrome() {
     };
   }, [positionIndicator]);
 
-  const toggleTheme = () => {
-    const root = document.documentElement;
-    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    try {
-      localStorage.setItem('ik-theme', next);
-    } catch {
-      /* Storage can be unavailable (private mode); the theme still applies. */
-    }
-  };
-
-  // Follow the OS preference for as long as the visitor has not picked a theme.
-  useEffect(() => {
-    let stored: string | null = null;
-    try {
-      stored = localStorage.getItem('ik-theme');
-    } catch {
-      return;
-    }
-    if (stored) return;
-
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = (event: MediaQueryListEvent) => {
-      try {
-        if (localStorage.getItem('ik-theme')) return;
-      } catch {
-        return;
-      }
-      document.documentElement.setAttribute('data-theme', event.matches ? 'dark' : 'light');
-    };
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
-
   return (
     <>
       <nav className="fixed top-4 right-0 left-0 z-50 flex justify-center px-4">
@@ -217,7 +185,7 @@ export default function SiteChrome() {
 
           <button
             type="button"
-            onClick={toggleTheme}
+            onClick={toggle}
             aria-label="Toggle theme"
             className="border-line bg-surface text-ink hover:border-primary grid h-9 w-9 flex-none cursor-pointer place-items-center rounded-full border transition-[border-color,rotate] hover:rotate-[20deg]"
           >
