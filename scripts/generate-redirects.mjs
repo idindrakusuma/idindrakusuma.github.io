@@ -33,7 +33,9 @@ for (const file of files) {
   const date = new Date(String(data.date));
   if (Number.isNaN(date.getTime())) throw new Error(`${slug}: unreadable date "${data.date}"`);
 
-  const from = `/${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())}/${slug}/`;
+  // The old URL used the original filename casing; the new one is lowercase.
+  const legacy = typeof data.legacySlug === 'string' ? data.legacySlug : slug;
+  const from = `/${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())}/${legacy}/`;
   rules.push(`${from}  /blog/${slug}/  301`);
 }
 

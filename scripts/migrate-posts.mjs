@@ -111,7 +111,11 @@ for (const file of files) {
   const { data, body: full } = parseFrontmatter(raw);
   const { excerpt, body } = splitExcerpt(full);
 
-  const slug = basename(file, '.md');
+  // Hexo took the slug from the filename, which was mixed-case for most posts.
+  // Netlify lowercases request paths and 301s to match, so a cased URL would
+  // cost every visitor a redirect and disagree with its own canonical tag.
+  const legacySlug = basename(file, '.md');
+  const slug = legacySlug.toLowerCase();
   const rawCategory = asList(data.categories)[0] ?? 'story';
   const category = CATEGORY[rawCategory.toLowerCase()];
   if (!category) throw new Error(`${slug}: no mapping for category "${rawCategory}"`);
@@ -126,6 +130,9 @@ for (const file of files) {
     `thumbnail: ${yamlString(data.thumbnail)}`,
     `excerpt: ${yamlString(excerpt)}`,
     `readingMinutes: ${readingMinutes(body)}`,
+    // Only when it differs — the old permalink carried the original casing and
+    // the redirect has to reproduce it exactly.
+    ...(legacySlug === slug ? [] : [`legacySlug: ${yamlString(legacySlug)}`]),
     '---',
     '',
   ].join('\n');

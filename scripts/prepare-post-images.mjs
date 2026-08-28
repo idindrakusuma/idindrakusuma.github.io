@@ -132,6 +132,17 @@ for (const name of onDisk) {
   measured++;
 }
 
+// A renamed or deleted post leaves its images behind. Reported rather than
+// deleted — they are committed, and removing one is the author's call.
+const referenced = new Set();
+for (const file of files) {
+  const text = await readFile(join(postsDir, file), 'utf8');
+  for (const [, href] of text.matchAll(/(\/images\/posts\/[a-z0-9._-]+\.webp)/g)) {
+    referenced.add(href);
+  }
+}
+const orphans = onDisk.map((n) => `/images/posts/${n}`).filter((h) => !referenced.has(h));
+
 // Drop entries whose file is gone, so the manifest cannot outlive its images.
 const live = new Set(onDisk.map((n) => `/images/posts/${n}`));
 for (const href of Object.keys(manifest)) if (!live.has(href)) delete manifest[href];
@@ -149,6 +160,10 @@ for (const f of written) bytes += (await stat(join(outDir, f))).size;
 console.log(
   `Fetched ${fetched}, reused ${reused}, measured ${measured} — ${written.length} images, ${(bytes / 1024 / 1024).toFixed(1)} MB`,
 );
+if (orphans.length) {
+  console.log(`Orphaned — no post references these: ${orphans.map((h) => h.split('/').pop()).join(', ')}`);
+}
+
 if (failures.length) {
   console.error(`\n${failures.length} could not be fetched:`);
   for (const f of failures) console.error(`  - ${f}`);
