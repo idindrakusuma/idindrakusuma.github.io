@@ -61,9 +61,14 @@ export default function useNavIndicator({
     position(highlightId, center);
   }, [highlightId, center, position]);
 
-  // Kept in a ref so the resize listener always re-measures the current link.
+  // Kept in a ref so the resize listener always re-measures the current link
+  // without having to be torn down and reattached on every highlight change.
+  // Written in an effect rather than during render: React treats a ref touched
+  // mid-render as a bug, and the listener only ever reads it later anyway.
   const highlightRef = useRef(highlightId);
-  highlightRef.current = highlightId;
+  useEffect(() => {
+    highlightRef.current = highlightId;
+  }, [highlightId]);
 
   useEffect(() => {
     const onResize = () => position(highlightRef.current);

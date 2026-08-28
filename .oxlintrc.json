@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["nextjs", "react", "typescript", "jsx-a11y", "import"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error"
+  },
+  "ignorePatterns": [".next", "out", "node_modules", "next-env.d.ts"],
+  "overrides": [
+    {
+      "files": ["src/components/Reveal.tsx"],
+      "rules": {
+        "react/refs": "off",
+        "react/set-state-in-effect": "off"
+      }
+    },
+    {
+      "files": ["scripts/**/*.mjs"],
+      "rules": {
+        "import/namespace": "off"
+      }
+    }
+  ]
+}
