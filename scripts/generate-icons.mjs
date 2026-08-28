@@ -4,7 +4,7 @@
  *
  * The design prototype pulled these from cdn.simpleicons.org at runtime; serving
  * them from our own origin removes a third-party request from the critical path
- * and keeps the marquee working offline. Re-run with `npm run assets:icons`
+ * and keeps the marquee working offline. Re-run with `pnpm assets:icons`
  * after bumping simple-icons or editing SKILL_ROWS.
  *
  * SKILL_ROWS in src/lib/site-data.ts is the only list of skills — this script
