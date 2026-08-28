@@ -1,12 +1,10 @@
 import { STATS } from '@/lib/site-data';
 import Reveal from './Reveal';
-import SectionEyebrow from './SectionEyebrow';
+import Section from './Section';
 
 export default function About() {
   return (
-    <section id="about" className="mx-auto max-w-[1160px] px-6 pt-10 pb-[30px]">
-      <SectionEyebrow label="01 — About" className="mb-[30px]" />
-
+    <Section id="about" eyebrow="About" className="pt-10 pb-[30px]" eyebrowClassName="mb-[30px]">
       <div className="ik-about grid grid-cols-[1.5fr_1fr] items-start gap-11">
         <Reveal
           as="p"
@@ -33,6 +31,6 @@ export default function About() {
           ))}
         </Reveal>
       </div>
-    </section>
+    </Section>
   );
 }

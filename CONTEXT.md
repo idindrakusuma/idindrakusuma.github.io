@@ -66,8 +66,9 @@ _Avoid_: autoplay, scroll
 
 - "Experience" names both the data type for one company in `site-data.ts` and the
   `Experience` Section component. Unresolved; they are distinct concepts.
-- Section 04's eyebrow reads "Honors" while its nav label reads "Awards". The two
-  are maintained separately and have drifted.
+- Section 04's eyebrow reads "Honors" while its nav label reads "Awards". Now a
+  deliberate override rather than drift — `Section` derives the number from
+  NAV_ITEMS but takes the label as a prop, so the two can differ on purpose.
 - **Site Chrome**'s nav assumes every entry is a **Section** on the current page:
   `NAV_ITEMS` entries are hashes and drive the scroll spy. A **Post** is a route,
   so the nav cannot address one without changing what a nav entry means.

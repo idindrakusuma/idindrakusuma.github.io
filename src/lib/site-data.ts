@@ -34,6 +34,20 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'contact', href: '#contact', label: 'Contact' },
 ];
 
+/**
+ * A Section's position in the page, zero-padded — "01" for the first.
+ *
+ * Derived from NAV_ITEMS rather than written on each Section, which is where the
+ * numbers used to live: five string literals that had to be renumbered by hand
+ * whenever the order changed, and that no longer had any connection to the nav
+ * they mirror. An id the nav does not know about is a build failure, not a "00".
+ */
+export function sectionNumber(id: string): string {
+  const index = NAV_ITEMS.findIndex((item) => item.id === id);
+  if (index === -1) throw new Error(`sectionNumber: "${id}" is not in NAV_ITEMS`);
+  return String(index + 1).padStart(2, '0');
+}
+
 export type Stat = {
   value: string;
   label: string;
