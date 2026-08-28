@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import useNavIndicator from '@/hooks/useNavIndicator';
 import useSectionSpy from '@/hooks/useSectionSpy';
 import useTheme from '@/hooks/useTheme';
-import { SECTIONS } from '@/lib/site-data';
+import { NAV_ITEMS, SECTIONS } from '@/lib/site-data';
 
 const SECTION_IDS = SECTIONS.map((section) => section.id);
 
@@ -13,8 +13,11 @@ const SECTION_IDS = SECTIONS.map((section) => section.id);
  * The fixed page chrome: the floating island nav and the theme toggle.
  *
  * The Sections it spies on only exist on the homepage, so everywhere else the
- * spy is switched off and the links become ordinary `/#id` navigation. That is
- * the whole difference — the chrome itself is the same on every route.
+ * spy is switched off and the links become ordinary `/#id` navigation.
+ *
+ * The nav also carries entries that are routes rather than Sections. Those the
+ * spy never claims — the pill sits on them only while the pointer is there, and
+ * they navigate like any other link.
  */
 export default function SiteChrome() {
   const pathname = usePathname();
@@ -58,29 +61,34 @@ export default function SiteChrome() {
                 boxShadow: '0 8px 20px -8px var(--glow)',
               }}
             />
-            {SECTIONS.map((item) => (
-              <a
-                key={item.id}
-                href={onHomepage ? `#${item.id}` : `/#${item.id}`}
-                data-nav={item.id}
-                aria-current={activeId === item.id ? 'true' : undefined}
-                onClick={
-                  onHomepage
-                    ? (event) => {
-                        event.preventDefault();
-                        setHoveredId(null);
-                        positionIndicator(item.id, true, 'auto');
-                        goTo(item.id);
-                      }
-                    : undefined
-                }
-                onMouseEnter={() => setHoveredId(item.id)}
-                className="relative z-1 rounded-full px-[15px] py-[9px] text-sm font-semibold no-underline transition-colors"
-                style={{ color: highlightId === item.id ? '#fff' : 'var(--muted)' }}
-              >
-                {item.label}
-              </a>
-            ))}
+            {NAV_ITEMS.map((item) => {
+              const isSection = item.kind === 'section';
+              return (
+                <a
+                  key={item.id}
+                  href={
+                    isSection ? (onHomepage ? `#${item.id}` : `/#${item.id}`) : item.href
+                  }
+                  data-nav={item.id}
+                  aria-current={isSection && activeId === item.id ? 'true' : undefined}
+                  onClick={
+                    isSection && onHomepage
+                      ? (event) => {
+                          event.preventDefault();
+                          setHoveredId(null);
+                          positionIndicator(item.id, true, 'auto');
+                          goTo(item.id);
+                        }
+                      : undefined
+                  }
+                  onMouseEnter={() => setHoveredId(item.id)}
+                  className="relative z-1 rounded-full px-[15px] py-[9px] text-sm font-semibold no-underline transition-colors"
+                  style={{ color: highlightId === item.id ? '#fff' : 'var(--muted)' }}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
           </div>
 
           <button

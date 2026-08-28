@@ -10,12 +10,14 @@
     "start": "next start",
     "lint": "oxlint --deny-warnings",
     "typecheck": "tsc --noEmit",
-    "assets": "pnpm assets:icons && pnpm assets:logos && pnpm assets:profile && pnpm assets:favicon && pnpm assets:mark",
+    "assets": "pnpm assets:icons && pnpm assets:logos && pnpm assets:profile && pnpm assets:favicon && pnpm assets:mark && pnpm assets:posts && pnpm assets:redirects",
     "assets:icons": "node scripts/generate-icons.mjs",
     "assets:logos": "node scripts/prepare-company-logos.mjs",
     "assets:profile": "node scripts/optimize-profile.mjs",
     "assets:favicon": "node scripts/generate-favicon.mjs",
-    "assets:mark": "node scripts/generate-logo.mjs"
+    "assets:mark": "node scripts/generate-logo.mjs",
+    "assets:posts": "node scripts/prepare-post-images.mjs",
+    "assets:redirects": "node scripts/generate-redirects.mjs"
   },
   "dependencies": {
     "@next/third-parties": "^15.5.4",
@@ -28,6 +30,8 @@
     "@types/node": "^24.5.2",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
+    "gray-matter": "^4.0.3",
+    "next-mdx-remote": "^6.0.0",
     "oxlint": "^1.80.0",
     "sharp": "^0.35.3",
     "simple-icons": "^16.28.0",
