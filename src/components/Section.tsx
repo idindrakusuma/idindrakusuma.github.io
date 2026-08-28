@@ -6,7 +6,7 @@ import Reveal from './Reveal';
  * The shell every numbered Section on the homepage shares: the centred column,
  * and the eyebrow with its number and trailing rule.
  *
- * The number comes from the Section's place in NAV_ITEMS, so the page cannot be
+ * The number comes from the Section's place in SECTIONS, so the page cannot be
  * reordered without the labels following. The vertical rhythm stays with the
  * caller — the gaps genuinely differ (About sits closer to the hero above it,
  * and has no heading under its eyebrow) and burying that variance in defaults

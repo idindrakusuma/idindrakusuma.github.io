@@ -24,27 +24,37 @@ export const SITE = {
   description: `${YEARS_EXPERIENCE}+ years building end-to-end — from top-traffic commerce frontends to Go services and AI-native tooling. Currently at ByteDance, previously Tokopedia.`,
 } as const;
 
-export type NavItem = { id: string; href: string; label: string };
+export type Section = { id: string; label: string };
 
-export const NAV_ITEMS: NavItem[] = [
-  { id: 'about', href: '#about', label: 'About' },
-  { id: 'experience', href: '#experience', label: 'Experience' },
-  { id: 'skills', href: '#skills', label: 'Skills' },
-  { id: 'awards', href: '#awards', label: 'Awards' },
-  { id: 'contact', href: '#contact', label: 'Contact' },
+/**
+ * The homepage's Sections, in the order they appear.
+ *
+ * This is the ordering authority: it numbers the Sections and it tells the
+ * scroll spy what to watch. The nav renders one entry per Section today, and the
+ * link is derived from the id rather than stored — a Section's href is `#id` on
+ * the homepage and `/#id` anywhere else, which is not a fact about the Section.
+ *
+ * A nav entry that is a route rather than a Section (a Blog link, say) does not
+ * belong in this list. Adding one here would renumber the Sections after it.
+ */
+export const SECTIONS: Section[] = [
+  { id: 'about', label: 'About' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'awards', label: 'Awards' },
+  { id: 'contact', label: 'Contact' },
 ];
 
 /**
  * A Section's position in the page, zero-padded — "01" for the first.
  *
- * Derived from NAV_ITEMS rather than written on each Section, which is where the
- * numbers used to live: five string literals that had to be renumbered by hand
- * whenever the order changed, and that no longer had any connection to the nav
- * they mirror. An id the nav does not know about is a build failure, not a "00".
+ * Derived from SECTIONS rather than written on each Section, which is where the
+ * numbers used to live: five string literals renumbered by hand whenever the
+ * order changed. An unknown id is a build failure, not a "00".
  */
 export function sectionNumber(id: string): string {
-  const index = NAV_ITEMS.findIndex((item) => item.id === id);
-  if (index === -1) throw new Error(`sectionNumber: "${id}" is not in NAV_ITEMS`);
+  const index = SECTIONS.findIndex((section) => section.id === id);
+  if (index === -1) throw new Error(`sectionNumber: "${id}" is not in SECTIONS`);
   return String(index + 1).padStart(2, '0');
 }
 

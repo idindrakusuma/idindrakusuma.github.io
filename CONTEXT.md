@@ -13,9 +13,14 @@ One numbered stop on the page, addressable by a hash and listed in the nav.
 _Avoid_: block, panel
 
 **Site Chrome**:
-The fixed furniture that floats over every Section — the nav island and the theme
-toggle.
+The fixed furniture that floats over every route — the nav island and the theme
+toggle. Identical everywhere; only its spy is homepage-only.
 _Avoid_: header, navbar
+
+**Spy**:
+The tracking of which Section the page is looking at. Runs only where Sections
+exist, and is muted while a tap-driven scroll is in flight.
+_Avoid_: scrollspy, observer, active-section tracker
 
 **Reveal**:
 A fade-and-slide applied to an element the first time it enters the viewport.
@@ -54,6 +59,8 @@ _Avoid_: autoplay, scroll
 - A **Marquee** **Drifts** unless it is hovered, dragged, or the visitor asked for reduced motion
 - Skills and Awards are each a **Marquee**; they differ only in rendering, not in looping
 - **Posts** live outside the Section sequence — the homepage has Sections, `/blog` has Posts
+- `SECTIONS` is the ordering authority: it numbers the **Sections** and tells the **Spy** what to watch
+- **Site Chrome** renders one nav entry per **Section**; a nav entry that is a route is not a **Section**
 
 ## Example dialogue
 
@@ -69,6 +76,7 @@ _Avoid_: autoplay, scroll
 - Section 04's eyebrow reads "Honors" while its nav label reads "Awards". Now a
   deliberate override rather than drift — `Section` derives the number from
   NAV_ITEMS but takes the label as a prop, so the two can differ on purpose.
-- **Site Chrome**'s nav assumes every entry is a **Section** on the current page:
-  `NAV_ITEMS` entries are hashes and drive the scroll spy. A **Post** is a route,
-  so the nav cannot address one without changing what a nav entry means.
+- ~~**Site Chrome**'s nav cannot address a **Post**~~ — resolved. `SECTIONS` is now
+  the ordering authority and the nav derives its links from it, so a route entry
+  can be added to the nav without renumbering the **Sections** after it. Nothing
+  links to `/blog` yet, though: reaching it still needs a nav or footer entry.

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import AuroraBackground from '@/components/AuroraBackground';
+import SiteChrome from '@/components/SiteChrome';
 import { getPosts } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
 
@@ -14,11 +15,9 @@ export const metadata: Metadata = {
  * The blog index. Scaffolding: `getPosts` returns nothing yet, so this renders
  * its empty state.
  *
- * Deliberately not wrapped in <SiteChrome>. That nav is a scroll spy over the
- * homepage's sections and its links are hashes — on a route with none of those
- * sections it would sit on the first item and scroll nowhere. Giving the site a
- * nav that works across routes is the decision to make before this page is
- * filled in, and it is the same knot as pulling the spy out of SiteChrome.
+ * Carries the same <SiteChrome> as the homepage. Off the homepage its spy is
+ * switched off and its links point back at `/#section`, so the chrome is shared
+ * without pretending the Sections are here.
  */
 export default async function BlogIndex() {
   const posts = await getPosts();
@@ -27,6 +26,7 @@ export default async function BlogIndex() {
     <>
       <AuroraBackground />
       <div className="relative z-1">
+        <SiteChrome />
         <main className="mx-auto max-w-[1160px] px-6 pt-[150px] pb-[90px]">
           <div className="mb-[30px] flex items-center gap-3.5">
             <span className="font-mono text-primary text-[13px] font-medium">Writing</span>
