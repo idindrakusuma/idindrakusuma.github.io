@@ -211,6 +211,13 @@ export type SkillLogo = {
   slug: string;
   name: string;
   desc: string;
+  /**
+   * Renders the name as text instead of a vendored mark. Set it only for a slug
+   * simple-icons has no entry for — scripts/generate-icons.mjs fails the run if
+   * this flag and simple-icons disagree in either direction, so it cannot go
+   * stale silently.
+   */
+  wordmark?: true;
 };
 
 export type SkillRow = {
@@ -218,9 +225,6 @@ export type SkillRow = {
   dir: -1 | 1;
   items: SkillLogo[];
 };
-
-/** Slugs with no simple-icons entry render as a text wordmark instead. */
-export const SKILL_LOGOS_WITHOUT_ICON = new Set(['lynx']);
 
 export const SKILL_ROWS: SkillRow[] = [
   {
@@ -233,7 +237,7 @@ export const SKILL_ROWS: SkillRow[] = [
       { slug: 'typescript', name: 'TypeScript', desc: 'Typed JavaScript' },
       { slug: 'javascript', name: 'JavaScript', desc: 'Core language' },
       { slug: 'html5', name: 'HTML5', desc: 'Markup & semantics' },
-      { slug: 'lynx', name: 'Lynx', desc: 'Cross-platform UI' },
+      { slug: 'lynx', name: 'Lynx', desc: 'Cross-platform UI', wordmark: true },
     ],
   },
   {

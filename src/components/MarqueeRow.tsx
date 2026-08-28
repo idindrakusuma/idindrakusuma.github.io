@@ -2,16 +2,16 @@
 
 import Image from 'next/image';
 import { useRef } from 'react';
-import { SKILL_LOGOS_WITHOUT_ICON, type SkillRow } from '@/lib/site-data';
+import type { SkillLogo, SkillRow } from '@/lib/site-data';
 import useMarquee from './useMarquee';
 
 /** Scroll speed in CSS pixels per second. */
 const SPEED = 13.2;
 
-function LogoItem({ slug, name, desc, hidden }: { slug: string; name: string; desc: string; hidden?: boolean }) {
+function LogoItem({ slug, name, desc, wordmark, hidden }: SkillLogo & { hidden?: boolean }) {
   return (
     <span className="ik-logo relative flex flex-none items-center" aria-hidden={hidden || undefined}>
-      {SKILL_LOGOS_WITHOUT_ICON.has(slug) ? (
+      {wordmark ? (
         // No mark exists for this one in simple-icons, so it reads as a wordmark.
         <span className="font-display text-ink text-[22px] font-bold tracking-[-.01em] whitespace-nowrap opacity-60">
           {name}

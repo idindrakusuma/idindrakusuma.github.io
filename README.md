@@ -30,6 +30,7 @@ npm run dev      # http://localhost:3000
 | `npm run build`     | Static export into `out/`                        |
 | `npm run lint`      | ESLint (next/core-web-vitals + TypeScript rules) |
 | `npm run typecheck` | `tsc --noEmit`                                   |
+| `npm run assets`    | Rebuild every generated asset (see below)        |
 
 To preview the production output exactly as Pages will serve it:
 
@@ -61,20 +62,35 @@ the skills marquee, edit `src/lib/site-data.ts` only.
 
 ## Assets
 
-Five generator scripts keep the shipped assets reproducible. Re-run them after
-changing a source file or bumping `simple-icons`:
+Everything under `public/logos/`, `public/profile.*`, `public/logo-*.webp` and
+`src/app/{icon,icon1,apple-icon}.png` is generated from a committed source in
+`assets/`. Both sides are in git, so a normal `npm run build` never needs these —
+run them after replacing a source file, bumping `simple-icons`, or editing
+`SKILL_ROWS`:
 
 ```bash
-node scripts/generate-icons.mjs         # tech logos → public/logos/skills
-node scripts/prepare-company-logos.mjs  # assets/logos/* → public/logos/companies
-node scripts/optimize-profile.mjs       # assets/profile-source.png → public/profile.{webp,jpg}
-node scripts/generate-favicon.mjs       # assets/favicon-source.png → src/app/{icon,icon1,apple-icon}.png
-node scripts/generate-logo.mjs          # assets/logo-{light,dark}-source.png → public/logo-{light,dark}.webp
+npm run assets            # all five, in order
+
+npm run assets:icons      # SKILL_ROWS → public/logos/skills
+npm run assets:logos      # assets/logos/* → public/logos/companies
+npm run assets:profile    # assets/profile-source.png → public/profile.{webp,jpg}
+npm run assets:favicon    # assets/favicon-source.png → src/app/{icon,icon1,apple-icon}.png
+npm run assets:mark       # assets/logo-{light,dark}-source.png → public/logo-{light,dark}.webp
 ```
+
+They are deterministic: running `npm run assets` on an unchanged tree leaves
+`git status` clean, so an unexpected diff means a source actually moved.
+
+**Tech logos.** `SKILL_ROWS` in `src/lib/site-data.ts` is the only list of skills.
+`npm run assets:icons` reads it and vendors each mark out of `simple-icons`. A
+skill `simple-icons` has no entry for needs `wordmark: true` on it, which renders
+the name as text instead; the script exits non-zero if that flag and
+`simple-icons` disagree either way, so a typo'd slug fails there rather than
+404ing in the marquee.
 
 **Company logos.** To add one, drop the image in `assets/logos/` named after the
 company (`tokopedia.jpeg`, `bytedance.png`, …) and run
-`node scripts/prepare-company-logos.mjs`. It emits an 80px WebP into
+`npm run assets:logos`. It emits an 80px WebP into
 `public/logos/companies/`; point the `logo` field in `src/lib/site-data.ts` at the
 new file if the name changed.
 
