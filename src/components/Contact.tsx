@@ -1,4 +1,4 @@
-import { SOCIALS } from '@/lib/site-data';
+import { SOCIALS, sectionNumber } from '@/lib/site-data';
 import Reveal from './Reveal';
 
 const ICONS: Record<string, React.ReactNode> = {
@@ -51,7 +51,7 @@ export default function Contact() {
         />
 
         <div className="relative max-w-[640px]">
-          <span className="font-mono text-primary text-[13px]">05 — Contact</span>
+          <span className="font-mono text-primary text-[13px]">{`${sectionNumber('contact')} — Contact`}</span>
           <h2 className="font-display mt-3.5 mb-4 text-[clamp(30px,5vw,48px)] leading-[1.05] font-bold tracking-[-.02em]">
             Let&apos;s build something
             <br />

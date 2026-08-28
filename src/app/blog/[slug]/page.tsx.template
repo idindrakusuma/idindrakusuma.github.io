@@ -1,0 +1,104 @@
+// ---------------------------------------------------------------------------
+// PARKED — rename to `page.tsx` when the first post exists.
+//
+// `output: 'export'` refuses a dynamic route whose generateStaticParams returns
+// an empty array: with no posts there are no URLs to emit, and Next reports it
+// as "missing generateStaticParams()" even though it is right there. So this
+// route cannot be live until lib/posts.ts returns something.
+//
+// The `.template` extension keeps it out of the route tree and out of tsc, so
+// it will not be typechecked while parked — it was verified compiling against a
+// probe post before being parked here.
+// ---------------------------------------------------------------------------
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import AuroraBackground from '@/components/AuroraBackground';
+import SiteChrome from '@/components/SiteChrome';
+import { getPost, getPosts } from '@/lib/posts';
+import { SITE } from '@/lib/site-data';
+
+/** Next 15 hands route params in as a promise. */
+type PostPageProps = { params: Promise<{ slug: string }> };
+
+/**
+ * The site is a static export, so every post URL has to be known at build time —
+ * there is no server to render an unlisted one on demand. `getPosts` is that
+ * list; while it is empty this route emits no pages at all, and the build is
+ * still correct.
+ */
+export async function generateStaticParams() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ slug: post.slug }));
+}
+
+/**
+ * A slug outside generateStaticParams is a 404 rather than a render attempt.
+ * `output: 'export'` requires this, but stating it keeps the intent readable.
+ */
+export const dynamicParams = false;
+
+export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPost(slug);
+  if (!post) return {};
+
+  return {
+    title: `${post.title} — ${SITE.name}`,
+    description: post.description,
+    alternates: { canonical: `/blog/${slug}` },
+    openGraph: {
+      type: 'article',
+      url: `${SITE.url}/blog/${slug}`,
+      title: post.title,
+      description: post.description,
+      publishedTime: post.date,
+    },
+  };
+}
+
+/**
+ * A single post. Scaffolding: the frontmatter renders, the body does not exist
+ * yet — whatever `lib/posts` grows to return will supply it.
+ */
+export default async function PostPage({ params }: PostPageProps) {
+  const { slug } = await params;
+  const post = await getPost(slug);
+  if (!post) notFound();
+
+  return (
+    <>
+      <AuroraBackground />
+      <div className="relative z-1">
+        <SiteChrome />
+        <main className="mx-auto max-w-[720px] px-6 pt-[150px] pb-[90px]">
+          <div className="font-mono text-faint mb-3.5 flex flex-wrap gap-x-4 gap-y-1.5 text-xs">
+            <time dateTime={post.date}>{post.date}</time>
+            {post.readingMinutes !== undefined && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>{post.readingMinutes} min read</span>
+              </>
+            )}
+          </div>
+
+          <h1 className="font-display mb-4 text-[clamp(32px,5vw,52px)] leading-[1.06] font-bold tracking-[-.03em]">
+            {post.title}
+          </h1>
+
+          <p className="text-muted mb-[34px] text-[clamp(16px,2.2vw,19px)]">{post.description}</p>
+
+          {/* TODO: the rendered body. Needs a decision on the content format
+              first — see the note at the top of lib/posts.ts. */}
+
+          <Link
+            href="/blog"
+            className="text-muted hover:text-primary mt-14 inline-block text-sm no-underline transition-colors"
+          >
+            ← All posts
+          </Link>
+        </main>
+      </div>
+    </>
+  );
+}

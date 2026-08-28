@@ -1,179 +1,41 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { NAV_ITEMS } from '@/lib/site-data';
+import { usePathname } from 'next/navigation';
+import { useRef, useState } from 'react';
+import useNavIndicator from '@/hooks/useNavIndicator';
+import useSectionSpy from '@/hooks/useSectionSpy';
+import useTheme from '@/hooks/useTheme';
+import { SECTIONS } from '@/lib/site-data';
 
-const SECTION_IDS = NAV_ITEMS.map((item) => item.id);
+const SECTION_IDS = SECTIONS.map((section) => section.id);
 
 /**
- * The fixed page chrome: floating island nav.
+ * The fixed page chrome: the floating island nav and the theme toggle.
+ *
+ * The Sections it spies on only exist on the homepage, so everywhere else the
+ * spy is switched off and the links become ordinary `/#id` navigation. That is
+ * the whole difference — the chrome itself is the same on every route.
  */
 export default function SiteChrome() {
+  const pathname = usePathname();
+  // Tolerant of the trailing slash the static export adds.
+  const onHomepage = pathname.replace(/\/+$/, '') === '';
+
   const linksRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLSpanElement>(null);
-  // The scroll spy is muted while a tap-driven scroll is in flight, so the pill
-  // stays on the item the visitor picked instead of flickering through every
-  // section the page passes on the way there.
-  const spyLockedRef = useRef(false);
-  const spySettleRef = useRef(0);
-  const spyStalledRef = useRef(0);
-  const unlockSpyRef = useRef<() => void>(() => {});
-  const [activeId, setActiveId] = useState<string>(SECTION_IDS[0]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  // The pill follows the hovered link, and snaps back to the active section on leave.
+  const { toggle } = useTheme();
+  const { activeId, goTo } = useSectionSpy(SECTION_IDS, onHomepage);
+
+  // The pill follows the hovered link, and snaps back to the active Section on leave.
   const highlightId = hoveredId ?? activeId;
-  // Kept in a ref so the resize listener always re-measures the current pill.
-  const highlightRef = useRef(highlightId);
-  highlightRef.current = highlightId;
-
-  const positionIndicator = useCallback((id: string, scrollIntoView = false, scrollBehavior?: ScrollBehavior) => {
-    const links = linksRef.current;
-    const indicator = indicatorRef.current;
-    if (!links || !indicator) return;
-
-    const link = links.querySelector<HTMLAnchorElement>(`[data-nav="${id}"]`) ?? links.querySelector('a');
-    if (!link) return;
-
-    indicator.style.width = `${link.offsetWidth}px`;
-    indicator.style.transform = `translateX(${link.offsetLeft}px)`;
-    indicator.style.opacity = '1';
-
-    if (scrollIntoView && links.scrollWidth > links.clientWidth) {
-      const maxScroll = links.scrollWidth - links.clientWidth;
-      const target = link.offsetLeft - (links.clientWidth - link.offsetWidth) / 2;
-      const left = Math.max(0, Math.min(target, maxScroll));
-      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        ? 'auto'
-        : (scrollBehavior ?? 'smooth');
-      links.scrollTo({ left, behavior });
-    }
-  }, []);
-
-  useEffect(() => {
-    positionIndicator(highlightId, hoveredId === null);
-  }, [highlightId, hoveredId, positionIndicator]);
-
-  const scrollToSection = (id: string) => {
-    const section = document.getElementById(id);
-    if (!section) return;
-
-    const offset = window.matchMedia('(max-width: 860px)').matches ? 112 : 96;
-    const top = window.scrollY + section.getBoundingClientRect().top - offset;
-    const distance = Math.abs(top - window.scrollY);
-    const longJump = distance > window.innerHeight * 1.35;
-    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches || longJump ? 'auto' : 'smooth';
-
-    spyLockedRef.current = true;
-    // Nothing to settle if the page never moves, so lift the lock on its own.
-    window.clearTimeout(spyStalledRef.current);
-    spyStalledRef.current = window.setTimeout(() => unlockSpyRef.current(), 400);
-    setHoveredId(null);
-    setActiveId(id);
-    positionIndicator(id, true, 'auto');
-    window.history.pushState(null, '', `#${id}`);
-    window.scrollTo({ top: Math.max(0, top), behavior });
-  };
-
-  useEffect(() => {
-    let frame = 0;
-
-    const read = () => {
-      frame = 0;
-      if (spyLockedRef.current) return;
-      const doc = document.documentElement;
-
-      // A section counts as active once its top passes 35% down the viewport.
-      const mid = doc.scrollTop + window.innerHeight * 0.35;
-      let current = SECTION_IDS[0];
-      for (const id of SECTION_IDS) {
-        const section = document.getElementById(id);
-        if (section && section.offsetTop <= mid) current = id;
-      }
-      setActiveId(current);
-    };
-
-    const unlockSpy = () => {
-      if (!spyLockedRef.current) return;
-      spyLockedRef.current = false;
-      window.clearTimeout(spySettleRef.current);
-      window.clearTimeout(spyStalledRef.current);
-      read();
-    };
-    unlockSpyRef.current = unlockSpy;
-
-    const onScroll = () => {
-      if (spyLockedRef.current) {
-        // Push the settle deadline out for as long as the page keeps moving, so
-        // the lock outlasts a smooth scroll of any length and then lifts once it
-        // comes to rest on the section that was asked for.
-        window.clearTimeout(spyStalledRef.current);
-        window.clearTimeout(spySettleRef.current);
-        spySettleRef.current = window.setTimeout(unlockSpy, 150);
-        return;
-      }
-      if (!frame) frame = requestAnimationFrame(read);
-    };
-
-    // Scrolling by hand outranks the tap that is still in flight.
-    const onManualScroll = () => unlockSpy();
-
-    // Fonts shift link widths, so re-measure once they have settled.
-    const onResize = () => positionIndicator(highlightRef.current);
-
-    read();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize, { passive: true });
-    window.addEventListener('wheel', onManualScroll, { passive: true });
-    window.addEventListener('touchstart', onManualScroll, { passive: true });
-    window.addEventListener('keydown', onManualScroll);
-    document.fonts?.ready.then(onResize).catch(() => {});
-
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      window.clearTimeout(spySettleRef.current);
-      window.clearTimeout(spyStalledRef.current);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('wheel', onManualScroll);
-      window.removeEventListener('touchstart', onManualScroll);
-      window.removeEventListener('keydown', onManualScroll);
-    };
-  }, [positionIndicator]);
-
-  const toggleTheme = () => {
-    const root = document.documentElement;
-    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    try {
-      localStorage.setItem('ik-theme', next);
-    } catch {
-      /* Storage can be unavailable (private mode); the theme still applies. */
-    }
-  };
-
-  // Follow the OS preference for as long as the visitor has not picked a theme.
-  useEffect(() => {
-    let stored: string | null = null;
-    try {
-      stored = localStorage.getItem('ik-theme');
-    } catch {
-      return;
-    }
-    if (stored) return;
-
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = (event: MediaQueryListEvent) => {
-      try {
-        if (localStorage.getItem('ik-theme')) return;
-      } catch {
-        return;
-      }
-      document.documentElement.setAttribute('data-theme', event.matches ? 'dark' : 'light');
-    };
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
+  const positionIndicator = useNavIndicator({
+    linksRef,
+    indicatorRef,
+    highlightId,
+    center: hoveredId === null,
+  });
 
   return (
     <>
@@ -196,16 +58,22 @@ export default function SiteChrome() {
                 boxShadow: '0 8px 20px -8px var(--glow)',
               }}
             />
-            {NAV_ITEMS.map((item) => (
+            {SECTIONS.map((item) => (
               <a
                 key={item.id}
-                href={item.href}
+                href={onHomepage ? `#${item.id}` : `/#${item.id}`}
                 data-nav={item.id}
                 aria-current={activeId === item.id ? 'true' : undefined}
-                onClick={(event) => {
-                  event.preventDefault();
-                  scrollToSection(item.id);
-                }}
+                onClick={
+                  onHomepage
+                    ? (event) => {
+                        event.preventDefault();
+                        setHoveredId(null);
+                        positionIndicator(item.id, true, 'auto');
+                        goTo(item.id);
+                      }
+                    : undefined
+                }
                 onMouseEnter={() => setHoveredId(item.id)}
                 className="relative z-1 rounded-full px-[15px] py-[9px] text-sm font-semibold no-underline transition-colors"
                 style={{ color: highlightId === item.id ? '#fff' : 'var(--muted)' }}
@@ -217,7 +85,7 @@ export default function SiteChrome() {
 
           <button
             type="button"
-            onClick={toggleTheme}
+            onClick={toggle}
             aria-label="Toggle theme"
             className="border-line bg-surface text-ink hover:border-primary grid h-9 w-9 flex-none cursor-pointer place-items-center rounded-full border transition-[border-color,rotate] hover:rotate-[20deg]"
           >

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { JetBrains_Mono, Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { SITE } from '@/lib/site-data';
+import { THEME_SCRIPT } from '@/lib/theme';
 import './globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -65,12 +66,6 @@ export const viewport: Viewport = {
     { media: '(prefers-color-scheme: dark)', color: '#05070e' },
   ],
 };
-
-/**
- * Applies the stored (or system) theme before first paint. Inlined in <head> so
- * there is no flash of the wrong palette — the same trick the prototype used.
- */
-const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('ik-theme');if(!t){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

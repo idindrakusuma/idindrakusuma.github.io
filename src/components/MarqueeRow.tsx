@@ -1,16 +1,17 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
-import { SKILL_LOGOS_WITHOUT_ICON, type SkillRow } from '@/lib/site-data';
+import { useRef } from 'react';
+import type { SkillLogo, SkillRow } from '@/lib/site-data';
+import useMarquee from '@/hooks/useMarquee';
 
 /** Scroll speed in CSS pixels per second. */
 const SPEED = 13.2;
 
-function LogoItem({ slug, name, desc, hidden }: { slug: string; name: string; desc: string; hidden?: boolean }) {
+function LogoItem({ slug, name, desc, wordmark, hidden }: SkillLogo & { hidden?: boolean }) {
   return (
     <span className="ik-logo relative flex flex-none items-center" aria-hidden={hidden || undefined}>
-      {SKILL_LOGOS_WITHOUT_ICON.has(slug) ? (
+      {wordmark ? (
         // No mark exists for this one in simple-icons, so it reads as a wordmark.
         <span className="font-display text-ink text-[22px] font-bold tracking-[-.01em] whitespace-nowrap opacity-60">
           {name}
@@ -39,85 +40,24 @@ function LogoItem({ slug, name, desc, hidden }: { slug: string; name: string; de
 /**
  * One infinite horizontal row of tech logos.
  *
- * The item set is repeated and the row translates by exactly one set's width
- * before wrapping, so the seam is invisible. Two copies are only enough when a
- * set is at least as wide as the viewport — otherwise the row runs out of
- * content mid-travel and leaves a visible gap — so the number of copies is
- * derived from the measured set width.
- *
- * Driven by requestAnimationFrame with a delta-time step, which keeps the speed
- * identical on 60 Hz and 120 Hz displays. Hovering a row pauses it so the
- * tooltip is readable, and reduced-motion users get a static row.
+ * The looping itself is `useMarquee`'s job. Hovering a row pauses it so the
+ * tooltip is readable — the pause sits on the track rather than a wrapper, so it
+ * only fires over the logos themselves.
  */
 export default function MarqueeRow({ row }: { row: SkillRow }) {
   const ref = useRef<HTMLDivElement>(null);
-  const pausedRef = useRef(false);
-  const [copies, setCopies] = useState(2);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    let wrapWidth = 0;
-    let offset = 0;
-    let last = 0;
-    let frame = 0;
-
-    const measure = () => {
-      const secondCopyStart = el.children[row.items.length] as HTMLElement | undefined;
-      const next = secondCopyStart ? secondCopyStart.offsetLeft : el.scrollWidth / 2;
-      if (next <= 0) return;
-
-      // Keep the visual position when the row is re-measured (e.g. logos finish
-      // loading) instead of snapping back to the start.
-      const progress = wrapWidth > 0 ? offset / wrapWidth : row.dir > 0 ? -1 : 0;
-      wrapWidth = next;
-      offset = progress * wrapWidth;
-
-      // The row travels one full set, so the copies after the first must cover
-      // the viewport for the tail never to show.
-      setCopies(Math.max(2, Math.ceil(window.innerWidth / wrapWidth) + 1));
-    };
-
-    const step = (now: number) => {
-      const delta = last ? Math.min((now - last) / 1000, 0.1) : 0;
-      last = now;
-
-      if (wrapWidth > 0 && !pausedRef.current) {
-        offset += row.dir * SPEED * delta;
-        if (row.dir < 0 && offset <= -wrapWidth) offset += wrapWidth;
-        if (row.dir > 0 && offset >= 0) offset -= wrapWidth;
-        el.style.transform = `translateX(${offset}px)`;
-      }
-
-      frame = requestAnimationFrame(step);
-    };
-
-    measure();
-    frame = requestAnimationFrame(step);
-
-    const observer = new ResizeObserver(measure);
-    observer.observe(el);
-    window.addEventListener('resize', measure, { passive: true });
-
-    return () => {
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-      window.removeEventListener('resize', measure);
-    };
-  }, [row.dir, row.items.length]);
+  const { copies, pauseHandlers } = useMarquee({
+    trackRef: ref,
+    itemCount: row.items.length,
+    speed: SPEED,
+    direction: row.dir,
+  });
 
   return (
     <div
       ref={ref}
       className="flex w-max items-center gap-[76px] will-change-transform"
-      onMouseEnter={() => {
-        pausedRef.current = true;
-      }}
-      onMouseLeave={() => {
-        pausedRef.current = false;
-      }}
+      {...pauseHandlers}
     >
       {Array.from({ length: copies }, (_, copy) =>
         row.items.map((item) => (

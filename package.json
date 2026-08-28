@@ -2,13 +2,19 @@
   "name": "indrakusuma-web-id",
   "version": "2.0.0",
   "private": true,
-  "description": "Personal website of Indra Kusuma — indrakusuma.web.id",
+  "description": "Personal website of Indra Kusuma \u2014 indrakusuma.web.id",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "assets": "npm run assets:icons && npm run assets:logos && npm run assets:profile && npm run assets:favicon && npm run assets:mark",
+    "assets:icons": "node scripts/generate-icons.mjs",
+    "assets:logos": "node scripts/prepare-company-logos.mjs",
+    "assets:profile": "node scripts/optimize-profile.mjs",
+    "assets:favicon": "node scripts/generate-favicon.mjs",
+    "assets:mark": "node scripts/generate-logo.mjs"
   },
   "dependencies": {
     "@next/third-parties": "^15.5.4",

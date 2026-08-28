@@ -4,7 +4,7 @@
  * assets/favicon-source.png is the 1254x1254 master (1 MB) and is never shipped.
  * Next.js picks up src/app/icon*.png and apple-icon.png by file convention, so the
  * outputs land there rather than in public/. Re-run with
- * `node scripts/generate-favicon.mjs` after replacing the source.
+ * `npm run assets:favicon` after replacing the source.
  *
  * The master carries ~5% transparent padding plus a drop shadow, which at 32px is
  * margin the mark cannot spare, so the artwork is trimmed and re-centred first.

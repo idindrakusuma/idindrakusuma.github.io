@@ -24,15 +24,39 @@ export const SITE = {
   description: `${YEARS_EXPERIENCE}+ years building end-to-end — from top-traffic commerce frontends to Go services and AI-native tooling. Currently at ByteDance, previously Tokopedia.`,
 } as const;
 
-export type NavItem = { id: string; href: string; label: string };
+export type Section = { id: string; label: string };
 
-export const NAV_ITEMS: NavItem[] = [
-  { id: 'about', href: '#about', label: 'About' },
-  { id: 'experience', href: '#experience', label: 'Experience' },
-  { id: 'skills', href: '#skills', label: 'Skills' },
-  { id: 'awards', href: '#awards', label: 'Awards' },
-  { id: 'contact', href: '#contact', label: 'Contact' },
+/**
+ * The homepage's Sections, in the order they appear.
+ *
+ * This is the ordering authority: it numbers the Sections and it tells the
+ * scroll spy what to watch. The nav renders one entry per Section today, and the
+ * link is derived from the id rather than stored — a Section's href is `#id` on
+ * the homepage and `/#id` anywhere else, which is not a fact about the Section.
+ *
+ * A nav entry that is a route rather than a Section (a Blog link, say) does not
+ * belong in this list. Adding one here would renumber the Sections after it.
+ */
+export const SECTIONS: Section[] = [
+  { id: 'about', label: 'About' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'awards', label: 'Awards' },
+  { id: 'contact', label: 'Contact' },
 ];
+
+/**
+ * A Section's position in the page, zero-padded — "01" for the first.
+ *
+ * Derived from SECTIONS rather than written on each Section, which is where the
+ * numbers used to live: five string literals renumbered by hand whenever the
+ * order changed. An unknown id is a build failure, not a "00".
+ */
+export function sectionNumber(id: string): string {
+  const index = SECTIONS.findIndex((section) => section.id === id);
+  if (index === -1) throw new Error(`sectionNumber: "${id}" is not in SECTIONS`);
+  return String(index + 1).padStart(2, '0');
+}
 
 export type Stat = {
   value: string;
@@ -211,6 +235,13 @@ export type SkillLogo = {
   slug: string;
   name: string;
   desc: string;
+  /**
+   * Renders the name as text instead of a vendored mark. Set it only for a slug
+   * simple-icons has no entry for — scripts/generate-icons.mjs fails the run if
+   * this flag and simple-icons disagree in either direction, so it cannot go
+   * stale silently.
+   */
+  wordmark?: true;
 };
 
 export type SkillRow = {
@@ -218,9 +249,6 @@ export type SkillRow = {
   dir: -1 | 1;
   items: SkillLogo[];
 };
-
-/** Slugs with no simple-icons entry render as a text wordmark instead. */
-export const SKILL_LOGOS_WITHOUT_ICON = new Set(['lynx']);
 
 export const SKILL_ROWS: SkillRow[] = [
   {
@@ -233,7 +261,7 @@ export const SKILL_ROWS: SkillRow[] = [
       { slug: 'typescript', name: 'TypeScript', desc: 'Typed JavaScript' },
       { slug: 'javascript', name: 'JavaScript', desc: 'Core language' },
       { slug: 'html5', name: 'HTML5', desc: 'Markup & semantics' },
-      { slug: 'lynx', name: 'Lynx', desc: 'Cross-platform UI' },
+      { slug: 'lynx', name: 'Lynx', desc: 'Cross-platform UI', wordmark: true },
     ],
   },
   {

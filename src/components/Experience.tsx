@@ -1,20 +1,14 @@
 import Image from 'next/image';
 import { EXPERIENCES } from '@/lib/site-data';
 import Reveal from './Reveal';
-import SectionEyebrow from './SectionEyebrow';
+import Section from './Section';
+import SectionHeading from './SectionHeading';
 import TimelineLine from './TimelineLine';
 
 export default function Experience() {
   return (
-    <section id="experience" className="mx-auto max-w-[1160px] px-6 pt-[60px] pb-[30px]">
-      <SectionEyebrow label="02 — Experience" />
-
-      <Reveal
-        as="h2"
-        className="font-display mb-11 text-[clamp(28px,4vw,40px)] font-bold tracking-[-.02em]"
-      >
-        Where I&apos;ve made an impact
-      </Reveal>
+    <Section id="experience" eyebrow="Experience">
+      <SectionHeading className="mb-11">Where I&apos;ve made an impact</SectionHeading>
 
       <div className="ik-timeline relative pl-1.5">
         <TimelineLine />
@@ -94,6 +88,6 @@ export default function Experience() {
           </Reveal>
         ))}
       </div>
-    </section>
+    </Section>
   );
 }

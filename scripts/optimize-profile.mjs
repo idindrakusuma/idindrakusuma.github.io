@@ -3,7 +3,7 @@
  *
  * assets/profile-source.png is the 1000x1000 master (1.5 MB) and is never shipped.
  * The hero renders the photo at 400 CSS px at most, so 800 px covers 2x displays
- * with room to spare. Re-run with `node scripts/optimize-profile.mjs` after
+ * with room to spare. Re-run with `npm run assets:profile` after
  * replacing the source.
  */
 import { fileURLToPath } from 'node:url';
