@@ -7,3 +7,5 @@ next-env.d.ts
 .DS_Store
 .env*.local
 .vercel
+package-lock.json
+yarn.lock

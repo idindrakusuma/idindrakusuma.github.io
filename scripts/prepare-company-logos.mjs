@@ -17,7 +17,7 @@
  * They are told apart by the corner pixel: a light corner means a mark on a card.
  *
  * To add or replace a logo: drop the file in assets/logos/ and re-run
- * `npm run assets:logos`. The source directory is not served.
+ * `pnpm assets:logos`. The source directory is not served.
  */
 import { mkdir, readdir, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';

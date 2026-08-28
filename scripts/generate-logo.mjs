@@ -11,7 +11,7 @@
  * them: trim to the artwork, pad both to one shared aspect ratio, then emit at a
  * single size. Both outputs end up pixel-for-pixel interchangeable.
  *
- * Re-run with `npm run assets:mark` after replacing either source.
+ * Re-run with `pnpm assets:mark` after replacing either source.
  */
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
