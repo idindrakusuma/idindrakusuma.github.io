@@ -68,7 +68,7 @@ export default async function BlogIndex() {
           <div className="flex min-w-0 flex-col gap-4">
             {posts.map((post, index) => (
               // The first thumbnail is what the page's LCP is measured on.
-              <PostCard key={post.slug} post={post} priority={index === 0} />
+              <PostCard key={post.slug} post={post} lcp={index === 0} />
             ))}
           </div>
 
