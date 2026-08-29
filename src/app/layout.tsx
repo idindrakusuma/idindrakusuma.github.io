@@ -72,6 +72,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       data-theme="light"
+      // globals.css sets `scroll-behavior: smooth` for in-page anchors. Next 16
+      // stopped suspending that during route changes, which would make a
+      // homepage-to-blog navigation smooth-scroll the whole document instead of
+      // landing at the top. This opts back into the old suspend-and-restore.
+      data-scroll-behavior="smooth"
       className={`${jakarta.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
