@@ -75,11 +75,11 @@ export default function Hero() {
     <header className="isolate overflow-x-clip px-6 pt-[150px] pb-[90px]">
       <div className="ik-hero relative z-1 mx-auto grid max-w-[1160px] grid-cols-[1.2fr_1fr] items-center gap-[52px]">
         <div className="ik-hero-copy">
-          <Reveal as="p" delay={60} className="font-mono mb-3.5 text-sm tracking-[.02em]">
+          <Reveal immediate as="p" delay={60} className="font-mono mb-3.5 text-sm tracking-[.02em]">
             <span className="ik-gradient-text font-medium">Fullstack Engineer · AI-Native</span>
           </Reveal>
 
-          <Reveal
+          <Reveal immediate
             as="h1"
             delay={100}
             className="font-display mb-[22px] text-[clamp(42px,7vw,76px)] leading-[1.02] font-bold tracking-[-.03em]"
@@ -91,7 +91,7 @@ export default function Hero() {
             <span className="ik-gradient-shine">experiences.</span>
           </Reveal>
 
-          <Reveal
+          <Reveal immediate
             as="p"
             delay={160}
             className="text-muted mb-[34px] max-w-[540px] text-[clamp(16px,2.2vw,19px)]"
@@ -102,7 +102,7 @@ export default function Hero() {
             <strong className="text-ink font-semibold">Tokopedia</strong>.
           </Reveal>
 
-          <Reveal delay={220} className="flex flex-wrap gap-[13px]">
+          <Reveal immediate delay={220} className="flex flex-wrap gap-[13px]">
             <a
               href="#experience"
               className="ik-btn-primary rounded-[13px] px-[26px] py-3.5 text-[15px] font-semibold text-white no-underline transition-[translate,box-shadow] hover:-translate-y-[3px]"
@@ -118,7 +118,7 @@ export default function Hero() {
           </Reveal>
         </div>
 
-        <Reveal
+        <Reveal immediate
           delay={140}
           // The cap is the desktop size; the middle term governs phones. It was
           // min(400px, 84vw), where the 84vw branch always won below ~476px — so the

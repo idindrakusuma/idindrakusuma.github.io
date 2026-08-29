@@ -8,6 +8,13 @@ import { createElement, useEffect, useRef, useState, type ElementType, type Reac
  * One shared IntersectionObserver serves every instance on the page rather than
  * one per element. Children are passed through untouched, so server components
  * can be wrapped without becoming client components themselves.
+ *
+ * Anything already on screen at load should pass `immediate`. Without it the
+ * element is `opacity: 0` in the server HTML and stays invisible until React has
+ * hydrated and the observer has fired — which is what put 2.3s of "element
+ * render delay" in front of the hero headline's Largest Contentful Paint. With
+ * it the state starts true, the server renders `data-visible`, and the CSS
+ * animation runs at parse time with no JavaScript involved.
  */
 
 type RevealCallback = () => void;
@@ -42,6 +49,8 @@ function getObserver(): IntersectionObserver | null {
 
 type RevealProps = {
   as?: ElementType;
+  /** Skip the observer and reveal on load. For content above the fold. */
+  immediate?: boolean;
   /** Stagger, in ms, applied as an animation-delay. */
   delay?: number;
   className?: string;
@@ -49,9 +58,17 @@ type RevealProps = {
   children?: ReactNode;
 } & Record<string, unknown>;
 
-export default function Reveal({ as = 'div', delay = 0, className, style, children, ...rest }: RevealProps) {
+export default function Reveal({
+  as = 'div',
+  immediate = false,
+  delay = 0,
+  className,
+  style,
+  children,
+  ...rest
+}: RevealProps) {
   const ref = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(immediate);
 
   useEffect(() => {
     const el = ref.current;
