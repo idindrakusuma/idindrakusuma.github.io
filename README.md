@@ -144,6 +144,13 @@ Nothing else to run. `legacyPath` belongs to the migrated posts alone, so a new
 post gets no redirect; the index, the sitemap and the article's "next" link all
 read the same `getPosts`, so they pick it up on the next build.
 
+Code fences are highlighted by Shiki through `rehype-pretty-code`, at build time
+— the pages are static, so no highlighter reaches the browser. Both themes are
+written onto every token as CSS variables and `globals.css` picks one from
+`data-theme`, which is how a code block re-colours on the theme toggle without a
+second render. The block keeps the design's `--code` surface rather than the
+theme's own, and a fence with no language is left as plain monospace.
+
 Posts are in Bahasa Indonesia on an otherwise English site; each article carries
 `lang="id"`.
 

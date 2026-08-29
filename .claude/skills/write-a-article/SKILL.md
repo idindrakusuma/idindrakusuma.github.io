@@ -43,8 +43,9 @@ Open the new file and draft with them. What matters about the shape:
   can stand alone — not as a warm-up sentence.
 - `## ` headings carry the structure. `###` exists but the design gives it much
   less weight; prefer flatter documents.
-- Code fences are rendered without syntax highlighting by design. Keep samples
-  short enough to read as prose.
+- Code fences are highlighted by Shiki at build time, so **label the language** —
+  an unlabelled fence renders as plain monospace. `js`, `jsx`, `php`, `bash` and
+  `json` are already in use. Keep samples short enough to read as prose.
 - Images go in as normal Markdown. A remote URL is fine while drafting — running
   `pnpm assets:posts` later fetches it into the repo, re-encodes it as WebP,
   measures it, and rewrites the link.

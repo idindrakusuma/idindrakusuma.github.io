@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { compileMDX } from 'next-mdx-remote/rsc';
+import rehypePrettyCode from 'rehype-pretty-code';
 import BlogBackdrop from '@/components/BlogBackdrop';
 import BlogChrome from '@/components/BlogChrome';
 import ReadingProgress from '@/components/ReadingProgress';
@@ -13,6 +14,23 @@ import { formatDate, getNextPost, getPost, getPostBody, getPosts, summarise } fr
 import { SITE } from '@/lib/site-data';
 
 type PostPageProps = { params: Promise<{ slug: string }> };
+
+/**
+ * Syntax highlighting, done by Shiki at build time — the pages are static, so
+ * this costs the reader nothing and ships no highlighter to the browser.
+ *
+ * Both themes are emitted as CSS variables on every token and globals.css picks
+ * one from `data-theme`, which is how a code block re-colours on the theme
+ * toggle without a second render. `keepBackground` is off so the block keeps the
+ * `--code` surface the design specified rather than the theme's own.
+ *
+ * A fence with no language is left alone, which is most of the migrated posts
+ * and looks exactly as it did before.
+ */
+const prettyCode = {
+  theme: { light: 'github-light', dark: 'github-dark' },
+  keepBackground: false,
+} as const;
 
 /**
  * The site is a static export, so every post URL is known at build time. This
@@ -56,7 +74,7 @@ export default async function PostPage({ params }: PostPageProps) {
   const { content } = await compileMDX({
     source: body,
     components: mdxComponents,
-    options: { parseFrontmatter: false },
+    options: { parseFrontmatter: false, mdxOptions: { rehypePlugins: [[rehypePrettyCode, prettyCode]] } },
   });
 
   return (

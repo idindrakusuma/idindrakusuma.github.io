@@ -2,7 +2,7 @@
   "name": "indrakusuma-web-id",
   "version": "2.0.0",
   "private": true,
-  "description": "Personal website of Indra Kusuma \u2014 indrakusuma.web.id",
+  "description": "Personal website of Indra Kusuma — indrakusuma.web.id",
   "scripts": {
     "preinstall": "node scripts/only-pnpm.mjs",
     "dev": "next dev",
@@ -34,7 +34,9 @@
     "gray-matter": "^4.0.3",
     "next-mdx-remote": "^6.0.0",
     "oxlint": "^1.80.0",
+    "rehype-pretty-code": "^0.14.5",
     "sharp": "^0.35.3",
+    "shiki": "^4.4.3",
     "simple-icons": "^16.28.0",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.9.2"
