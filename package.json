@@ -2,7 +2,7 @@
   "name": "indrakusuma-web-id",
   "version": "2.0.0",
   "private": true,
-  "description": "Personal website of Indra Kusuma — indrakusuma.web.id",
+  "description": "Personal website of Indra Kusuma \u2014 indrakusuma.web.id",
   "scripts": {
     "preinstall": "node scripts/only-pnpm.mjs",
     "dev": "next dev",
@@ -18,6 +18,7 @@
     "assets:favicon": "node scripts/generate-favicon.mjs",
     "assets:mark": "node scripts/generate-logo.mjs",
     "assets:posts": "node scripts/prepare-post-images.mjs",
+    "assets:thumbnail": "node scripts/generate-post-thumbnail.mjs",
     "assets:redirects": "node scripts/generate-redirects.mjs"
   },
   "dependencies": {

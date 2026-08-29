@@ -120,14 +120,18 @@ for (const file of files) {
   if (output !== source) await writeFile(join(postsDir, file), output, 'utf8');
 }
 
-// Measure anything on disk the passes above did not touch — images localised by
-// an earlier run are already local in the MDX, so they never reach `localise`.
+// Measure every image on disk, not only the ones missing an entry. Filling in
+// gaps alone let a replaced file keep its old recorded size — a regenerated
+// thumbnail went from 1200x630 to 1200x825 and the manifest never noticed, which
+// is precisely the layout shift it exists to prevent. Reading metadata off a
+// hundred-odd local WebPs costs nothing.
 const onDisk = (await readdir(outDir)).filter((f) => f.endsWith('.webp'));
 let measured = 0;
 for (const name of onDisk) {
   const href = `/images/posts/${name}`;
-  if (manifest[href]) continue;
   const { width, height } = await sharp(join(outDir, name)).metadata();
+  const known = manifest[href];
+  if (known?.width === width && known?.height === height) continue;
   manifest[href] = { width, height };
   measured++;
 }
