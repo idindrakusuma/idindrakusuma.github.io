@@ -28,6 +28,7 @@ pnpm for months while the committed lockfile was npm's.
 | `pnpm lint` | oxlint |
 | `pnpm typecheck` | `tsc --noEmit` |
 | `pnpm assets` | Rebuild every generated asset |
+| `pnpm new-post` | Scaffold a new blog post |
 | `pnpm assets:posts` | Vendor blog images and measure them |
 
 ## Linting
@@ -108,25 +109,36 @@ manifest fails the build rather than shipping a layout shift.
 ### Writing a new post
 
 ```bash
-# 1. content/posts/<slug>.mdx — the filename is the URL, so keep it lowercase
-# 2. pnpm assets:posts     # only if the post points at any remote image
-# 3. pnpm build
+pnpm new-post "Judul Tulisan" --category Development
 ```
 
-Four fields are required. Get one wrong and the build stops and names the file:
+That writes `content/posts/<slug>.mdx` with the frontmatter filled in and
+`draft: true`, and prints what is left to do. `--slug` overrides the URL when the
+title makes a poor one. Inside Claude Code, `/write-a-article` does the same and
+then helps write.
+
+**Drafts** are served by `pnpm dev` at their real URL and skipped by
+`pnpm build`, so a post can exist and be previewed before it has a thumbnail —
+which is what would otherwise block the build the moment the file appeared. (A
+draft missing from `dev` usually means a `.next` left by a production build:
+`rm -rf .next`.)
+
+**To publish:** set `thumbnail`, add `tags` if you want them, delete
+`draft: true`. Four fields are required of a published post, and getting one
+wrong stops the build and names the file:
 
 ```yaml
 ---
 title: 'Judul Tulisan'
 date: '2026-08-29'                 # anything Date can parse
 category: Development              # Development · Story · Tutorial · Kuliah · Tips
-thumbnail: '/images/posts/x.webp'  # or a remote URL, vendored by assets:posts
+thumbnail: '/images/posts/x.webp'  # or a remote URL, then `pnpm assets:posts`
 ---
 ```
 
-`tags` is optional. So are `excerpt` and `readingMinutes` — without them the first
-paragraph becomes the excerpt and the reading time is counted from the body. Write
-them yourself only to override.
+`excerpt` and `readingMinutes` are optional — without them the first paragraph
+becomes the excerpt and the reading time is counted from the body. Write them
+only to override.
 
 Nothing else to run. `legacyPath` belongs to the migrated posts alone, so a new
 post gets no redirect; the index, the sitemap and the article's "next" link all

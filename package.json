@@ -10,6 +10,7 @@
     "start": "next start",
     "lint": "oxlint --deny-warnings",
     "typecheck": "tsc --noEmit",
+    "new-post": "node scripts/new-post.mjs",
     "assets": "pnpm assets:icons && pnpm assets:logos && pnpm assets:profile && pnpm assets:favicon && pnpm assets:mark && pnpm assets:posts && pnpm assets:redirects",
     "assets:icons": "node scripts/generate-icons.mjs",
     "assets:logos": "node scripts/prepare-company-logos.mjs",

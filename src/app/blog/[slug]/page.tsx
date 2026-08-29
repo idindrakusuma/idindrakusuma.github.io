@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
       title: post.title,
       description,
       publishedTime: new Date(post.date).toISOString(),
-      images: [{ url: post.thumbnail }],
+      ...(post.thumbnail ? { images: [{ url: post.thumbnail }] } : {}),
     },
   };
 }

@@ -28,9 +28,14 @@ export type Post = {
   date: string;
   category: Category;
   tags: string[];
-  /** Local path under /images/posts, vendored by scripts/prepare-post-images.mjs. */
+  /**
+   * Local path under /images/posts, vendored by scripts/prepare-post-images.mjs.
+   * Empty only on a draft — the card falls back to its own empty tile.
+   */
   thumbnail: string;
   readingMinutes: number;
+  /** Served by `next dev`, skipped by `next build`. */
+  draft: boolean;
 };
 
 const postsDir = join(process.cwd(), 'content', 'posts');
@@ -85,6 +90,8 @@ function toPost(slug: string, data: Record<string, unknown>, body: string): Post
     return value;
   };
 
+  const draft = data.draft === true;
+
   const category = data.category as Category;
   if (!CATEGORIES.includes(category)) {
     throw new Error(
@@ -107,16 +114,27 @@ function toPost(slug: string, data: Record<string, unknown>, body: string): Post
     date,
     category,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
-    thumbnail: need('thumbnail'),
+    // A draft is allowed to not have one yet; publishing without one is not.
+    thumbnail: draft ? String(data.thumbnail ?? '') : need('thumbnail'),
     readingMinutes:
       typeof data.readingMinutes === 'number' ? data.readingMinutes : readingMinutes(`${excerpt} ${body}`),
+    draft,
   };
 }
 
 let cache: Post[] | null = null;
 
 /**
- * Every post, newest first.
+ * Drafts are readable while writing and never shipped.
+ *
+ * `next dev` renders them so a post can be previewed at its real URL before it
+ * is finished; `next build` drops them, which also means an unfinished post
+ * cannot reach the sitemap or a "next article" link.
+ */
+const includeDrafts = process.env.NODE_ENV !== 'production';
+
+/**
+ * Every published post, newest first.
  *
  * Ordering lives here rather than in the pages so the index, the article's
  * "next" link, the sitemap and the redirects cannot disagree about it.
@@ -132,7 +150,9 @@ export async function getPosts(): Promise<Post[]> {
     }),
   );
 
-  cache = posts.sort((a, b) => b.date.localeCompare(a.date));
+  cache = posts
+    .filter((post) => includeDrafts || !post.draft)
+    .sort((a, b) => b.date.localeCompare(a.date));
   return cache;
 }
 
