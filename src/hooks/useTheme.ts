@@ -38,19 +38,30 @@ function applyTheme(theme: Theme): void {
 }
 
 /**
- * Where the reveal in globals.css starts from, and how far it has to grow.
+ * Where the reveal in globals.css starts from, and how far it has to grow —
+ * both as ratios of the viewport rather than lengths.
  *
- * A percentage radius on `circle()` is measured against the box rather than the
- * origin, so `circle(100%)` from a corner-ish button leaves a wedge of the old
- * theme alive in the far corner. The distance to the furthest corner is the only
- * radius that is always enough, and it can only be measured here.
+ * Pixels are wrong here, and wrong in a way that only shows up on a HiDPI
+ * screen: the box that `clip-path` resolves against on ::view-transition-new is
+ * not laid out in CSS pixels, so on a 2x display `748px` lands at 374 and the
+ * radius comes out half of what was asked for. The circle then grows from the
+ * middle of the nav instead of the button, stalls halfway across the screen,
+ * and snaps to the new theme when the transition ends. A ratio survives
+ * whatever unit space the box is in.
+ *
+ * The radius still has to reach the furthest corner: anything shorter leaves a
+ * wedge of the old theme alive until the transition ends, which is the same
+ * snap by another route. A percentage radius on `circle()` is resolved against
+ * sqrt(w² + h²) / sqrt(2), so the distance is converted into that scale.
  */
 function markOrigin(x: number, y: number): void {
   const { style } = document.documentElement;
-  const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
-  style.setProperty('--vt-x', `${x}px`);
-  style.setProperty('--vt-y', `${y}px`);
-  style.setProperty('--vt-r', `${radius}px`);
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const radius = Math.hypot(Math.max(x, w - x), Math.max(y, h - y));
+  style.setProperty('--vt-x', `${(x / w) * 100}%`);
+  style.setProperty('--vt-y', `${(y / h) * 100}%`);
+  style.setProperty('--vt-r', `${(radius / (Math.hypot(w, h) / Math.SQRT2)) * 100}%`);
 }
 
 export default function useTheme(): { toggle: (event?: MouseEvent<HTMLElement>) => void } {
@@ -80,8 +91,10 @@ export default function useTheme(): { toggle: (event?: MouseEvent<HTMLElement>) 
     // the whole document stops being hit-testable for the length of a view
     // transition — elementFromPoint over this very button returns <html> — so a
     // click inside the window never reaches the page at all. Measured on Chrome
-    // 151: clicks land again at ~520ms, right after the 480ms reveal ends. The
-    // cost is a deliberate one, and it is the reason --dur-theme is not longer.
+    // 151, clicks land again just after the reveal ends, which means --dur-theme
+    // is also how long the page ignores its visitor. At 1s that is a knowingly
+    // paid price: the sweep is the feature, and it only reads as one when it is
+    // slow enough to watch.
     document.startViewTransition(() => applyTheme(next));
   }, []);
 
