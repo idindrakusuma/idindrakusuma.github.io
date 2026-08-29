@@ -35,6 +35,7 @@
     "next-mdx-remote": "^6.0.0",
     "oxlint": "^1.80.0",
     "rehype-pretty-code": "^0.14.5",
+    "remark-gfm": "^4.0.1",
     "sharp": "^0.35.3",
     "shiki": "^4.4.3",
     "simple-icons": "^16.28.0",
