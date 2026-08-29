@@ -34,6 +34,12 @@ export type Post = {
    */
   thumbnail: string;
   readingMinutes: number;
+  /**
+   * BCP 47 tag for the post's own text. The site's chrome is English and the
+   * migrated archive is Indonesian, so a post says which it is rather than
+   * inheriting a wrong answer from either.
+   */
+  lang: string;
   /** Served by `next dev`, skipped by `next build`. */
   draft: boolean;
 };
@@ -63,15 +69,37 @@ export function summarise(text: string, max = 155): string {
 /** ~200 words a minute, floored at one. */
 const readingMinutes = (text: string) => Math.max(1, Math.round(text.split(/\s+/).length / 200));
 
-/** First paragraph, stripped to plain text — the fallback when none is given. */
-function deriveExcerpt(body: string): string {
-  const first = body.trim().split(/\n\s*\n/)[0] ?? '';
-  return first
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/[*_`#>]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+/**
+ * Separates a post's lead from the rest of it.
+ *
+ * A post that names its own `excerpt` keeps its body whole: that is how the
+ * migrated posts arrive, with the lead already lifted out by
+ * scripts/migrate-posts.mjs.
+ *
+ * A post that does not — anything written by hand — has one derived from its
+ * opening paragraph, and that paragraph then has to come out of the body. The
+ * article renders the excerpt as the lead above the prose, so leaving it in
+ * printed it twice: once large under the title, once again as the first line.
+ */
+function splitLead(
+  data: Record<string, unknown>,
+  content: string,
+): { excerpt: string; body: string } {
+  if (typeof data.excerpt === 'string') return { excerpt: data.excerpt, body: content };
+
+  const trimmed = content.trimStart();
+  const breakAt = trimmed.search(/\n\s*\n/);
+  const lead = breakAt === -1 ? trimmed : trimmed.slice(0, breakAt);
+
+  return {
+    excerpt: lead
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+      .replace(/[*_`#>]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim(),
+    body: breakAt === -1 ? '' : trimmed.slice(breakAt).trimStart(),
+  };
 }
 
 /**
@@ -104,7 +132,7 @@ function toPost(slug: string, data: Record<string, unknown>, body: string): Post
     throw new Error(`content/posts/${slug}.mdx: date "${date}" is not a date`);
   }
 
-  const excerpt = typeof data.excerpt === 'string' ? data.excerpt : deriveExcerpt(body);
+  const { excerpt } = splitLead(data, body);
   if (!excerpt) throw new Error(`content/posts/${slug}.mdx: no excerpt, and none could be derived`);
 
   return {
@@ -118,6 +146,8 @@ function toPost(slug: string, data: Record<string, unknown>, body: string): Post
     thumbnail: draft ? String(data.thumbnail ?? '') : need('thumbnail'),
     readingMinutes:
       typeof data.readingMinutes === 'number' ? data.readingMinutes : readingMinutes(`${excerpt} ${body}`),
+    // The archive is Indonesian; a post in another language says so.
+    lang: typeof data.lang === 'string' ? data.lang : 'id',
     draft,
   };
 }
@@ -163,8 +193,8 @@ export async function getPost(slug: string): Promise<Post | null> {
 
 /** The MDX body, without frontmatter. Compiled by the article page. */
 export async function getPostBody(slug: string): Promise<string> {
-  const raw = await readFile(join(postsDir, `${slug}.mdx`), 'utf8');
-  return matter(raw).content;
+  const { data, content } = matter(await readFile(join(postsDir, `${slug}.mdx`), 'utf8'));
+  return splitLead(data, content).body;
 }
 
 /**

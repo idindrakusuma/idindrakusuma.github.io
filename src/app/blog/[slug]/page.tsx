@@ -7,7 +7,6 @@ import rehypePrettyCode from 'rehype-pretty-code';
 import remarkGfm from 'remark-gfm';
 import BlogBackdrop from '@/components/BlogBackdrop';
 import BlogChrome from '@/components/BlogChrome';
-import ReadingProgress from '@/components/ReadingProgress';
 import ProfileCard from '@/components/ProfileCard';
 import Reveal from '@/components/Reveal';
 import { mdxComponents } from '@/components/mdx-components';
@@ -90,7 +89,6 @@ export default async function PostPage({ params }: PostPageProps) {
 
   return (
     <>
-      <ReadingProgress />
       <BlogBackdrop single />
       <div className="relative z-1">
         <BlogChrome
@@ -105,7 +103,9 @@ export default async function PostPage({ params }: PostPageProps) {
         <div className="ik-article-shell mx-auto max-w-[1120px] px-6 pt-[130px]">
           <div className="mx-auto w-full max-w-[760px]">
             {/* The posts are Bahasa Indonesia on an otherwise English site. */}
-            <article lang="id" className="pb-10">
+            {/* The archive is Bahasa Indonesia on an otherwise English site, so
+                each post declares its own language rather than inheriting one. */}
+            <article lang={post.lang} className="pb-10">
               <Reveal immediate className="font-mono text-faint mb-5 flex flex-wrap items-center gap-2.5 text-[12.5px]">
                 <span className="text-primary tracking-[.04em] uppercase">{post.category}</span>
                 <span aria-hidden="true">·</span>

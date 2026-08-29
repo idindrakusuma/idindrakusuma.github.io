@@ -66,8 +66,11 @@ production build — `rm -rf .next` and start dev again.
 
 Only when the user says it is ready:
 
-1. Set `thumbnail` — a path under `/images/posts/`, or a URL followed by
-   `pnpm assets:posts`. Required; the build fails without it and names the file.
+1. Set `thumbnail`. Three ways, in order of preference:
+   - a path under `/images/posts/`, or a URL followed by `pnpm assets:posts`
+   - `pnpm assets:thumbnail <slug>` to draw one from the post's title and
+     category, in the site's gradient and typeface, when there is no image to use
+   Required either way; the build fails without it and names the file.
 2. Add `tags` if they want them. Optional, and free-form.
 3. Delete `draft: true`.
 4. `pnpm build` to confirm.

@@ -30,6 +30,7 @@ pnpm for months while the committed lockfile was npm's.
 | `pnpm assets` | Rebuild every generated asset |
 | `pnpm new-post` | Scaffold a new blog post |
 | `pnpm assets:posts` | Vendor blog images and measure them |
+| `pnpm assets:thumbnail` | Draw a thumbnail for a post that has no image |
 
 ## Linting
 
@@ -124,7 +125,24 @@ draft missing from `dev` usually means a `.next` left by a production build:
 `rm -rf .next`.)
 
 **To publish:** set `thumbnail`, add `tags` if you want them, delete
-`draft: true`. Four fields are required of a published post, and getting one
+`draft: true`.
+
+A post with no image of its own can have one drawn for it:
+
+```bash
+pnpm assets:thumbnail <slug>
+```
+
+It renders the title and category over the brand gradient in the site's own
+faces, writes `public/images/posts/<slug>-thumb.webp`, and points the post at it.
+Drawn at the index card's 16/11 with padding that keeps everything inside a
+social card's 1.91:1 crop too, so the same file serves both. It refuses to
+overwrite a thumbnail that is already set.
+
+`next/og` does the rendering — satori underneath, which emits text as vector
+paths, so the result does not depend on the fonts of whatever machine runs it.
+The two faces it needs are vendored under `assets/fonts/` (OFL); see the README
+there for how they were obtained and why they are static instances. Four fields are required of a published post, and getting one
 wrong stops the build and names the file:
 
 ```yaml
