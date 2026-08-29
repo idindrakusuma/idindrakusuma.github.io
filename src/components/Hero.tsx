@@ -149,7 +149,16 @@ export default function Hero() {
                 alt="Indra Kusuma"
                 width={800}
                 height={800}
-                priority
+                // The homepage's LCP element. `priority` is deprecated in Next
+                // 16, and it never set fetchPriority anyway — the two are
+                // separate props, so the preload it emitted went out at default
+                // priority and PageSpeed flagged exactly that. The <img> is
+                // already discoverable in the initial HTML, so these two
+                // attributes are all it needs; the docs say to prefer them over
+                // `preload` precisely when the image is not hidden from the
+                // parser.
+                loading="eager"
+                fetchPriority="high"
                 className="h-full w-full object-cover"
               />
             </div>

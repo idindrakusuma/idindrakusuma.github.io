@@ -9,10 +9,11 @@ import { formatDate, type Post } from '@/lib/posts';
  * colour, the slow push-in on the thumbnail — is one `:hover` in globals.css
  * rather than four handlers here.
  *
- * The first card's thumbnail is the index's Largest Contentful Paint, so it gets
- * `priority`; lazy-loading the one image the page is measured on only delays it.
+ * The first card's thumbnail is the index's Largest Contentful Paint, so it is
+ * fetched eagerly and at high priority; lazy-loading the one image the page is
+ * measured on only delays it.
  */
-export default function PostCard({ post, priority = false }: { post: Post; priority?: boolean }) {
+export default function PostCard({ post, lcp = false }: { post: Post; lcp?: boolean }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
@@ -28,7 +29,8 @@ export default function PostCard({ post, priority = false }: { post: Post; prior
             alt=""
             width={560}
             height={385}
-            priority={priority}
+            loading={lcp ? 'eager' : 'lazy'}
+            fetchPriority={lcp ? 'high' : undefined}
             className="block h-full w-full object-cover"
           />
         )}
