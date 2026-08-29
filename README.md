@@ -28,6 +28,8 @@ pnpm for months while the committed lockfile was npm's.
 | `pnpm lint` | oxlint |
 | `pnpm typecheck` | `tsc --noEmit` |
 | `pnpm assets` | Rebuild every generated asset |
+| `pnpm new-post` | Scaffold a new blog post |
+| `pnpm assets:posts` | Vendor blog images and measure them |
 
 ## Linting
 
@@ -64,8 +66,9 @@ src/
   hooks/        React and DOM glue
   lib/          Framework-free logic and content
                 site-data.ts · marquee.ts · posts.ts
+content/posts/  Blog posts as MDX — the source of truth
 scripts/        Asset generators
-public/         Generated assets, CNAME, .nojekyll
+public/         Generated assets, _redirects, CNAME, .nojekyll
 assets/         Masters — never served, only built from
 ```
 
@@ -79,16 +82,77 @@ To change a job, an award or the skills list, edit `src/lib/site-data.ts` only.
 
 ## Blog
 
-Scaffolding, not yet live. `lib/posts.ts` is the seam: `getPosts`/`getPost` return
-nothing yet, and where posts actually come from — MDX, Markdown, a CMS — is
-deliberately undecided. `/blog` renders an empty state, and `sitemap.ts` reads the
-same `getPosts`, so a published post can never be reachable but unlisted.
+31 posts, migrated out of the Hexo blog that used to live on this repo's
+`source-code` branch. `content/posts/*.mdx` is the source of truth; `lib/posts.ts`
+reads it at build time, and `sitemap.ts` and the redirects read the same function,
+so nothing can be reachable but unlisted.
 
-`app/blog/[slug]/page.tsx.template` is written and verified but **parked**: a
-static export refuses a dynamic route whose `generateStaticParams` returns an
-empty array, and reports it as "missing generateStaticParams()" even though it is
-right there. Rename it to `page.tsx` alongside the first post. While parked it is
-outside both the route tree and `tsc`.
+The migration is recorded rather than remembered:
+
+```bash
+node scripts/migrate-posts.mjs   # one-time: source-code branch → content/posts
+pnpm assets:posts                # remote images → public/images/posts, rewrites the MDX
+pnpm assets:redirects            # old Hexo permalinks → public/_redirects
+```
+
+`migrate-posts.mjs` is deliberately **not** in `pnpm assets`: content/posts is
+hand-editable now, and re-running would discard those edits. It repairs what Hexo
+never validated — single-digit months, an impossible `13:05:97` — and maps Hexo's
+six categories onto the five the design filters on, throwing on anything it does
+not recognise.
+
+`assets:posts` is safe to re-run: it fetches only URLs that are still remote, and
+measures every image into `public/images/posts/manifest.json`. Markdown carries no
+image dimensions, so the article reads them from there — an image missing from the
+manifest fails the build rather than shipping a layout shift.
+
+### Writing a new post
+
+```bash
+pnpm new-post "Judul Tulisan" --category Development
+```
+
+That writes `content/posts/<slug>.mdx` with the frontmatter filled in and
+`draft: true`, and prints what is left to do. `--slug` overrides the URL when the
+title makes a poor one. Inside Claude Code, `/write-a-article` does the same and
+then helps write.
+
+**Drafts** are served by `pnpm dev` at their real URL and skipped by
+`pnpm build`, so a post can exist and be previewed before it has a thumbnail —
+which is what would otherwise block the build the moment the file appeared. (A
+draft missing from `dev` usually means a `.next` left by a production build:
+`rm -rf .next`.)
+
+**To publish:** set `thumbnail`, add `tags` if you want them, delete
+`draft: true`. Four fields are required of a published post, and getting one
+wrong stops the build and names the file:
+
+```yaml
+---
+title: 'Judul Tulisan'
+date: '2026-08-29'                 # anything Date can parse
+category: Development              # Development · Story · Tutorial · Kuliah · Tips
+thumbnail: '/images/posts/x.webp'  # or a remote URL, then `pnpm assets:posts`
+---
+```
+
+`excerpt` and `readingMinutes` are optional — without them the first paragraph
+becomes the excerpt and the reading time is counted from the body. Write them
+only to override.
+
+Nothing else to run. `legacyPath` belongs to the migrated posts alone, so a new
+post gets no redirect; the index, the sitemap and the article's "next" link all
+read the same `getPosts`, so they pick it up on the next build.
+
+Code fences are highlighted by Shiki through `rehype-pretty-code`, at build time
+— the pages are static, so no highlighter reaches the browser. Both themes are
+written onto every token as CSS variables and `globals.css` picks one from
+`data-theme`, which is how a code block re-colours on the theme toggle without a
+second render. The block keeps the design's `--code` surface rather than the
+theme's own, and a fence with no language is left as plain monospace.
+
+Posts are in Bahasa Indonesia on an otherwise English site; each article carries
+`lang="id"`.
 
 ## Theming
 

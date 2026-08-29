@@ -3,8 +3,12 @@
  *
  * assets/profile-source.png is the 1000x1000 master (1.5 MB) and is never shipped.
  * The hero renders the photo at 400 CSS px at most, so 800 px covers 2x displays
- * with room to spare. Re-run with `pnpm assets:profile` after
- * replacing the source.
+ * with room to spare.
+ *
+ * The blog needs the same face far smaller — 76 px in the index sidebar, 44 px on
+ * the article's author card — and shipping the hero's 800 px file for a 44 px
+ * circle is most of a page's image budget spent on a thumbnail. A 152 px variant
+ * covers both at 2x. Re-run with `pnpm assets:profile` after replacing the source.
  */
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -19,6 +23,8 @@ const outputs = [
   // JPEG fallback for the handful of clients without WebP; also what social
   // scrapers that ignore WebP will pick up for the og:image.
   { file: 'profile.jpg', size: 800, options: { quality: 84, mozjpeg: true } },
+  // 76 px sidebar and 44 px author card, both at 2x.
+  { file: 'profile-avatar.webp', size: 152, options: { quality: 84, effort: 6 } },
 ];
 
 for (const { file, size, options } of outputs) {

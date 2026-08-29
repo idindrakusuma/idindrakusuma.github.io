@@ -1,69 +1,88 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import AuroraBackground from '@/components/AuroraBackground';
-import SiteChrome from '@/components/SiteChrome';
-import { getPosts } from '@/lib/posts';
+import BlogBackdrop from '@/components/BlogBackdrop';
+import BlogChrome from '@/components/BlogChrome';
+import CategoryFilter from '@/components/CategoryFilter';
+import PostCard from '@/components/PostCard';
+import ProfileCard from '@/components/ProfileCard';
+import Reveal from '@/components/Reveal';
+import { CATEGORIES, getPosts } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
 
 export const metadata: Metadata = {
   title: `Blog — ${SITE.name}`,
-  description: 'Notes on frontend performance, fullstack engineering and AI-native tooling.',
+  description:
+    'Tutorials, engineering notes and a few career stories — written mostly in Bahasa Indonesia.',
   alternates: { canonical: '/blog' },
 };
 
 /**
- * The blog index. Scaffolding: `getPosts` returns nothing yet, so this renders
- * its empty state.
+ * The blog index: every post, newest first, filterable by category.
  *
- * Carries the same <SiteChrome> as the homepage. Off the homepage its spy is
- * switched off and its links point back at `/#section`, so the chrome is shared
- * without pretending the Sections are here.
+ * Carries its own chrome rather than SiteChrome — see BlogChrome. The whole
+ * archive is rendered into the static HTML and the filter hides cards in place,
+ * so nothing here depends on JavaScript to be readable.
  */
 export default async function BlogIndex() {
   const posts = await getPosts();
+  const used = CATEGORIES.filter((category) => posts.some((post) => post.category === category));
 
   return (
     <>
-      <AuroraBackground />
+      <BlogBackdrop />
       <div className="relative z-1">
-        <SiteChrome />
-        <main className="mx-auto max-w-[1160px] px-6 pt-[150px] pb-[90px]">
-          <div className="mb-[30px] flex items-center gap-3.5">
-            <span className="font-mono text-primary text-[13px] font-medium">Writing</span>
-            <span className="ik-divider" />
+        <BlogChrome back={{ href: '/', label: 'Back to site' }} trailing={{ label: 'Writing' }} />
+
+        <header className="mx-auto max-w-[1080px] px-6 pt-[132px] pb-[22px]">
+          <Reveal as="p" className="font-mono text-primary m-0 mb-3.5 text-[13px]">
+            {`Blog · ${posts.length} posts`}
+          </Reveal>
+
+          <Reveal
+            as="h1"
+            className="font-display m-0 mb-[18px] text-[clamp(38px,6.5vw,68px)] leading-[1.03] font-bold tracking-[-.03em]"
+          >
+            Notes on building
+            <br />
+            <span className="ik-gradient-wide">for the web.</span>
+          </Reveal>
+
+          <Reveal as="p" className="text-muted m-0 max-w-[600px] text-[clamp(16px,2.2vw,18px)]">
+            Tutorials, engineering notes and a few career stories — written mostly in Bahasa
+            Indonesia over the years at{' '}
+            <Link href="/" className="text-primary font-semibold no-underline">
+              indrakusuma.web.id
+            </Link>
+            .
+          </Reveal>
+        </header>
+
+        <div className="mx-auto max-w-[1080px] px-6 pt-[18px] pb-1.5">
+          <Reveal>
+            <CategoryFilter categories={used} />
+          </Reveal>
+        </div>
+
+        <main className="ik-blog-main mx-auto grid max-w-[1080px] grid-cols-[1fr_260px] items-start gap-10 px-6 pt-[26px] pb-10">
+          <div className="flex min-w-0 flex-col gap-4">
+            {posts.map((post) => (
+              <PostCard key={post.slug} post={post} />
+            ))}
           </div>
 
-          <h1 className="font-display mb-3.5 text-[clamp(42px,7vw,76px)] leading-[1.02] font-bold tracking-[-.03em]">
-            Blog
-          </h1>
-
-          <p className="text-muted mb-[34px] max-w-[620px] text-[clamp(16px,2.2vw,19px)]">
-            Notes on frontend performance, fullstack engineering and AI-native tooling.
-          </p>
-
-          {posts.length === 0 ? (
-            <p className="text-faint font-mono text-sm">Nothing published yet.</p>
-          ) : (
-            // TODO: the post card. One <article> per post — title, date, reading
-            // time, description — most likely lifted from the award card's shape.
-            <ul className="m-0 flex list-none flex-col gap-4 p-0">
-              {posts.map((post) => (
-                <li key={post.slug}>
-                  <Link href={`/blog/${post.slug}`} className="text-ink no-underline">
-                    {post.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <Link
-            href="/"
-            className="text-muted hover:text-primary mt-14 inline-block text-sm no-underline transition-colors"
-          >
-            ← Back to homepage
-          </Link>
+          <aside className="ik-side sticky top-[88px]">
+            <ProfileCard />
+          </aside>
         </main>
+
+        <footer className="border-line text-faint mx-auto flex max-w-[1080px] flex-wrap items-center justify-between gap-3 border-t px-6 py-6 text-[13px]">
+          <span>
+            © {new Date().getFullYear()} {SITE.name}
+          </span>
+          <Link href="/" className="text-primary font-semibold no-underline">
+            Back to site →
+          </Link>
+        </footer>
       </div>
     </>
   );

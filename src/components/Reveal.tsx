@@ -27,7 +27,14 @@ function getObserver(): IntersectionObserver | null {
           observer?.unobserve(entry.target);
         }
       },
-      { threshold: 0.14, rootMargin: '0px 0px -6% 0px' },
+      // threshold 0, not a fraction of the element. A ratio can never be reached
+      // by anything taller than the viewport divided by it — at 0.14 an element
+      // more than ~7 viewports tall never fires and stays invisible for good,
+      // which is what happened to every long article body. Firing on first
+      // contact behaves the same for a card and is the only form that holds for
+      // an element of any height; the negative bottom margin is what keeps the
+      // reveal from starting right at the edge of the screen.
+      { threshold: 0, rootMargin: '0px 0px -8% 0px' },
     );
   }
   return observer;

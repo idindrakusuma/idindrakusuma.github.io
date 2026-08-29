@@ -31,6 +31,20 @@ One blog entry, addressed by its slug at `/blog/{slug}`. A Post is a route of it
 own, not a Section.
 _Avoid_: article, entry, page
 
+**Excerpt**:
+A Post's own opening paragraph — everything before the `<!-- more -->` marker it
+carried in Hexo. Not a written summary.
+_Avoid_: description, summary, teaser
+
+**Category**:
+One of five buckets the blog index filters on. Exactly one per Post.
+_Avoid_: tag, section, topic
+
+**Tag**:
+A free-form label on a Post, shown on the article and never filtered on. A Post
+has many.
+_Avoid_: category, keyword
+
 ### Marquee
 
 **Marquee**:
@@ -59,6 +73,8 @@ _Avoid_: autoplay, scroll
 - A **Marquee** **Drifts** unless it is hovered, dragged, or the visitor asked for reduced motion
 - Skills and Awards are each a **Marquee**; they differ only in rendering, not in looping
 - **Posts** live outside the Section sequence — the homepage has Sections, `/blog` has Posts
+- A **Post** has exactly one **Category** and any number of **Tags**; only Category is filterable
+- A **Post**'s **Excerpt** is quoted from the Post, never written for it
 - `SECTIONS` is the ordering authority: it numbers the **Sections** and tells the **Spy** what to watch
 - **Site Chrome** renders one nav entry per **Section**; a nav entry that is a route is not a **Section**
 
@@ -76,7 +92,8 @@ _Avoid_: autoplay, scroll
 - Section 04's eyebrow reads "Honors" while its nav label reads "Awards". Now a
   deliberate override rather than drift — `Section` derives the number from
   NAV_ITEMS but takes the label as a prop, so the two can differ on purpose.
-- ~~**Site Chrome**'s nav cannot address a **Post**~~ — resolved. `SECTIONS` is now
-  the ordering authority and the nav derives its links from it, so a route entry
-  can be added to the nav without renumbering the **Sections** after it. Nothing
-  links to `/blog` yet, though: reaching it still needs a nav or footer entry.
+- ~~**Site Chrome**'s nav cannot address a **Post**~~ — resolved. `SECTIONS` orders
+  the page, `NAV_ITEMS` describes the nav, and the Blog entry is a route variant
+  that renumbers nothing. `/blog` is reachable from the nav island.
+- The blog does not use **Site Chrome** at all: it has its own smaller island,
+  because a scroll spy over Sections has nothing to spy on there.

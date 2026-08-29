@@ -17,6 +17,8 @@
   --faint: #8b98b5;
   --border: #e2e8f5;
   --border-2: #d6def0;
+  /* Code block ground — a touch cooler than --surface-2 so `pre` reads as inset. */
+  --code: #f5f7fc;
   --primary: #c0203f;
   --primary-2: #e0627a;
   --primary-3: #8a1c50;
@@ -46,6 +48,7 @@
   --faint: #5f708f;
   --border: #1b2740;
   --border-2: #26375a;
+  --code: #0c1524;
   --primary: #ff5c76;
   --primary-2: #ff89a0;
   --primary-3: #c8477f;
@@ -262,6 +265,17 @@ body {
 /* ---------------------------------------------------------------------------
    Gradient helpers
 --------------------------------------------------------------------------- */
+/* The blog headline's gradient runs flatter and through all three accents —
+   it spans a much wider line than the homepage's, which would otherwise show
+   only the two ends. */
+.ik-gradient-wide {
+  background: linear-gradient(100deg, var(--a1), var(--a2), var(--a3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
 .ik-gradient-text {
   background: linear-gradient(135deg, var(--a1), var(--a3));
   -webkit-background-clip: text;
@@ -510,5 +524,289 @@ body {
     opacity: 1 !important;
     animation: none !important;
     transform: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Blog
+--------------------------------------------------------------------------- */
+/* Post card. The whole card is the link, so the lift, the border, the title
+   colour and the thumbnail's slow push-in all key off one :hover. */
+.ik-post {
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.45s ease,
+    box-shadow 0.45s ease;
+}
+.ik-post:hover {
+  transform: translateY(-6px);
+  border-color: var(--primary);
+  box-shadow: 0 26px 50px -20px var(--glow);
+}
+.ik-post:hover .ik-thumb img {
+  transform: scale(1.06);
+}
+.ik-thumb img {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   Article prose
+
+   The MDX body renders as plain HTML, so it is styled here rather than in the
+   component. Code blocks are deliberately untokenised — the design sets one
+   foreground colour and lets the monospace face carry it.
+--------------------------------------------------------------------------- */
+.ik-prose h2 {
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(22px, 3.2vw, 29px);
+  letter-spacing: -0.02em;
+  margin: 52px 0 16px;
+  line-height: 1.2;
+  color: var(--text);
+}
+.ik-prose h3 {
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 19px;
+  margin: 36px 0 12px;
+  color: var(--text);
+}
+.ik-prose p {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--muted);
+  margin: 0 0 20px;
+  text-wrap: pretty;
+}
+.ik-prose strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.ik-prose a {
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--primary) 40%, transparent);
+}
+.ik-prose code {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.86em;
+  background: var(--surface-3);
+  color: var(--primary);
+  padding: 2.5px 7px;
+  border-radius: 6px;
+}
+.ik-prose pre {
+  background: var(--code);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 24px;
+  overflow-x: auto;
+  margin: 0 0 24px;
+  box-shadow: var(--shadow-sm);
+}
+.ik-prose pre code {
+  background: none;
+  color: var(--text);
+  padding: 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+/* Shiki writes both palettes onto every token as custom properties; these two
+   rules are what choose between them. A fence with no language produces no
+   tokens at all and keeps the plain `--text` above, which is how the migrated
+   posts looked before highlighting existed. */
+.ik-prose pre code span {
+  color: var(--shiki-light);
+}
+:root[data-theme='dark'] .ik-prose pre code span {
+  color: var(--shiki-dark);
+}
+
+/* Long lines scroll with the block rather than wrapping — a wrapped indent
+   reads as a different nesting level. */
+.ik-prose pre code {
+  display: block;
+  width: fit-content;
+  min-width: 100%;
+}
+.ik-prose pre code [data-line] {
+  display: block;
+}
+.ik-prose blockquote {
+  margin: 0 0 24px;
+  padding: 18px 24px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 16.5px;
+}
+.ik-prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+.ik-prose ul,
+.ik-prose ol {
+  margin: 0 0 22px;
+  padding: 0 0 0 4px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.ik-prose li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 16.5px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.ik-prose li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+.ik-prose ol {
+  counter-reset: ik-step;
+}
+.ik-prose ol li {
+  counter-increment: ik-step;
+}
+.ik-prose ol li::before {
+  content: counter(ik-step);
+  top: 0;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: none;
+  color: var(--primary);
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 13px;
+  font-weight: 500;
+}
+.ik-prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+  display: block;
+  margin: 0 0 26px;
+  border: 1px solid var(--border);
+}
+.ik-prose hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 40px 0;
+}
+.ik-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 24px;
+  font-size: 15px;
+}
+.ik-prose th,
+.ik-prose td {
+  border: 1px solid var(--border);
+  padding: 9px 13px;
+  text-align: left;
+  color: var(--muted);
+}
+.ik-prose th {
+  color: var(--text);
+  font-weight: 600;
+  background: var(--surface-2);
+}
+
+/* Card excerpts are the post's own opening paragraph, which runs to a few
+   hundred characters. The full text stays in the markup; the card shows the
+   first two lines so every card is the same height. */
+.ik-post-excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 760px) {
+  /* The blog drops its sidebar and the card's secondary text before the
+     homepage's own 860px breakpoint — the two-column post card runs out of
+     room sooner than the hero does. */
+  .ik-blog-main {
+    grid-template-columns: 1fr !important;
+  }
+  .ik-side {
+    display: none !important;
+  }
+  .ik-hide-sm {
+    display: none !important;
+  }
+  .ik-post {
+    padding: 10px !important;
+    gap: 12px !important;
+  }
+  .ik-thumb {
+    width: 120px !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Article sidebar
+
+   Desktop only, and on the article's terms: the reading column stays at its
+   760px measure, so the card appears in the room beside it or not at all. It
+   needs 760 + 40 gap + 260 card inside the shell's padding before there is any.
+--------------------------------------------------------------------------- */
+.ik-article-side {
+  display: none;
+}
+
+@media (min-width: 1180px) {
+  .ik-article-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 760px) 260px;
+    gap: 40px;
+    justify-content: center;
+    align-items: start;
+  }
+  .ik-article-side {
+    display: block;
+    position: sticky;
+    /* Clears the fixed nav island, same as the index sidebar. */
+    top: 88px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Category filter
+--------------------------------------------------------------------------- */
+/* Cards arriving after a category change, on the same curve and duration as the
+   hero's reveal — the entrance the visitor has already seen once on this site.
+   The stagger is set per card from the filter. */
+.ik-post-enter {
+  animation: ik-reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  opacity: 0;
+}
+
+@media (max-width: 760px) {
+  /* One row that scrolls, not two that wrap: at this width a second row of pills
+     costs more height than the first post card is tall. The negative margin lets
+     the row bleed to both screen edges, so the last pill can scroll fully into
+     view instead of stopping inside the page's padding. */
+  .ik-cat-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: -24px;
+    padding-inline: 24px;
+  }
+  .ik-cat-row::-webkit-scrollbar {
+    display: none;
   }
 }

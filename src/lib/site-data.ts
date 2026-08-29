@@ -58,6 +58,23 @@ export function sectionNumber(id: string): string {
   return String(index + 1).padStart(2, '0');
 }
 
+/**
+ * A nav entry is either a Section on the homepage or a route of its own.
+ *
+ * Kept apart from SECTIONS deliberately: SECTIONS numbers the page, so a route
+ * added here — Blog — must not be able to renumber the Sections after it. The
+ * Section variant carries no href because it depends on where you are, `#id` on
+ * the homepage and `/#id` anywhere else.
+ */
+export type NavItem =
+  | { kind: 'section'; id: string; label: string }
+  | { kind: 'route'; id: string; label: string; href: string };
+
+export const NAV_ITEMS: NavItem[] = [
+  ...SECTIONS.map((section): NavItem => ({ kind: 'section', id: section.id, label: section.label })),
+  { kind: 'route', id: 'blog', label: 'Blog', href: '/blog' },
+];
+
 export type Stat = {
   value: string;
   label: string;

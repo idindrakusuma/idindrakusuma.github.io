@@ -1,0 +1,40 @@
+---
+title: 'Cara Custom Domain untuk Github Pages'
+date: '2017-07-29 11:23:32'
+category: Tutorial
+tags: ['github', 'website']
+thumbnail: '/images/posts/cara-custom-domain-untuk-github-page-thumb.webp'
+excerpt: 'Salah satu platform blog maupun web yang populer dikalangan programmer adalah Github Pages. Github Pages merupakan salah satu layanan dari Github yang memungkinkan programmer untuk memiliki web page pribadi. Layanan ini dihost langsung dari github repositori langsung dengan aturan penamaan repositori username.github.io maka secara otomatis kamu akan punya github pages mu sendiri. Keren bukan ?'
+readingMinutes: 1
+legacyPath: '/2017/07/29/Cara-Custom-Domain-untuk-Github-Page/'
+---
+![Cara Custom Domain untuk Github Pages](/images/posts/cara-custom-domain-untuk-github-page-1.webp)
+
+Banyak proyek _opensource_ yang memanfaatkan github pages, salah satunya blog yang penulis gunakan ini. penulis menggunakan platform **HEXO** untuk membangun blog ini dengan template dari **PPOffice**.
+
+Seperti yang penulis jelaskan sebelumnya, bahwa alamat _default_ dari Github Pages adalah _username.github.io_ (username = akun github kamu). Tapi tahukah kamu bahwa Github Pages bisa kamu Custom Domain loh? layaknya website atau blog pada umumnya.
+
+Nah, berikut merupakan _Cara Custom Domain untuk Github Pages_.
+## Setting Custom Domain
+1. Buka `repository` Github Pages kamu.
+2. Klik `Settings`
+3. Nah, pada bagian **Github Pages**, masukan nama domain kamu pada `Custom Domain` kemudian klik save.
+![Custom Domain for Github Pages](/images/posts/cara-custom-domain-untuk-github-page-2.webp)
+
+## Setting DNS Domain
+Setelah custom domain berhasil disetting, sekarang masuk ke _control panel_ dari Domain kamu, disini saya tunjukan menggunakan clooudflare.
+1. Masuk ke menu `DNS` atau `DNS Management` kemudian tambahkan beberapa Record dari IP github berikut,
+```
+192.30.252.153
+192.30.252.154
+```
+2. Kemudian tambahkan CNAME dengan alias link github pages kamu. Sehingga hasilnya seperti gambar dibawah ini.
+![Setting DNS for Github Pages](/images/posts/cara-custom-domain-untuk-github-page-3.webp)
+
+3. Setelah itu, simpan.
+
+_*Proses perubahan DNS mungkin bisa memakan waktu 5 - 30 menit (terantung penyedia layanan)_
+
+Gimana ? mudah kan ? semoga bermanfaat :)
+
+Referensi : https://www.chenhuijing.com/blog/setting-up-custom-domain-github-pages/
