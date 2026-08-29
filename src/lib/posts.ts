@@ -55,27 +55,61 @@ export function summarise(text: string, max = 155): string {
   return `${cut.slice(0, cut.lastIndexOf(' ')).replace(/[.,;:]$/, '')}…`;
 }
 
-/** Old Hexo permalink, kept so the redirects can be generated from the posts. */
-export function hexoPath(post: Post): string {
-  const d = new Date(post.date);
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `/${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${post.slug}/`;
+/** ~200 words a minute, floored at one. */
+const readingMinutes = (text: string) => Math.max(1, Math.round(text.split(/\s+/).length / 200));
+
+/** First paragraph, stripped to plain text — the fallback when none is given. */
+function deriveExcerpt(body: string): string {
+  const first = body.trim().split(/\n\s*\n/)[0] ?? '';
+  return first
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/[*_`#>]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
-function toPost(slug: string, data: Record<string, unknown>): Post {
+/**
+ * Reads one post's frontmatter, and says so when it cannot.
+ *
+ * A missing field used to become the string "undefined" on the page and pass
+ * the build without a word. Writing a post is hand work now that the migration
+ * is done, so the fields it cannot guess are required and the rest are derived.
+ */
+function toPost(slug: string, data: Record<string, unknown>, body: string): Post {
+  const need = (field: string): string => {
+    const value = data[field];
+    if (typeof value !== 'string' || !value.trim()) {
+      throw new Error(`content/posts/${slug}.mdx: "${field}" is required`);
+    }
+    return value;
+  };
+
   const category = data.category as Category;
   if (!CATEGORIES.includes(category)) {
-    throw new Error(`${slug}: unknown category "${String(data.category)}"`);
+    throw new Error(
+      `content/posts/${slug}.mdx: category "${String(data.category)}" is not one of ${CATEGORIES.join(', ')}`,
+    );
   }
+
+  const date = need('date');
+  if (Number.isNaN(new Date(date).getTime())) {
+    throw new Error(`content/posts/${slug}.mdx: date "${date}" is not a date`);
+  }
+
+  const excerpt = typeof data.excerpt === 'string' ? data.excerpt : deriveExcerpt(body);
+  if (!excerpt) throw new Error(`content/posts/${slug}.mdx: no excerpt, and none could be derived`);
+
   return {
     slug,
-    title: String(data.title),
-    excerpt: String(data.excerpt),
-    date: String(data.date),
+    title: need('title'),
+    excerpt,
+    date,
     category,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
-    thumbnail: String(data.thumbnail),
-    readingMinutes: Number(data.readingMinutes),
+    thumbnail: need('thumbnail'),
+    readingMinutes:
+      typeof data.readingMinutes === 'number' ? data.readingMinutes : readingMinutes(`${excerpt} ${body}`),
   };
 }
 
@@ -93,8 +127,8 @@ export async function getPosts(): Promise<Post[]> {
   const files = (await readdir(postsDir)).filter((f) => f.endsWith('.mdx'));
   const posts = await Promise.all(
     files.map(async (file) => {
-      const raw = await readFile(join(postsDir, file), 'utf8');
-      return toPost(file.replace(/\.mdx$/, ''), matter(raw).data);
+      const { data, content } = matter(await readFile(join(postsDir, file), 'utf8'));
+      return toPost(file.replace(/\.mdx$/, ''), data, content);
     }),
   );
 

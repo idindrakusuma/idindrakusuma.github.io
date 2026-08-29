@@ -22,21 +22,18 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const postsDir = join(root, 'content', 'posts');
 const outFile = join(root, 'public', '_redirects');
 
-const pad = (n) => String(n).padStart(2, '0');
-
 const files = (await readdir(postsDir)).filter((f) => f.endsWith('.mdx')).sort();
 const rules = [];
 
 for (const file of files) {
   const slug = file.replace(/\.mdx$/, '');
   const { data } = matter(await readFile(join(postsDir, file), 'utf8'));
-  const date = new Date(String(data.date));
-  if (Number.isNaN(date.getTime())) throw new Error(`${slug}: unreadable date "${data.date}"`);
 
-  // The old URL used the original filename casing; the new one is lowercase.
-  const legacy = typeof data.legacySlug === 'string' ? data.legacySlug : slug;
-  const from = `/${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())}/${legacy}/`;
-  rules.push(`${from}  /blog/${slug}/  301`);
+  // Only posts migrated from Hexo carry a legacyPath. Anything written since
+  // never had an old URL, so it gets no redirect — deriving one from the date
+  // would publish a rule for a page that never existed.
+  if (typeof data.legacyPath !== 'string' || !data.legacyPath) continue;
+  rules.push(`${data.legacyPath}  /blog/${slug}/  301`);
 }
 
 const header = [

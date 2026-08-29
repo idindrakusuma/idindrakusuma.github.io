@@ -105,6 +105,33 @@ measures every image into `public/images/posts/manifest.json`. Markdown carries 
 image dimensions, so the article reads them from there — an image missing from the
 manifest fails the build rather than shipping a layout shift.
 
+### Writing a new post
+
+```bash
+# 1. content/posts/<slug>.mdx — the filename is the URL, so keep it lowercase
+# 2. pnpm assets:posts     # only if the post points at any remote image
+# 3. pnpm build
+```
+
+Four fields are required. Get one wrong and the build stops and names the file:
+
+```yaml
+---
+title: 'Judul Tulisan'
+date: '2026-08-29'                 # anything Date can parse
+category: Development              # Development · Story · Tutorial · Kuliah · Tips
+thumbnail: '/images/posts/x.webp'  # or a remote URL, vendored by assets:posts
+---
+```
+
+`tags` is optional. So are `excerpt` and `readingMinutes` — without them the first
+paragraph becomes the excerpt and the reading time is counted from the body. Write
+them yourself only to override.
+
+Nothing else to run. `legacyPath` belongs to the migrated posts alone, so a new
+post gets no redirect; the index, the sitemap and the article's "next" link all
+read the same `getPosts`, so they pick it up on the next build.
+
 Posts are in Bahasa Indonesia on an otherwise English site; each article carries
 `lang="id"`.
 

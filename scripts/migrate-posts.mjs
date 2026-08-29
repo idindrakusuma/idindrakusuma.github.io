@@ -121,6 +121,12 @@ const readingMinutes = (body) => Math.max(1, Math.round(body.split(/\s+/).length
 
 const yamlString = (s) => `'${String(s).replace(/'/g, "''")}'`;
 
+/** Hexo served posts at /:year/:month/:day/:title/, with the filename's casing. */
+function hexoPath(date, slug) {
+  const [y, mo, d] = date.slice(0, 10).split('-');
+  return `/${y}/${mo}/${d}/${slug}/`;
+}
+
 await mkdir(outDir, { recursive: true });
 
 const files = git('ls-tree', '-r', '--name-only', BRANCH, '--', SRC).trim().split('\n').filter(Boolean);
@@ -151,9 +157,10 @@ for (const file of files) {
     `excerpt: ${yamlString(excerpt)}`,
     // Measured on the whole post, lead included — that is what gets read.
     `readingMinutes: ${readingMinutes(whole)}`,
-    // Only when it differs — the old permalink carried the original casing and
-    // the redirect has to reproduce it exactly.
-    ...(legacySlug === slug ? [] : [`legacySlug: ${yamlString(legacySlug)}`]),
+    // The exact URL this post used to live at, recorded rather than rebuilt
+    // later from its date and slug — a post written from now on has no old URL,
+    // and a generator that derives one would invent history for it.
+    `legacyPath: ${yamlString(hexoPath(date, legacySlug))}`,
     '---',
     '',
   ].join('\n');
