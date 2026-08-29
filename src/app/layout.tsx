@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from 'next';
 import { JetBrains_Mono, Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import DeferredAnalytics from '@/components/DeferredAnalytics';
 import { SITE } from '@/lib/site-data';
 import { THEME_SCRIPT } from '@/lib/theme';
 import './globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  // 800 is loaded by nobody — `font-extrabold` appears nowhere in src/.
+  weight: ['400', '500', '600', '700'],
   variable: '--font-jakarta',
   display: 'swap',
 });
@@ -89,7 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         {children}
-        <GoogleAnalytics gaId="G-BTNT9P4VS1" />
+        <DeferredAnalytics gaId="G-BTNT9P4VS1" />
       </body>
     </html>
   );

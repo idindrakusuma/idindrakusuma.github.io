@@ -8,8 +8,11 @@ import { formatDate, type Post } from '@/lib/posts';
  * The whole card is the link. Its hover — the lift, the border, the title
  * colour, the slow push-in on the thumbnail — is one `:hover` in globals.css
  * rather than four handlers here.
+ *
+ * The first card's thumbnail is the index's Largest Contentful Paint, so it gets
+ * `priority`; lazy-loading the one image the page is measured on only delays it.
  */
-export default function PostCard({ post }: { post: Post }) {
+export default function PostCard({ post, priority = false }: { post: Post; priority?: boolean }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
@@ -25,6 +28,7 @@ export default function PostCard({ post }: { post: Post }) {
             alt=""
             width={560}
             height={385}
+            priority={priority}
             className="block h-full w-full object-cover"
           />
         )}

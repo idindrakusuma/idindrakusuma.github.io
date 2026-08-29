@@ -95,7 +95,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <div className="mx-auto w-full max-w-[760px]">
             {/* The posts are Bahasa Indonesia on an otherwise English site. */}
             <article lang="id" className="pb-10">
-              <Reveal className="font-mono text-faint mb-5 flex flex-wrap items-center gap-2.5 text-[12.5px]">
+              <Reveal immediate className="font-mono text-faint mb-5 flex flex-wrap items-center gap-2.5 text-[12.5px]">
                 <span className="text-primary tracking-[.04em] uppercase">{post.category}</span>
                 <span aria-hidden="true">·</span>
                 <time dateTime={new Date(post.date).toISOString()}>{formatDate(post.date)}</time>
@@ -104,18 +104,19 @@ export default async function PostPage({ params }: PostPageProps) {
               </Reveal>
 
               <Reveal
+                immediate
                 as="h1"
                 className="font-display m-0 mb-[22px] text-[clamp(32px,5.4vw,50px)] leading-[1.08] font-bold tracking-[-.03em]"
               >
                 {post.title}
               </Reveal>
 
-              <Reveal as="p" className="text-muted m-0 mb-[26px] text-[19px] leading-[1.65]">
+              <Reveal immediate as="p" className="text-muted m-0 mb-[26px] text-[19px] leading-[1.65]">
                 {post.excerpt}
               </Reveal>
 
               {post.tags.length > 0 && (
-                <Reveal className="mb-[34px] flex flex-wrap gap-2">
+                <Reveal immediate className="mb-[34px] flex flex-wrap gap-2">
                   {post.tags.map((tag) => (
                     <span
                       key={tag}
@@ -127,7 +128,7 @@ export default async function PostPage({ params }: PostPageProps) {
                 </Reveal>
               )}
 
-              <Reveal className="bg-surface border-line shadow-card-sm mb-11 flex items-center gap-3.5 rounded-[18px] border px-5 py-4">
+              <Reveal immediate className="bg-surface border-line shadow-card-sm mb-11 flex items-center gap-3.5 rounded-[18px] border px-5 py-4">
                 {/* The design used "IK" initials here; the ring is what is left of that
                     gradient once the photograph fills the circle. */}
                 <span

@@ -34,11 +34,12 @@ export default async function BlogIndex() {
         <BlogChrome back={{ href: '/', label: 'Back to site' }} trailing={{ label: 'Writing' }} />
 
         <header className="mx-auto max-w-[1080px] px-6 pt-[132px] pb-[22px]">
-          <Reveal as="p" className="font-mono text-primary m-0 mb-3.5 text-[13px]">
+          <Reveal immediate as="p" className="font-mono text-primary m-0 mb-3.5 text-[13px]">
             {`Blog · ${posts.length} posts`}
           </Reveal>
 
           <Reveal
+            immediate
             as="h1"
             className="font-display m-0 mb-[18px] text-[clamp(38px,6.5vw,68px)] leading-[1.03] font-bold tracking-[-.03em]"
           >
@@ -47,7 +48,7 @@ export default async function BlogIndex() {
             <span className="ik-gradient-wide">for the web.</span>
           </Reveal>
 
-          <Reveal as="p" className="text-muted m-0 max-w-[600px] text-[clamp(16px,2.2vw,18px)]">
+          <Reveal immediate as="p" className="text-muted m-0 max-w-[600px] text-[clamp(16px,2.2vw,18px)]">
             Tutorials, engineering notes and a few career stories — written mostly in Bahasa
             Indonesia over the years at{' '}
             <Link href="/" className="text-primary font-semibold no-underline">
@@ -58,15 +59,16 @@ export default async function BlogIndex() {
         </header>
 
         <div className="mx-auto max-w-[1080px] px-6 pt-[18px] pb-1.5">
-          <Reveal>
+          <Reveal immediate>
             <CategoryFilter categories={used} />
           </Reveal>
         </div>
 
         <main className="ik-blog-main mx-auto grid max-w-[1080px] grid-cols-[1fr_260px] items-start gap-10 px-6 pt-[26px] pb-10">
           <div className="flex min-w-0 flex-col gap-4">
-            {posts.map((post) => (
-              <PostCard key={post.slug} post={post} />
+            {posts.map((post, index) => (
+              // The first thumbnail is what the page's LCP is measured on.
+              <PostCard key={post.slug} post={post} priority={index === 0} />
             ))}
           </div>
 
