@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import BlogBackdrop from '@/components/BlogBackdrop';
 import BlogChrome from '@/components/BlogChrome';
 import CategoryFilter from '@/components/CategoryFilter';
 import PostCard from '@/components/PostCard';
+import ProfileCard from '@/components/ProfileCard';
 import Reveal from '@/components/Reveal';
 import { CATEGORIES, getPosts } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
@@ -70,36 +70,8 @@ export default async function BlogIndex() {
             ))}
           </div>
 
-          <aside className="ik-side bg-surface border-line shadow-card-sm sticky top-[88px] flex flex-col items-center gap-3.5 rounded-[20px] border px-5 py-[26px] text-center">
-            <span
-              className="h-[76px] w-[76px] flex-none rounded-full p-[3px]"
-              style={{ background: 'linear-gradient(135deg,var(--a1),var(--a3))' }}
-            >
-              <Image
-                src="/profile-avatar.webp"
-                alt={SITE.name}
-                width={152}
-                height={152}
-                className="h-full w-full rounded-full object-cover"
-              />
-            </span>
-
-            <span className="flex flex-col gap-[3px]">
-              <span className="font-display text-ink text-base font-semibold">{SITE.name}</span>
-              <span className="text-muted text-[12.5px]">{SITE.role}</span>
-            </span>
-
-            <p className="text-muted m-0 text-[12.5px] leading-[1.55]">
-              Building fast, scalable web experiences — currently at ByteDance, previously
-              Tokopedia.
-            </p>
-
-            <Link
-              href="/"
-              className="bg-primary w-full rounded-[11px] py-[11px] text-center text-[13.5px] font-semibold text-white no-underline"
-            >
-              View profile
-            </Link>
+          <aside className="ik-side sticky top-[88px]">
+            <ProfileCard />
           </aside>
         </main>
 

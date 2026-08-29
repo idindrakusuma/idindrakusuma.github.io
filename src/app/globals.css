@@ -733,3 +733,30 @@ body {
     width: 120px !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Article sidebar
+
+   Desktop only, and on the article's terms: the reading column stays at its
+   760px measure, so the card appears in the room beside it or not at all. It
+   needs 760 + 40 gap + 260 card inside the shell's padding before there is any.
+--------------------------------------------------------------------------- */
+.ik-article-side {
+  display: none;
+}
+
+@media (min-width: 1180px) {
+  .ik-article-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 760px) 260px;
+    gap: 40px;
+    justify-content: center;
+    align-items: start;
+  }
+  .ik-article-side {
+    display: block;
+    position: sticky;
+    /* Clears the fixed nav island, same as the index sidebar. */
+    top: 88px;
+  }
+}
