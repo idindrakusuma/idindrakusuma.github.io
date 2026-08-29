@@ -108,7 +108,7 @@
      reason it is a different curve: the distance is the diagonal of the
      viewport. */
   --ease-sweep: cubic-bezier(0.55, 0, 0.35, 1);
-  --dur-theme: 1s;
+  --dur-theme: 500ms;
 }
 
 /* ---------------------------------------------------------------------------
