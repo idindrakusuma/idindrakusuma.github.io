@@ -20,6 +20,7 @@ import { dirname, join, basename } from 'node:path';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, 'content', 'posts');
 const BRANCH = 'origin/source-code';
+const SITE_URL = 'https://indrakusuma.web.id';
 const SRC = 'source/_posts';
 
 /**
@@ -116,6 +117,34 @@ function normaliseDate(raw) {
   return `${y}-${pad(mo, 12)}-${pad(d, 31)} ${pad(h, 23)}:${pad(mi, 59)}:${pad(se, 59)}`;
 }
 
+/**
+ * Rewrites links that point at the old blog into links into this one.
+ *
+ * Posts cross-referenced each other by absolute Hexo permalink, on a
+ * `blog.indrakusuma.web.id` subdomain that no longer resolves at all — those
+ * links are dead, not merely stale. The date is dropped and the slug lowercased
+ * to match the file it now lives in.
+ *
+ * A link to a post that was not migrated throws rather than being left dead or
+ * silently dropped.
+ */
+function rewriteInternalLinks(body, slugs, from) {
+  const permalink = /https?:\/\/(?:blog\.)?indrakusuma\.web\.id\/\d{4}\/\d{2}\/\d{2}\/([^/)\s]+)\/?/g;
+  const withPost = body.replace(permalink, (_match, oldSlug) => {
+    const slug = oldSlug.toLowerCase();
+    if (!slugs.has(slug)) {
+      throw new Error(`${from}: links to "${oldSlug}", which is not among the migrated posts`);
+    }
+    return `/blog/${slug}/`;
+  });
+
+  // One post announces the move to the old subdomain by naming it. Left alone it
+  // becomes a live link to a host that no longer resolves, so it is pointed at
+  // where that blog actually ended up. Only the bare origin — image captions
+  // carry the old domain as a watermark and have no scheme, so they are untouched.
+  return withPost.replace(/https?:\/\/blog\.indrakusuma\.web\.id(?![\w/.-])/g, `${SITE_URL}/blog`);
+}
+
 /** ~200 words per minute, floored at one. */
 const readingMinutes = (body) => Math.max(1, Math.round(body.split(/\s+/).length / 200));
 
@@ -130,6 +159,10 @@ function hexoPath(date, slug) {
 await mkdir(outDir, { recursive: true });
 
 const files = git('ls-tree', '-r', '--name-only', BRANCH, '--', SRC).trim().split('\n').filter(Boolean);
+
+// Needed up front: a post can link to any other, including one processed later.
+const slugs = new Set(files.map((file) => basename(file, '.md').toLowerCase()));
+
 const written = [];
 
 for (const file of files) {
@@ -165,7 +198,8 @@ for (const file of files) {
     '',
   ].join('\n');
 
-  await writeFile(join(outDir, `${slug}.mdx`), front + body.trim() + '\n', 'utf8');
+  const linked = rewriteInternalLinks(body, slugs, `${slug}.mdx`);
+  await writeFile(join(outDir, `${slug}.mdx`), front + linked.trim() + '\n', 'utf8');
   written.push({ slug, category, date });
 }
 

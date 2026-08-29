@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import rehypePrettyCode from 'rehype-pretty-code';
+import remarkGfm from 'remark-gfm';
 import BlogBackdrop from '@/components/BlogBackdrop';
 import BlogChrome from '@/components/BlogChrome';
 import ReadingProgress from '@/components/ReadingProgress';
@@ -74,7 +75,17 @@ export default async function PostPage({ params }: PostPageProps) {
   const { content } = await compileMDX({
     source: body,
     components: mdxComponents,
-    options: { parseFrontmatter: false, mdxOptions: { rehypePlugins: [[rehypePrettyCode, prettyCode]] } },
+    options: {
+      parseFrontmatter: false,
+      mdxOptions: {
+        // Hexo rendered these posts with GFM, so bare URLs were links. MDX does
+        // not autolink by default, which left 28 of them across 16 posts as
+        // unclickable text — the same migration gap as the dead permalinks
+        // above, just quieter.
+        remarkPlugins: [remarkGfm],
+        rehypePlugins: [[rehypePrettyCode, prettyCode]],
+      },
+    },
   });
 
   return (
