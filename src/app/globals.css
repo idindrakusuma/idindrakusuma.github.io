@@ -98,6 +98,17 @@
   --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   --default-transition-timing-function: var(--ease-smooth);
   --default-transition-duration: 260ms;
+  /* The theme reveal is the one place that curve is wrong. --ease-smooth is
+     heavily front-loaded — roughly 90% of the distance inside the first 30% of
+     the time — which is right for a pill sliding 40px and wrong for a radius
+     growing 1300px: the circle covers most of the screen before the eye can see
+     it was ever a circle, so the reveal stops reading as something that came
+     out of the button, then crawls to a finish. This curve starts slow enough
+     to show the origin and lands evenly. The duration is longer for the same
+     reason it is a different curve: the distance is the diagonal of the
+     viewport. */
+  --ease-sweep: cubic-bezier(0.55, 0, 0.35, 1);
+  --dur-theme: 1s;
 }
 
 /* ---------------------------------------------------------------------------
@@ -260,6 +271,46 @@ body {
 }
 :root[data-theme='dark'] .ik-icon-moon {
   display: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Theme transition
+   Flipping data-theme inside document.startViewTransition() leaves the old
+   palette on screen as a still image while the new one is painted live above
+   it. The new layer is then clipped to a circle growing out of the toggle, so
+   the theme arrives from the button that asked for it.
+
+   Both defaults have to be replaced: the browser's own transition cross-fades
+   the two layers with plus-lighter blending, which would wash the palettes
+   together instead of letting one sweep over the other.
+
+   The origin and radius are written onto <html> by hooks/useTheme.ts; the
+   fallbacks below only matter if that ever stops happening. Browsers without
+   view transitions, and visitors who asked for reduced motion, never reach this
+   rule — the hook flips the attribute directly for them.
+--------------------------------------------------------------------------- */
+@keyframes ik-theme-reveal {
+  from {
+    clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+  to {
+    clip-path: circle(var(--vt-r, 150%) at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+  animation: ik-theme-reveal var(--dur-theme) var(--ease-sweep);
 }
 
 /* ---------------------------------------------------------------------------
