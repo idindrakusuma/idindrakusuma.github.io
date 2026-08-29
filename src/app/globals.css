@@ -760,3 +760,31 @@ body {
     top: 88px;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Category filter
+--------------------------------------------------------------------------- */
+/* Cards arriving after a category change, on the same curve and duration as the
+   hero's reveal — the entrance the visitor has already seen once on this site.
+   The stagger is set per card from the filter. */
+.ik-post-enter {
+  animation: ik-reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  opacity: 0;
+}
+
+@media (max-width: 760px) {
+  /* One row that scrolls, not two that wrap: at this width a second row of pills
+     costs more height than the first post card is tall. The negative margin lets
+     the row bleed to both screen edges, so the last pill can scroll fully into
+     view instead of stopping inside the page's padding. */
+  .ik-cat-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: -24px;
+    padding-inline: 24px;
+  }
+  .ik-cat-row::-webkit-scrollbar {
+    display: none;
+  }
+}
