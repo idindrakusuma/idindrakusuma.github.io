@@ -76,7 +76,7 @@ export default async function BlogIndex() {
               style={{ background: 'linear-gradient(135deg,var(--a1),var(--a3))' }}
             >
               <Image
-                src="/profile.webp"
+                src="/profile-avatar.webp"
                 alt={SITE.name}
                 width={152}
                 height={152}

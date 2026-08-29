@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { compileMDX } from 'next-mdx-remote/rsc';
@@ -102,12 +103,19 @@ export default async function PostPage({ params }: PostPageProps) {
           )}
 
           <Reveal className="bg-surface border-line shadow-card-sm mb-11 flex items-center gap-3.5 rounded-[18px] border px-5 py-4">
+            {/* The design used "IK" initials here; the ring is what is left of that
+                gradient once the photograph fills the circle. */}
             <span
-              className="font-display grid h-11 w-11 flex-none place-items-center rounded-full text-[15px] font-bold text-white"
+              className="h-11 w-11 flex-none rounded-full p-[2px]"
               style={{ background: 'linear-gradient(135deg,var(--a1),var(--a3))' }}
-              aria-hidden="true"
             >
-              IK
+              <Image
+                src="/profile-avatar.webp"
+                alt={SITE.name}
+                width={152}
+                height={152}
+                className="h-full w-full rounded-full object-cover"
+              />
             </span>
             <span className="flex flex-col">
               <span className="text-[15px] font-semibold">{SITE.name}</span>
