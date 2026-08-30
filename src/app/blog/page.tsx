@@ -31,7 +31,7 @@ export default async function BlogIndex() {
     <>
       <BlogBackdrop />
       <div className="relative z-1">
-        <BlogChrome back={{ href: '/', label: 'Back to site' }} trailing={{ label: 'Blog' }} />
+        <BlogChrome back={{ href: '/', label: 'Back to site' }} trailing="Blog" />
 
         <header className="mx-auto max-w-[1080px] px-6 pt-[132px] pb-[22px]">
           <Reveal immediate as="p" className="font-mono text-primary m-0 mb-3.5 text-[13px]">
