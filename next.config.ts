@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
     // next/image's optimizer needs a server; the export ships the originals as-is.
     unoptimized: true,
   },
+  allowedDevOrigins: ['192.168.100.*']
 };
 
 export default nextConfig;
