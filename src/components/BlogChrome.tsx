@@ -17,12 +17,14 @@ export default function BlogChrome({
   trailing,
 }: {
   back: { href: string; label: string };
-  /** After the divider: a plain label on the index, a link on an article. */
-  trailing: { label: string; href?: string };
+  /**
+   * After the divider: where you are, not somewhere to go. Both routes say
+   * "Blog" — the article page used to point at the homepage here instead, which
+   * made the same slot mean two different things depending on the page.
+   */
+  trailing: string;
 }) {
   const { toggle } = useTheme();
-
-  const trailingClass = 'text-muted text-sm font-semibold whitespace-nowrap no-underline';
 
   return (
     <nav className="fixed top-4 right-0 left-0 z-50 flex justify-center px-3">
@@ -40,15 +42,9 @@ export default function BlogChrome({
 
         <span aria-hidden="true" className="bg-line h-5 w-px flex-none" />
 
-        {trailing.href ? (
-          <Link href={trailing.href} className={`${trailingClass} hover:text-primary pr-1 transition-colors`}>
-            {trailing.label}
-          </Link>
-        ) : (
-          <span className="font-display text-ink pr-1 text-sm font-semibold whitespace-nowrap">
-            {trailing.label}
-          </span>
-        )}
+        <span className="font-display text-ink pr-1 text-sm font-semibold whitespace-nowrap">
+          {trailing}
+        </span>
 
         <button
           type="button"

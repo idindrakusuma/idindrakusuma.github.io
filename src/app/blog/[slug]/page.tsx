@@ -91,10 +91,7 @@ export default async function PostPage({ params }: PostPageProps) {
     <>
       <BlogBackdrop single />
       <div className="relative z-1">
-        <BlogChrome
-          back={{ href: '/blog', label: 'All writing' }}
-          trailing={{ label: 'Homepage', href: '/' }}
-        />
+        <BlogChrome back={{ href: '/blog', label: 'All writing' }} trailing="Blog" />
 
         {/* From a wide enough viewport the author card sits alongside the
             article. The reading column keeps its 760px measure either way —
