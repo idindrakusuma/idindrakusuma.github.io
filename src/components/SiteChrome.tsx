@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRef, useState } from 'react';
 import useNavIndicator from '@/hooks/useNavIndicator';
@@ -16,8 +17,10 @@ const SECTION_IDS = SECTIONS.map((section) => section.id);
  * spy is switched off and the links become ordinary `/#id` navigation.
  *
  * The nav also carries entries that are routes rather than Sections. Those the
- * spy never claims — the pill sits on them only while the pointer is there, and
- * they navigate like any other link.
+ * spy never claims — the pill sits on them only while the pointer is there — and
+ * they go through next/link, so the move is a client navigation rather than a
+ * fresh page boot. A Section link stays a plain anchor on purpose: its href is a
+ * hash into the page you are already on, which is not a route at all.
  */
 export default function SiteChrome() {
   const pathname = usePathname();
@@ -62,17 +65,31 @@ export default function SiteChrome() {
               }}
             />
             {NAV_ITEMS.map((item) => {
-              const isSection = item.kind === 'section';
+              // The pill styling is the same whichever element carries the link, so it
+              // is written once — the two branches differ only in how they navigate.
+              const appearance = {
+                onMouseEnter: () => setHoveredId(item.id),
+                className:
+                  'relative z-1 rounded-full px-[15px] py-[9px] text-sm font-semibold no-underline transition-colors',
+                style: { color: highlightId === item.id ? '#fff' : 'var(--muted)' },
+              };
+
+              if (item.kind === 'route') {
+                return (
+                  <Link key={item.id} href={item.href} data-nav={item.id} {...appearance}>
+                    {item.label}
+                  </Link>
+                );
+              }
+
               return (
                 <a
                   key={item.id}
-                  href={
-                    isSection ? (onHomepage ? `#${item.id}` : `/#${item.id}`) : item.href
-                  }
+                  href={onHomepage ? `#${item.id}` : `/#${item.id}`}
                   data-nav={item.id}
-                  aria-current={isSection && activeId === item.id ? 'true' : undefined}
+                  aria-current={activeId === item.id ? 'true' : undefined}
                   onClick={
-                    isSection && onHomepage
+                    onHomepage
                       ? (event) => {
                           event.preventDefault();
                           setHoveredId(null);
@@ -81,9 +98,7 @@ export default function SiteChrome() {
                         }
                       : undefined
                   }
-                  onMouseEnter={() => setHoveredId(item.id)}
-                  className="relative z-1 rounded-full px-[15px] py-[9px] text-sm font-semibold no-underline transition-colors"
-                  style={{ color: highlightId === item.id ? '#fff' : 'var(--muted)' }}
+                  {...appearance}
                 >
                   {item.label}
                 </a>
