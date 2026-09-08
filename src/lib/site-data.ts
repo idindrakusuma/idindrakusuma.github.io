@@ -94,12 +94,12 @@ export type Stat = {
  * a claim that any one module was touched by that many people.
  */
 export const STATS: Stat[] = [
-  { value: '100M+', label: 'Monthly users', context: 'Tokopedia & TikTok Shop' },
+  { value: '100M+', label: 'Monthly platform users', context: 'Tokopedia & TikTok Shop' },
   // The timeline keeps the detailed LCP/p75 proof while this stat stays compact.
-  { value: '3×', label: 'Faster page load', context: 'in Web Tiktok Seller Center' },
+  { value: '3×', label: 'Faster page load', context: 'Manage Product, TikTok Seller Center' },
   // The stat highlights the named high-traffic surfaces while leaving room for
   // adjacent commerce work covered in the timeline below.
-  { value: '6+', label: 'Core commerce surfaces', context: 'Homepage, Flash Sale, Checkout, and more' },
+  { value: '6+', label: 'Core commerce modules', context: 'Homepage, Flash Sale, Cart, Checkout, and more' },
   { value: '4+', label: 'International teams', context: 'US, China, Singapore, India, and more' },
 ];
 
@@ -134,7 +134,7 @@ export const EXPERIENCES: Experience[] = [
       {
         title: 'Senior Software Engineer, Frontend',
         period: 'Feb 2024 — Present',
-        location: 'Jakarta, ID',
+        location: 'Jakarta',
         current: true,
         points: [
           'Improved page performance by reducing LCP by 70% (10s → 3s at p75) on the ‘Manage Product’ page, one of the top-3 highest-traffic modules in TikTok Seller Center.',

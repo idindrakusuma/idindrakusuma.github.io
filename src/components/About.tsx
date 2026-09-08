@@ -10,9 +10,10 @@ export default function About() {
           as="p"
           className="font-display text-ink text-[clamp(22px,3vw,30px)] leading-[1.4] font-normal tracking-[-.01em]"
         >
-          I build <span className="text-primary">robust, high-performance products end-to-end</span> — from
-          top-traffic commerce frontends to Go services and AI-native developer tooling — with a strong bias
-          toward speed, quality, and clean DX.
+          I build and maintain{' '}
+          <span className="text-primary">core commerce experiences at Tokopedia and TikTok Shop</span>,
+          from Homepage and Flash Sale to Cart, Checkout, and post-purchase experiences. I also improve web performance
+          and build internal tools that simplify workflows for engineering teams.
         </Reveal>
 
         <Reveal delay={100} className="grid grid-cols-2 gap-3.5">

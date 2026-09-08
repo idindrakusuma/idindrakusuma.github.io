@@ -76,7 +76,7 @@ export default function Hero() {
       <div className="ik-hero relative z-1 mx-auto grid max-w-[1160px] grid-cols-[1.2fr_1fr] items-center gap-[52px]">
         <div className="ik-hero-copy">
           <Reveal immediate as="p" delay={60} className="font-mono mb-3.5 text-sm tracking-[.02em]">
-            <span className="ik-gradient-text font-medium">Fullstack Engineer · AI-Native</span>
+            <span className="ik-gradient-text font-medium">Hi, I’m Indra Kusuma.</span>
           </Reveal>
 
           <Reveal immediate
@@ -84,7 +84,7 @@ export default function Hero() {
             delay={100}
             className="font-display mb-[22px] text-[clamp(42px,7vw,76px)] leading-[1.02] font-bold tracking-[-.03em]"
           >
-            Building fast,
+            I build fast,
             <br />
             scalable web
             <br />
@@ -96,8 +96,8 @@ export default function Hero() {
             delay={160}
             className="text-muted mb-[34px] max-w-[540px] text-[clamp(16px,2.2vw,19px)]"
           >
-            {YEARS_EXPERIENCE}+ years building end-to-end — from top-traffic commerce frontends to Go
-            services and AI-native tooling. Currently at{' '}
+            I’m a full-stack engineer with {YEARS_EXPERIENCE}+ years of experience building web products,
+            backend services, and developer tools. Currently at{' '}
             <strong className="text-ink font-semibold">ByteDance</strong>, previously{' '}
             <strong className="text-ink font-semibold">Tokopedia</strong>.
           </Reveal>
