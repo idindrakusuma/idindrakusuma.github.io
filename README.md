@@ -51,11 +51,9 @@ something Next runs for us, so it still gates the Netlify deploy now that
 `next build` no longer lints. Warnings are fatal: a gate that only reports is a
 gate nobody reads.
 
-Two suppressions, both in `.oxlintrc.json` with the reason next to them:
-`Reveal.tsx` passes a ref object into `createElement` (it never reads `.current`)
-and sets state in an effect as an `IntersectionObserver` fallback, and
-`generate-icons.mjs` looks up icons by computed key, which is the whole point of
-deriving an export name from a slug.
+One suppression, in `.oxlintrc.json` with the reason next to it: `Reveal.tsx`
+passes a ref object into `createElement` (it never reads `.current`) and sets
+state in an effect as an `IntersectionObserver` fallback.
 
 ## Layout
 
@@ -77,9 +75,9 @@ The three `src/` layers are ordered by what each is allowed to touch: `lib/` use
 neither React nor the DOM, `hooks/` adds both, `components/` adds markup.
 Dependencies only ever point that way. The marquee spans all three and is the
 worked example — geometry in `lib/marquee.ts`, DOM work in `hooks/useMarquee.ts`,
-and two callers in `components/` that supply nothing but rendering.
+and a caller in `components/` that supplies nothing but rendering.
 
-To change a job, an award or the skills list, edit `src/lib/site-data.ts` only.
+To change a job, an award or a capability, edit `src/lib/site-data.ts` only.
 
 ## Blog
 
@@ -186,12 +184,11 @@ toggles it, the site keeps following the OS.
 Everything under `public/logos/`, `public/profile.*`, `public/logo-*.webp` and
 `src/app/{icon,icon1,apple-icon}.png` is generated from a committed master in
 `assets/`. Both sides are in git, so `pnpm build` never needs these — re-run
-after replacing a master, bumping `simple-icons`, or editing `SKILL_ROWS`:
+after replacing a master:
 
 ```bash
-pnpm assets            # all five, in order
+pnpm assets            # all of them, in order
 
-pnpm assets:icons      # SKILL_ROWS → public/logos/skills
 pnpm assets:logos      # assets/logos/* → public/logos/companies
 pnpm assets:profile    # assets/profile-source.png → public/profile.{webp,jpg}
 pnpm assets:favicon    # assets/favicon-source.png → src/app/{icon,icon1,apple-icon}.png
@@ -200,11 +197,6 @@ pnpm assets:mark       # assets/logo-{light,dark}-source.png → public/logo-{li
 
 They are deterministic: `pnpm assets` on an unchanged tree leaves `git status`
 clean, so an unexpected diff means a master actually moved.
-
-**Tech logos.** `SKILL_ROWS` is the only list of skills. A slug `simple-icons` has
-no mark for needs `wordmark: true` on it, which renders the name as text instead;
-the script exits non-zero if that flag and `simple-icons` disagree in either
-direction, so a typo'd slug fails the run rather than 404ing in the marquee.
 
 **Company logos.** Drop the image in `assets/logos/` named after the company and
 run `pnpm assets:logos`. Badges are 40 CSS px, which is unforgiving, so each
