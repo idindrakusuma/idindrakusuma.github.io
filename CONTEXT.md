@@ -45,6 +45,11 @@ A free-form label on a Post, shown on the article and never filtered on. A Post
 has many.
 _Avoid_: category, keyword
 
+**Capability**:
+One area of ownership in Section 03 — what the work is, in a sentence, over the
+chips naming the stack behind it. Named for the doing, not the tool.
+_Avoid_: skill, competency, tech stack
+
 ### Marquee
 
 **Marquee**:
@@ -71,7 +76,7 @@ _Avoid_: autoplay, scroll
 - The page is an ordered list of **Sections**; **Site Chrome** floats above all of them
 - A **Marquee** renders `copies` of its **Set**, derived from the **Wrap width** and the viewport
 - A **Marquee** **Drifts** unless it is hovered, dragged, or the visitor asked for reduced motion
-- Skills and Awards are each a **Marquee**; they differ only in rendering, not in looping
+- Awards is the page's only **Marquee**; Skills is a static grid of **Capabilities**
 - **Posts** live outside the Section sequence — the homepage has Sections, `/blog` has Posts
 - A **Post** has exactly one **Category** and any number of **Tags**; only Category is filterable
 - A **Post**'s **Excerpt** is quoted from the Post, never written for it

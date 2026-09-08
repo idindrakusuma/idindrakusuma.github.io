@@ -355,14 +355,17 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   Award cards
-   A soft highlight tracks the cursor across the card while it lifts.
-   The card no longer flips to a solid primary fill. The cards now drift past
+   Spotlight cards
+   A soft highlight tracks the cursor across the card while it lifts. Shared by
+   the Award cards and the Section 03 capability cards — the two wanted the same
+   hover, so the recipe lives once here rather than twice.
+
+   The card no longer flips to a solid primary fill. The award cards drift past
    continuously in the marquee, and recolouring every one the pointer crossed
    read as flashing rather than as a hover.
-   --mx/--my are written by the mousemove handler in AwardCard.
+   --mx/--my are written by `trackSpotlight` in lib/spotlight.ts.
 --------------------------------------------------------------------------- */
-.ik-award {
+.ik-spotlight {
   position: relative;
   overflow: hidden;
   /* The lift keeps the slow curve; the border catches up sooner, so the outline
@@ -372,7 +375,7 @@ body {
     border-color 0.35s ease,
     box-shadow 0.5s ease;
 }
-.ik-award::after {
+.ik-spotlight::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -383,24 +386,24 @@ body {
   z-index: 1;
   pointer-events: none;
 }
-.ik-award > div {
+.ik-spotlight > * {
   position: relative;
   z-index: 2;
 }
-.ik-award:hover {
+.ik-spotlight:hover {
   transform: translateY(-6px);
   border-color: var(--primary);
   box-shadow: 0 26px 50px -18px var(--glow);
 }
-.ik-award:hover::after {
+.ik-spotlight:hover::after {
   opacity: 1;
 }
 
 /* ---------------------------------------------------------------------------
    Awards marquee
-   Same recipe as the skills rows below: the track is `width: max-content` and
-   runs far wider than the page, so it needs clipping as well as the fade, or the
-   document overflows and mobile browsers widen the layout viewport to fit.
+   The track is `width: max-content` and runs far wider than the page, so it
+   needs clipping as well as the fade, or the document overflows and mobile
+   browsers widen the layout viewport to fit.
    `clip` rather than `hidden` so the cards' hover lift stays free vertically.
 
    Note the mask is the tighter constraint, not the overflow: it paints only
@@ -446,35 +449,8 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   Skills marquee
+   Brand mark
 --------------------------------------------------------------------------- */
-.ik-logos {
-  -webkit-mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-  mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-  /* The rows are `width: max-content` and run far wider than the page. The mask only
-     fades them, it does not clip, so without this the document overflows and mobile
-     browsers widen the layout viewport to fit. `clip` rather than `hidden` so the
-     tooltips above the top row are still free to overhang vertically. */
-  overflow-x: clip;
-}
-.ik-logos img {
-  filter: var(--logo-filter);
-  opacity: 0.6;
-  transition:
-    opacity 0.25s,
-    filter 0.25s;
-}
-.ik-logo:hover img {
-  opacity: 1;
-}
-.ik-logo:hover .ik-tip {
-  opacity: 1;
-  /* Must move `translate`, not `transform`: the resting offset comes from Tailwind's
-     -translate-x-1/2, which writes `translate`. Setting `transform` here applied on
-     top of it and shifted the tooltip half its own width off-centre. */
-  translate: -50% 0;
-}
-
 /* The iK mark. It ships as two artworks — one drawn for dark surfaces, one for light —
    rather than one file recoloured by CSS, so each keeps its own art-directed gradients.
    Painted as a background rather than an <img> because only the matching variant is then

@@ -1,7 +1,7 @@
 'use client';
 
-import type { MouseEvent } from 'react';
 import type { Award } from '@/lib/site-data';
+import { trackSpotlight } from '@/lib/spotlight';
 
 /**
  * Award card. A soft highlight tracks the cursor across it while it lifts — the
@@ -12,16 +12,10 @@ import type { Award } from '@/lib/site-data';
  * card's own hover lift. The reveal lives on the static wrapper instead.
  */
 export default function AwardCard({ award, hidden }: { award: Award; hidden?: boolean }) {
-  const trackCursor = (event: MouseEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    event.currentTarget.style.setProperty('--mx', `${((event.clientX - rect.left) / rect.width) * 100}%`);
-    event.currentTarget.style.setProperty('--my', `${((event.clientY - rect.top) / rect.height) * 100}%`);
-  };
-
   return (
     <div
-      className="ik-award bg-surface border-line w-[290px] flex-none rounded-2xl border p-[22px]"
-      onMouseMove={trackCursor}
+      className="ik-spotlight bg-surface border-line w-[290px] flex-none rounded-2xl border p-[22px]"
+      onMouseMove={trackSpotlight}
       aria-hidden={hidden || undefined}
     >
       <div>

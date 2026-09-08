@@ -16,12 +16,6 @@
         "react/refs": "off",
         "react/set-state-in-effect": "off"
       }
-    },
-    {
-      "files": ["scripts/**/*.mjs"],
-      "rules": {
-        "import/namespace": "off"
-      }
     }
   ]
 }

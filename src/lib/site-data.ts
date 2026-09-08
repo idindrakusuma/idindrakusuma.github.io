@@ -247,65 +247,42 @@ export const EXPERIENCES: Experience[] = [
   },
 ];
 
-export type SkillLogo = {
-  /** simple-icons slug; also the filename under /logos/skills. */
-  slug: string;
-  name: string;
-  desc: string;
-  /**
-   * Renders the name as text instead of a vendored mark. Set it only for a slug
-   * simple-icons has no entry for — scripts/generate-icons.mjs fails the run if
-   * this flag and simple-icons disagree in either direction, so it cannot go
-   * stale silently.
-   */
-  wordmark?: true;
-};
+/**
+ * One area of ownership in Section 03 — what the work actually is, and the stack
+ * behind it. The chips name tools; the blurb is what they were used to own.
+ */
+export type Capability = { name: string; blurb: string; items: string[] };
 
-export type SkillRow = {
-  /** -1 scrolls left, 1 scrolls right. */
-  dir: -1 | 1;
-  items: SkillLogo[];
-};
-
-export const SKILL_ROWS: SkillRow[] = [
+export const CAPABILITIES: Capability[] = [
   {
-    dir: -1,
-    items: [
-      { slug: 'react', name: 'React', desc: 'UI library' },
-      { slug: 'nextdotjs', name: 'Next.js', desc: 'React framework' },
-      { slug: 'gatsby', name: 'Gatsby', desc: 'Static site gen' },
-      { slug: 'vuedotjs', name: 'Vue.js', desc: 'UI framework' },
-      { slug: 'typescript', name: 'TypeScript', desc: 'Typed JavaScript' },
-      { slug: 'javascript', name: 'JavaScript', desc: 'Core language' },
-      { slug: 'html5', name: 'HTML5', desc: 'Markup & semantics' },
-      { slug: 'lynx', name: 'Lynx', desc: 'Cross-platform UI', wordmark: true },
-    ],
+    name: 'Frontend at scale',
+    blurb: 'Own high-traffic React surfaces end to end — architecture, state, and the performance budget.',
+    items: ['React', 'Next.js', 'TypeScript', 'Vue.js', 'Lynx', 'ReactLynx', 'React Native · Expo'],
   },
   {
-    dir: 1,
-    items: [
-      { slug: 'go', name: 'Go', desc: 'Backend language' },
-      { slug: 'nodedotjs', name: 'Node.js', desc: 'JS runtime' },
-      { slug: 'php', name: 'PHP', desc: 'Backend language' },
-      { slug: 'laravel', name: 'Laravel', desc: 'PHP framework' },
-      { slug: 'mysql', name: 'MySQL', desc: 'Relational database' },
-      { slug: 'supabase', name: 'Supabase', desc: 'Postgres backend' },
-      { slug: 'firebase', name: 'Firebase', desc: 'Backend-as-a-Service' },
-      { slug: 'docker', name: 'Docker', desc: 'Containers' },
-    ],
+    name: 'Backend & data',
+    blurb: 'Build and maintain the services behind them, from API design to schema and query performance.',
+    items: ['Go', 'Node.js', 'PostgreSQL', 'MySQL', 'MongoDB', 'Supabase', 'Firebase'],
   },
   {
-    dir: -1,
-    items: [
-      { slug: 'bytedance', name: 'ByteDance', desc: 'Tech stack' },
-      { slug: 'anthropic', name: 'Claude', desc: 'AI-native coding' },
-      { slug: 'githubcopilot', name: 'Copilot', desc: 'AI code assistant' },
-      { slug: 'githubactions', name: 'GitHub Actions', desc: 'CI / CD' },
-      { slug: 'googlecloud', name: 'Google Cloud', desc: 'Cloud infra' },
-      { slug: 'netlify', name: 'Netlify', desc: 'Deploy platform' },
-      { slug: 'gitlab', name: 'GitLab', desc: 'Git & pipelines' },
-      { slug: 'figma', name: 'Figma', desc: 'Design & handoff' },
-    ],
+    name: 'Performance',
+    blurb: 'Diagnose and fix Core Web Vitals — led a cross-team perf working group at Tokopedia.',
+    items: ['Core Web Vitals', 'INP', 'Lighthouse', 'Perfsee', 'Profiling', 'Caching'],
+  },
+  {
+    name: 'Developer experience',
+    blurb: 'Own the toolchain a team lives in daily — bundling, tests and lint that stay fast as the codebase grows.',
+    items: ['Vite', 'Rspack', 'webpack', 'Vitest', 'Playwright', 'Testing Library', 'ESLint', 'oxlint'],
+  },
+  {
+    name: 'Infrastructure & delivery',
+    blurb: 'Ship it and keep it up — containers, CI pipelines, and the edge and cloud it runs on.',
+    items: ['Docker', 'GitHub Actions', 'Google Cloud', 'Cloudflare', 'Netlify'],
+  },
+  {
+    name: 'AI-native delivery',
+    blurb: 'Ship faster with agentic tooling in the loop — and the judgement for where it doesn’t belong.',
+    items: ['Claude Code', 'Codex', 'Copilot', 'MCP', 'Agentic workflows'],
   },
 ];
 
