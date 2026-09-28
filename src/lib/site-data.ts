@@ -333,6 +333,5 @@ export type SocialLink = { href: string; label: string; title: string };
 export const SOCIALS: SocialLink[] = [
   { href: `mailto:${SITE.email}`, label: 'Email', title: SITE.email },
   { href: 'https://www.linkedin.com/in/idindrakusuma', label: 'LinkedIn', title: 'LinkedIn' },
-  { href: 'https://x.com/idindrakusuma', label: 'X', title: 'X' },
   { href: 'https://github.com/idindrakusuma', label: 'GitHub', title: 'GitHub' },
 ];
