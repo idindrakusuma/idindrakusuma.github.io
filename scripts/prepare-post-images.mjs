@@ -22,6 +22,7 @@ import sharp from 'sharp';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const postsDir = join(root, 'content', 'posts');
 const outDir = join(root, 'public', 'images', 'posts');
+const shareDir = join(root, 'public', 'images', 'og');
 
 /** Card thumb renders at 280px, article images in a 760px column — 2x each. */
 const THUMB_WIDTH = 560;
@@ -157,6 +158,27 @@ await writeFile(
   'utf8',
 );
 
+// Link previews read og:image, and WhatsApp among others will not render a
+// WebP there — a shared post showed no picture at all. So each thumbnail also
+// gets a JPEG copy for crawlers only, at the same size, which the post page
+// points og:image and twitter:image at. Always rewritten: it is a pure function
+// of the thumbnail, so a replaced thumbnail can never leave a stale copy behind.
+await mkdir(shareDir, { recursive: true });
+const shared = new Set();
+for (const file of files) {
+  const slug = file.replace(/\.mdx$/, '');
+  const { 1: thumb } = /^thumbnail:\s*'(\/images\/posts\/[^']+\.webp)'$/m.exec(
+    await readFile(join(postsDir, file), 'utf8'),
+  ) ?? [];
+  if (!thumb) continue;
+  await sharp(join(root, 'public', thumb))
+    .flatten({ background: '#ffffff' })
+    .jpeg({ quality: 85, mozjpeg: true })
+    .toFile(join(shareDir, `${slug}.jpg`));
+  shared.add(`${slug}.jpg`);
+}
+const staleShares = (await readdir(shareDir)).filter((f) => f.endsWith('.jpg') && !shared.has(f));
+
 const written = onDisk;
 let bytes = 0;
 for (const f of written) bytes += (await stat(join(outDir, f))).size;
@@ -164,6 +186,10 @@ for (const f of written) bytes += (await stat(join(outDir, f))).size;
 console.log(
   `Fetched ${fetched}, reused ${reused}, measured ${measured} — ${written.length} images, ${(bytes / 1024 / 1024).toFixed(1)} MB`,
 );
+console.log(`Share images: ${shared.size} JPEGs in public/images/og`);
+if (staleShares.length) {
+  console.log(`Orphaned share images — no post has these slugs: ${staleShares.join(', ')}`);
+}
 if (orphans.length) {
   console.log(`Orphaned — no post references these: ${orphans.map((h) => h.split('/').pop()).join(', ')}`);
 }

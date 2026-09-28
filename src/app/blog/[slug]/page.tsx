@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -12,6 +14,9 @@ import Reveal from '@/components/Reveal';
 import { mdxComponents } from '@/components/mdx-components';
 import { formatDate, getNextPost, getPost, getPostBody, getPosts, summarise } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
+import manifest from '../../../../public/images/posts/manifest.json';
+
+const dimensions = manifest as Record<string, { width: number; height: number }>;
 
 type PostPageProps = { params: Promise<{ slug: string }> };
 
@@ -50,19 +55,48 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   if (!post) return {};
 
   const description = summarise(post.excerpt);
+  const images = shareImage(slug, post.thumbnail, post.title, post.draft);
   return {
     title: `${post.title} — ${SITE.name}`,
     description,
     alternates: { canonical: `/blog/${slug}` },
     openGraph: {
       type: 'article',
+      siteName: SITE.name,
       url: `${SITE.url}/blog/${slug}/`,
       title: post.title,
       description,
       publishedTime: new Date(post.date).toISOString(),
-      ...(post.thumbnail ? { images: [{ url: post.thumbnail }] } : {}),
+      images,
+    },
+    // Set in full, not left to the layout: Next merges metadata one top-level
+    // key at a time, so a post without its own `twitter` inherited the
+    // homepage's — and previews that read these tags showed the profile photo.
+    twitter: {
+      card: images.length ? 'summary_large_image' : 'summary',
+      creator: '@idindrakusuma',
+      title: post.title,
+      description,
+      images,
     },
   };
+}
+
+/**
+ * The JPEG copy of a post's thumbnail that scripts/prepare-post-images.mjs
+ * writes for link previews, which will not render WebP. Same pixels, so the
+ * thumbnail's measured size is the copy's size too. A published post whose copy
+ * is missing fails the build rather than shipping a preview with no picture.
+ */
+function shareImage(slug: string, thumbnail: string, alt: string, draft: boolean) {
+  if (!thumbnail) return [];
+  const size = dimensions[thumbnail];
+  if (!size || !existsSync(join(process.cwd(), 'public', 'images', 'og', `${slug}.jpg`))) {
+    // Same leniency as the thumbnail itself: a draft may not be prepared yet.
+    if (draft) return [];
+    throw new Error(`No share image for "${slug}" — run \`pnpm assets:posts\``);
+  }
+  return [{ url: `/images/og/${slug}.jpg`, width: size.width, height: size.height, alt }];
 }
 
 export default async function PostPage({ params }: PostPageProps) {
