@@ -14,6 +14,9 @@ import manifest from '../../public/images/posts/manifest.json';
 type Dimensions = { width: number; height: number };
 const dimensions = manifest as Record<string, Dimensions>;
 
+/** Longest inline-code word kept on one line — about a third of a phone's column. */
+const MAX_UNBROKEN = 24;
+
 export const mdxComponents = {
   /**
    * Markdown image syntax carries no dimensions, and an unsized image in a
@@ -29,6 +32,34 @@ export const mdxComponents = {
       throw new Error(`No measurement for "${href}" — run \`pnpm assets:posts\``);
     }
     return <Image src={href} alt={alt ?? ''} width={size.width} height={size.height} />;
+  },
+
+  /**
+   * Inline code may wrap between words, but a browser will also break it after
+   * any hyphen — `source-` / `code`, or `<!-- more -` / `->`. Each word is held
+   * together instead, except one long enough (a URL) that holding it would push
+   * the column wider than a phone.
+   *
+   * Multi-line strings are left alone: that is an unlabelled fence, whose
+   * newlines a nowrap span would collapse.
+   */
+  code: ({ children, ...props }: ComponentProps<'code'>) => {
+    if (typeof children !== 'string' || children.includes('\n')) {
+      return <code {...props}>{children}</code>;
+    }
+    return (
+      <code {...props}>
+        {children.split(/( +)/).map((part, i) =>
+          part.trim() && part.length <= MAX_UNBROKEN ? (
+            <span key={i} className="whitespace-nowrap">
+              {part}
+            </span>
+          ) : (
+            part
+          ),
+        )}
+      </code>
+    );
   },
 
   /**

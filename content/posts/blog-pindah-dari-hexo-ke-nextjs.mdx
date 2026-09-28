@@ -1,0 +1,81 @@
+---
+title: 'Setelah 7 Tahun, Blog Ini Pindah dari Hexo ke Next.js'
+date: '2026-09-28 07:33:53'
+category: Development
+tags: []
+thumbnail: '/images/posts/blog-pindah-dari-hexo-ke-nextjs-thumb.webp'
+---
+
+Tahun 2017 saya pernah nulis kenapa blog ini pindah dari Blogger ke Hexo. Sekarang, setelah 7 tahun lebih blog ini "mati suri", saya pindah lagi — kali ini ke Next.js dengan konten berbasis MDX. Semua 31 artikel lama ikut pindah, link lamanya tetap jalan, dan websitenya tetap statis seperti dulu. Di artikel ini saya cerita kenapa pindah, gimana cara migrasinya, dan apa saja yang saya dapat dari proses ini.
+
+## Kenapa Nggak Tetap Pakai Hexo?
+
+Jujur, Hexo nggak salah apa-apa. Waktu itu Hexo menjawab semua kebutuhan saya: cepat, simple, dan bisa di-hosting gratis. Masalahnya ada di saya sendiri, hehe.
+
+Setelah 7 tahun nggak disentuh, source code blog ini sudah susah dijalankan lagi. Versi Node-nya sudah jauh ketinggalan, plugin dan temanya banyak yang sudah nggak di-maintain, dan saya sendiri sudah lupa gimana struktur project-nya. Mau nulis satu artikel saja rasanya harus "arkeologi" dulu.
+
+Di sisi lain, sehari-hari saya kerja pakai React dan Next.js. Jadi daripada belajar ulang ekosistem Hexo, lebih masuk akal kalau blog ini pakai stack yang memang saya pakai setiap hari.
+
+## Tetap Statis, Tetap Ringan
+
+Satu hal yang saya pertahankan dari zaman Hexo: **website ini harus statis**. Nggak ada server, nggak ada database, cukup file HTML yang bisa di-hosting di mana saja.
+
+Untungnya Next.js punya fitur static export. Cukup satu baris di konfigurasi:
+
+```ts
+const nextConfig: NextConfig = {
+  output: 'export',
+  trailingSlash: true,
+};
+```
+
+Dengan `output: 'export'`, `pnpm build` menghasilkan folder `out/` berisi HTML statis. `trailingSlash` dipakai supaya setiap halaman jadi `index.html` di foldernya sendiri, karena hosting statis melayani direktori, bukan route.
+
+## Migrasi 31 Artikel Lama
+
+Ini bagian yang paling saya khawatirkan. Artikel-artikel lama masih tersimpan di branch `source-code` sebagai file Markdown ala Hexo, lengkap dengan frontmatter dan penanda `<!-- more -->` untuk excerpt.
+
+Daripada copy-paste satu per satu, saya bikin script migrasi yang membaca file-file itu langsung dari git — jadi nggak perlu checkout branch lama sama sekali. Script ini jalan sekali saja, lalu hasilnya jadi file `.mdx` di `content/posts/` yang bisa diedit manual.
+
+Beberapa penyesuaian kecil juga terjadi di sini. Misalnya, Hexo dulu punya enam kategori, sekarang cuma lima. Kategori `portofolio` saya gabung ke `Story`, karena isinya memang cerita pengalaman bikin project waktu kuliah, bukan tutorial.
+
+## Link Lama Nggak Boleh Mati
+
+Dulu URL artikel formatnya `/tahun/bulan/tanggal/judul/`, sekarang jadi `/blog/slug/`. Masalahnya, link lama itu yang masih tersebar di Google dan di blog orang lain. Kalau dibiarkan, semuanya bakal 404.
+
+Solusinya, saya generate file redirect otomatis dari data artikel itu sendiri. Tanggal dan slug yang dipakai untuk bikin URL lama sama persis dengan yang tersimpan di frontmatter, jadi nggak mungkin nggak sinkron. Cukup jalankan:
+
+```bash
+pnpm assets:redirects
+```
+
+## Gambar dan Kode yang Lebih Rapi
+
+Dua hal kecil yang bikin saya senang:
+
+- **Gambar** di-download ke repo, di-convert ke WebP, dan diukur dimensinya secara otomatis lewat `pnpm assets:posts`. Jadi nggak ada lagi gambar yang hilang karena hosting pihak ketiganya tutup.
+- **Syntax highlighting** sekarang pakai Shiki, dan prosesnya terjadi saat build. Artinya nggak ada JavaScript tambahan yang dikirim ke browser cuma buat mewarnai kode.
+
+## Nulis Artikel Baru Jadi Gampang
+
+Yang paling penting buat saya: nulis artikel baru harus semudah mungkin, supaya blog ini nggak mati suri lagi. Sekarang cukup satu perintah:
+
+```bash
+pnpm new-post "Judul Artikel" --category Development
+```
+
+File baru langsung jadi dengan frontmatter lengkap dan status `draft: true`. Draft bisa dilihat di `pnpm dev`, tapi otomatis dilewati saat `pnpm build` — jadi artikel yang belum selesai nggak mungkin nyasar ke website live. Kalau belum punya gambar thumbnail, ada juga `pnpm assets:thumbnail` yang menggambar thumbnail dari judul dan kategori artikel.
+
+Artikel yang sedang kamu baca ini pun dibuat dengan cara itu 😄
+
+## Dibantu AI, 100%
+
+Proses migrasi ke blog baru ini jadi jauh lebih menyenangkan karena semuanya dikerjakan bareng AI, full 100%. Desainnya saya buat pakai Claude Design, sedangkan urusan nulis kode, migrasi artikel, dan lain-lainnya dikerjakan pakai Claude Code.
+
+Prosesnya juga cepat banget. Untuk dapat MVP pertama, saya cuma butuh 1 hari development. Sisanya tinggal update tipis-tipis saja.
+
+## Penutup
+
+Dari Blogger ke Hexo, lalu dari Hexo ke Next.js. Alatnya boleh ganti, tapi tujuannya tetap sama seperti tahun 2017: tempat saya menulis apa yang sudah saya pelajari, semacam media pengingat buat diri sendiri.
+
+Semoga kali ini nggak perlu nunggu 7 tahun lagi buat artikel berikutnya, hehe. Sampai jumpa dan semoga bermanfaat :)
