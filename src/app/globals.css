@@ -258,6 +258,26 @@ body {
   animation: ik-reveal 0.8s var(--ease-smooth) both;
 }
 
+/* The same rise without the fade, for the page's Largest Contentful Paint. An
+   element at opacity 0 is not painted as far as LCP is concerned, so a fading
+   hero headline put ~450ms of animation delay in front of the metric — most of
+   it, on a page whose HTML arrives in tens of milliseconds. Sliding in at full
+   opacity reads almost the same and counts from the first frame. */
+@keyframes ik-rise {
+  from {
+    transform: translateY(28px);
+  }
+  to {
+    transform: none;
+  }
+}
+.ik-reveal.ik-reveal-rise {
+  opacity: 1;
+}
+.ik-reveal-rise[data-visible='true'] {
+  animation-name: ik-rise;
+}
+
 /* ---------------------------------------------------------------------------
    Theme toggle icons
    Swapped in CSS rather than from React state so the correct glyph is painted

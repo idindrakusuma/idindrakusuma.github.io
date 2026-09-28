@@ -82,7 +82,8 @@ export default function Hero() {
           <Reveal immediate
             as="h1"
             delay={100}
-            className="font-display mb-[22px] text-[clamp(42px,7vw,76px)] leading-[1.02] font-bold tracking-[-.03em]"
+            // The LCP element: rises in without fading — see .ik-reveal-rise.
+            className="ik-reveal-rise font-display mb-[22px] text-[clamp(42px,7vw,76px)] leading-[1.02] font-bold tracking-[-.03em]"
           >
             I build fast,
             <br />
