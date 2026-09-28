@@ -624,6 +624,14 @@ body {
   color: var(--primary);
   padding: 2.5px 7px;
   border-radius: 6px;
+  /* Inline code is quoted literally — `<!-- more -->` must not turn into
+     arrows. And when it wraps, each line keeps its own padding and corners
+     rather than reading as one box sliced in half. A token with no break in
+     it at all (a bare URL) may split anywhere rather than widen the page. */
+  font-variant-ligatures: none;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 .ik-prose pre {
   background: var(--code);
