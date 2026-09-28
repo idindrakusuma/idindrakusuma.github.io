@@ -1,0 +1,6 @@
+# Netlify response headers. Everything under /_next/static is content-hashed —
+# a changed file gets a new name — so it can be cached for good. Without this
+# Netlify serves it `max-age=0, must-revalidate`, and every repeat visit
+# re-checks all ~15 scripts and fonts before the page can use them.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
