@@ -220,6 +220,16 @@ body {
 .ik-art-float-late {
   animation-delay: -3s;
 }
+/* Dashes that travel along their path: one dash-and-gap (3 + 8) per step, so
+   the loop is seamless. */
+@keyframes ik-march {
+  to {
+    stroke-dashoffset: -11;
+  }
+}
+.ik-orbit-march {
+  animation: ik-march 1.4s linear infinite;
+}
 @keyframes ik-ping {
   0% {
     transform: scale(0.9);
@@ -620,6 +630,7 @@ body {
 @media (max-width: 860px) {
   .ik-hero {
     grid-template-columns: 1fr;
+    row-gap: 30px;
   }
   .ik-hero-copy {
     text-align: center;

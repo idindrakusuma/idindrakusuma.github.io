@@ -10,7 +10,8 @@ const driftLate = { animation: 'ik-float 6s ease-in-out infinite -3s' };
 
 /**
  * A dotted orbit behind the portrait — the same thin, dashed line the blog
- * header's illustration draws, in place of the old spinning atom.
+ * header's illustration draws, in place of the old spinning atom. Its dashes
+ * march slowly round it (.ik-orbit-march).
  */
 function Orbit() {
   return (
@@ -28,6 +29,7 @@ function Orbit() {
         transform="rotate(-14 200 200)"
         strokeWidth="1.3"
         strokeDasharray="3 8"
+        className="ik-orbit-march"
         style={{ stroke: 'var(--primary)', opacity: 0.4 }}
       />
     </svg>
@@ -58,7 +60,7 @@ export default function Hero() {
   // and reintroduce the vertical cut. `isolate` keeps the overhang painting beneath
   // the sections that follow, which dropping the clip would otherwise break.
   return (
-    <header className="isolate overflow-x-clip px-6 pt-[150px] pb-[90px]">
+    <header className="isolate overflow-x-clip px-6 pt-[150px] pb-[90px] max-sm:pt-[112px] max-sm:pb-[64px]">
       <div className="ik-hero relative z-1 mx-auto grid max-w-[1160px] grid-cols-[1.2fr_1fr] items-center gap-[52px]">
         <div className="ik-hero-copy">
           {/* One heading holds both the greeting and the headline, so the page's
