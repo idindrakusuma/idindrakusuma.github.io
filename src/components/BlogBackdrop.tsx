@@ -7,16 +7,27 @@
  * Soft by gradient alone, with no `blur()` filter — see AuroraBackground,
  * including why every gradient is sized `closest-side` and why the layer clips
  * only sideways.
+ *
+ * On a phone the top orb moves down and grows. Sized in vw it is small there,
+ * and hung from the very top it sat right behind the status bar — where iOS
+ * draws its own chrome over the page — so it read as a circle cut off by the
+ * bar. Lowered to behind the title, it glows the way it does on a desktop,
+ * where the same numbers already put its centre well clear of the top edge.
+ * Classes are whole strings on purpose: Tailwind only generates what it can
+ * read in the source.
  */
+const TOP_ORB = {
+  index:
+    'absolute -top-[15%] right-[-11%] h-[60vw] w-[60vw] opacity-[.14] max-sm:top-[8%] max-sm:right-[-30%] max-sm:h-[85vw] max-sm:w-[85vw]',
+  article:
+    'absolute -top-[15%] right-[-11%] h-[58vw] w-[58vw] opacity-[.12] max-sm:top-[8%] max-sm:right-[-30%] max-sm:h-[85vw] max-sm:w-[85vw]',
+};
 export default function BlogBackdrop({ single = false }: { single?: boolean }) {
   return (
     <div aria-hidden="true" className="bg-bg pointer-events-none fixed inset-0 z-0 overflow-x-clip">
       <div
-        className="absolute -top-[15%] right-[-11%]"
+        className={single ? TOP_ORB.article : TOP_ORB.index}
         style={{
-          width: single ? '58vw' : '60vw',
-          height: single ? '58vw' : '60vw',
-          opacity: single ? 0.12 : 0.14,
           background: 'radial-gradient(closest-side,var(--a1),transparent)',
           animation: `ik-aur1 ${single ? '28s' : '26s'} ease-in-out infinite`,
         }}
