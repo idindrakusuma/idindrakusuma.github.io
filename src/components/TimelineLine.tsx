@@ -49,14 +49,12 @@ export default function TimelineLine() {
       ref={ref}
       aria-hidden="true"
       className="absolute top-2 bottom-2 left-6 w-0.5 rounded-full"
-      // Brand colour the whole way down, fading only to a lighter tint of it.
-      // It used to fade into --border at 60% under a 55% opacity — the border
-      // colour is within a few shades of the page background in both themes,
-      // so past the first company the line simply wasn't there.
-      style={{
-        background:
-          'linear-gradient(var(--primary),color-mix(in srgb,var(--primary) 45%,transparent) 55%,color-mix(in srgb,var(--primary) 25%,transparent))',
-      }}
+      // One flat tint of the brand colour, top to bottom. It used to fade into
+      // --border, which sits within a few shades of the page background, so past
+      // the first companies the line vanished; a gradient over a line this long
+      // also left the top far brighter than the rest. color-mix keeps the tint
+      // right in both themes, since --primary is lighter in dark mode.
+      style={{ background: 'color-mix(in srgb,var(--primary) 40%,transparent)' }}
     />
   );
 }
