@@ -29,6 +29,7 @@
   --nav: rgb(255 255 255 / 0.7);
   --shadow: 0 18px 50px -22px rgb(96 24 40 / 0.26);
   --shadow-sm: 0 6px 20px -10px rgb(96 24 40 / 0.2);
+  --art-shadow: 0 14px 22px rgb(96 24 40 / 0.12);
   /* Aurora / gradient accents. --a1 tracks --primary; --a2/--a3 are its lighter
      and deeper companions, used across every gradient on the page. */
   --a1: #c0203f;
@@ -59,6 +60,7 @@
   --nav: rgb(18 9 12 / 0.62);
   --shadow: 0 24px 70px -24px rgb(0 0 0 / 0.72);
   --shadow-sm: 0 8px 26px -12px rgb(0 0 0 / 0.6);
+  --art-shadow: 0 16px 28px rgb(0 0 0 / 0.45);
   --a1: #f0455f;
   --a2: #ff7d97;
   --a3: #b83a86;
@@ -210,6 +212,13 @@ body {
   50% {
     transform: translateY(-12px);
   }
+}
+/* The blog header's illustration: its three pieces drift out of step. */
+.ik-art-float {
+  animation: ik-float 6s ease-in-out infinite;
+}
+.ik-art-float-late {
+  animation-delay: -3s;
 }
 @keyframes ik-ping {
   0% {
@@ -370,6 +379,24 @@ body {
 .ik-popular:hover .ik-popular-title,
 .ik-popular:focus-visible .ik-popular-title {
   color: var(--primary);
+}
+/* Popular titles show two lines, and the full title slides open beneath them
+   on hover or keyboard focus. The clamp itself cannot animate, so it is lifted
+   at once and max-height does the easing; 5.2em (four lines) covers the longest
+   title at the sidebar's width. Only where a pointer can hover: on touch, a tap
+   is the navigation. */
+.ik-popular-title {
+  max-height: 2.6em;
+  transition:
+    max-height 0.35s var(--ease-smooth),
+    color 0.15s;
+}
+@media (hover: hover) {
+  .ik-popular:hover .ik-popular-title,
+  .ik-popular:focus-visible .ik-popular-title {
+    -webkit-line-clamp: unset;
+    max-height: 5.2em;
+  }
 }
 .ik-clap[data-full] {
   border-color: var(--primary);
@@ -608,6 +635,9 @@ body {
   }
   .ik-hero-copy > div {
     justify-content: center;
+  }
+  .ik-blog-art {
+    display: none;
   }
   .ik-hero-media {
     order: -1;
