@@ -63,8 +63,9 @@ export default function PopularPosts({ posts }: { posts: Entry[] }) {
               </span>
               {/* Two lines are always reserved for the title, and the count sits
                   beside it rather than under it, so every row is the same height
-                  whether or not the ranking has arrived. */}
-              <span className="ik-popular-title font-display line-clamp-2 min-h-[2.6em] min-w-0 flex-1 text-[14px] leading-[1.3] font-semibold transition-colors">
+                  whether or not the ranking has arrived. The rest of a long title
+                  opens on hover — see .ik-popular-title. */}
+              <span className="ik-popular-title font-display line-clamp-2 min-h-[2.6em] min-w-0 flex-1 text-[14px] leading-[1.3] font-semibold">
                 {post.title}
               </span>
               {post.total > 0 && (

@@ -371,6 +371,24 @@ body {
 .ik-popular:focus-visible .ik-popular-title {
   color: var(--primary);
 }
+/* Popular titles show two lines, and the full title slides open beneath them
+   on hover or keyboard focus. The clamp itself cannot animate, so it is lifted
+   at once and max-height does the easing; 5.2em (four lines) covers the longest
+   title at the sidebar's width. Only where a pointer can hover: on touch, a tap
+   is the navigation. */
+.ik-popular-title {
+  max-height: 2.6em;
+  transition:
+    max-height 0.35s var(--ease-smooth),
+    color 0.15s;
+}
+@media (hover: hover) {
+  .ik-popular:hover .ik-popular-title,
+  .ik-popular:focus-visible .ik-popular-title {
+    -webkit-line-clamp: unset;
+    max-height: 5.2em;
+  }
+}
 .ik-clap[data-full] {
   border-color: var(--primary);
   color: var(--primary);

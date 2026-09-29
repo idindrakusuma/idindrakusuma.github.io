@@ -33,51 +33,55 @@ export default async function BlogIndex() {
       <div className="relative z-1">
         <BlogChrome back={{ href: '/', label: 'Back to site' }} trailing="Blog" />
 
-        <header className="mx-auto max-w-[1080px] px-6 pt-[132px] pb-[22px]">
-          <Reveal immediate as="p" className="font-mono text-primary m-0 mb-3.5 text-[13px]">
-            {`Blog · ${posts.length} posts`}
-          </Reveal>
+        {/* The sidebar starts level with the header rather than below it, so the
+            space beside the heading holds the Popular list instead of nothing. */}
+        <div className="ik-blog-main mx-auto grid max-w-[1120px] grid-cols-[1fr_290px] items-start gap-10 px-6 pt-[132px] pb-10">
+          <div className="min-w-0">
+            <header className="pb-[22px]">
+              <Reveal immediate as="p" className="font-mono text-primary m-0 mb-3.5 text-[13px]">
+                {`Blog · ${posts.length} posts`}
+              </Reveal>
 
-          <Reveal
-            immediate
-            as="h1"
-            className="font-display m-0 mb-[18px] text-[clamp(38px,6.5vw,68px)] leading-[1.03] font-bold tracking-[-.03em]"
-          >
-            Notes on building
-            <br />
-            <span className="ik-gradient-wide">for the web.</span>
-          </Reveal>
+              <Reveal
+                immediate
+                as="h1"
+                className="font-display m-0 mb-[18px] text-[clamp(38px,6.5vw,68px)] leading-[1.03] font-bold tracking-[-.03em]"
+              >
+                Notes on building
+                <br />
+                <span className="ik-gradient-wide">for the web.</span>
+              </Reveal>
 
-          <Reveal immediate as="p" className="text-muted m-0 max-w-[600px] text-[clamp(16px,2.2vw,18px)]">
-            Tutorials, engineering notes and a few career stories — written mostly in Bahasa
-            Indonesia over the years at{' '}
-            <Link href="/" className="text-primary font-semibold no-underline">
-              indrakusuma.web.id
-            </Link>
-            .
-          </Reveal>
-        </header>
+              <Reveal immediate as="p" className="text-muted m-0 max-w-[600px] text-[clamp(16px,2.2vw,18px)]">
+                Tutorials, engineering notes and a few career stories — written mostly in Bahasa
+                Indonesia over the years at{' '}
+                <Link href="/" className="text-primary font-semibold no-underline">
+                  indrakusuma.web.id
+                </Link>
+                .
+              </Reveal>
+            </header>
 
-        <div className="mx-auto max-w-[1080px] px-6 pt-[18px] pb-1.5">
-          <Reveal immediate>
-            <CategoryFilter categories={used} />
-          </Reveal>
-        </div>
+            <div className="pt-[18px] pb-1.5">
+              <Reveal immediate>
+                <CategoryFilter categories={used} />
+              </Reveal>
+            </div>
 
-        <main className="ik-blog-main mx-auto grid max-w-[1080px] grid-cols-[1fr_260px] items-start gap-10 px-6 pt-[26px] pb-10">
-          <div className="flex min-w-0 flex-col gap-4">
-            {posts.map((post, index) => (
-              // The first thumbnail is what the page's LCP is measured on.
-              <PostCard key={post.slug} post={post} lcp={index === 0} />
-            ))}
+            <main className="flex flex-col gap-4 pt-[26px]">
+              {posts.map((post, index) => (
+                // The first thumbnail is what the page's LCP is measured on.
+                <PostCard key={post.slug} post={post} lcp={index === 0} />
+              ))}
+            </main>
           </div>
 
           <aside className="ik-side sticky top-[88px]">
             <PopularPosts posts={posts.map(({ slug, title }) => ({ slug, title }))} />
           </aside>
-        </main>
+        </div>
 
-        <footer className="border-line text-faint mx-auto flex max-w-[1080px] flex-wrap items-center justify-between gap-3 border-t px-6 py-6 text-[13px]">
+        <footer className="border-line text-faint mx-auto flex max-w-[1120px] flex-wrap items-center justify-between gap-3 border-t px-6 py-6 text-[13px]">
           <span>
             © {new Date().getFullYear()} {SITE.name}
           </span>
