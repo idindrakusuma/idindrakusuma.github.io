@@ -136,7 +136,15 @@ export default async function PostPage({ params }: PostPageProps) {
             the sidebar appears in the space beside it or not at all, rather
             than narrowing the text to make room. */}
         <div
-          className={`ik-article-shell mx-auto max-w-[1120px] px-6 pt-[130px]${toc.length >= 2 ? ' ik-has-toc-fab' : ''}`}
+          // Kept as whole, space-separated strings: Tailwind finds classes by
+          // scanning the source, and one glued to a `${` is not seen as a class
+          // at all — which is how pt-[130px] once went missing from the CSS.
+          className={[
+            'ik-article-shell mx-auto max-w-[1120px] px-6 pt-[130px]',
+            toc.length >= 2 && 'ik-has-toc-fab',
+          ]
+            .filter(Boolean)
+            .join(' ')}
         >
           <div className="mx-auto w-full max-w-[760px]">
             {/* The posts are Bahasa Indonesia on an otherwise English site. */}
