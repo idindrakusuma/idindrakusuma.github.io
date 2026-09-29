@@ -821,6 +821,10 @@ body {
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  /* Older posts link bare URLs and file names with no break in them. Left
+     whole, one of those set the page's width on a phone and iOS zoomed the
+     entire article out to fit it; they may split anywhere instead. */
+  overflow-wrap: anywhere;
 }
 .ik-prose code {
   font-family: var(--font-jetbrains), monospace;
