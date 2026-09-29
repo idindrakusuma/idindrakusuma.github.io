@@ -278,6 +278,29 @@ body {
   animation-name: ik-rise;
 }
 
+/* Clap button at the end of a post: each tap floats a "+1" up out of it, and
+   the button settles into the brand colour once the reader's ten are spent. */
+@keyframes ik-clap-burst {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -30px);
+  }
+}
+.ik-clap-burst {
+  animation: ik-clap-burst 0.7s var(--ease-smooth) forwards;
+}
+.ik-clap:active {
+  transform: scale(0.95);
+}
+.ik-clap[data-full] {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
 /* ---------------------------------------------------------------------------
    Theme toggle icons
    Swapped in CSS rather than from React state so the correct glyph is painted
