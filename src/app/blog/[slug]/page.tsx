@@ -11,7 +11,7 @@ import BlogBackdrop from '@/components/BlogBackdrop';
 import BlogChrome from '@/components/BlogChrome';
 import PostActions from '@/components/PostActions';
 import Reveal from '@/components/Reveal';
-import TableOfContents from '@/components/TableOfContents';
+import TableOfContents, { FloatingTableOfContents } from '@/components/TableOfContents';
 import { mdxComponents } from '@/components/mdx-components';
 import { formatDate, getNextPost, getPost, getPostBody, getPosts, summarise } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
@@ -135,7 +135,9 @@ export default async function PostPage({ params }: PostPageProps) {
             the article. The reading column keeps its 760px measure either way —
             the sidebar appears in the space beside it or not at all, rather
             than narrowing the text to make room. */}
-        <div className="ik-article-shell mx-auto max-w-[1120px] px-6 pt-[130px]">
+        <div
+          className={`ik-article-shell mx-auto max-w-[1120px] px-6 pt-[130px]${toc.length >= 2 ? ' ik-has-toc-fab' : ''}`}
+        >
           <div className="mx-auto w-full max-w-[760px]">
             {/* The posts are Bahasa Indonesia on an otherwise English site. */}
             {/* The archive is Bahasa Indonesia on an otherwise English site, so
@@ -235,6 +237,10 @@ export default async function PostPage({ params }: PostPageProps) {
               empty rather than moving the article off its usual line. */}
           <aside className="ik-article-side">{toc.length >= 2 && <TableOfContents items={toc} />}</aside>
         </div>
+
+        {/* The same contents below the sidebar's breakpoint, folded into a
+            floating button. */}
+        {toc.length >= 2 && <FloatingTableOfContents items={toc} />}
       </div>
     </>
   );
