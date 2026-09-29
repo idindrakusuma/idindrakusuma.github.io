@@ -296,6 +296,29 @@ body {
 .ik-clap:active {
   transform: scale(0.95);
 }
+/* Table of contents beside an article: scrolls itself if the post has more
+   sections than fit, and marks the one being read. */
+.ik-toc {
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+}
+.ik-toc-link {
+  color: var(--muted);
+  border-color: transparent;
+}
+.ik-toc-link:hover {
+  color: var(--text);
+}
+.ik-toc-link[aria-current] {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--surface-2);
+  font-weight: 600;
+}
+.ik-popular:hover .ik-popular-title,
+.ik-popular:focus-visible .ik-popular-title {
+  color: var(--primary);
+}
 .ik-clap[data-full] {
   border-color: var(--primary);
   color: var(--primary);
@@ -838,8 +861,9 @@ body {
    Article sidebar
 
    Desktop only, and on the article's terms: the reading column stays at its
-   760px measure, so the card appears in the room beside it or not at all. It
-   needs 760 + 40 gap + 260 card inside the shell's padding before there is any.
+   760px measure, so the table of contents appears in the room beside it or not
+   at all. It needs 760 + 40 gap + 260 sidebar inside the shell's padding before
+   there is any.
 --------------------------------------------------------------------------- */
 .ik-article-side {
   display: none;

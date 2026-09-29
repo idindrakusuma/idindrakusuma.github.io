@@ -18,6 +18,9 @@ importers:
       '@next/third-parties':
         specifier: 16.3.3
         version: 16.3.3(next@16.3.3(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      github-slugger:
+        specifier: ^2.0.0
+        version: 2.0.0
       next:
         specifier: 16.3.3
         version: 16.3.3(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -864,6 +867,9 @@ packages:
 
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
+
+  github-slugger@2.0.0:
+    resolution: {integrity: sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==}
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
@@ -2182,6 +2188,8 @@ snapshots:
       is-extendable: 0.1.1
 
   extend@3.0.2: {}
+
+  github-slugger@2.0.0: {}
 
   graceful-fs@4.2.11: {}
 

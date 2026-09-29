@@ -10,11 +10,12 @@ import remarkGfm from 'remark-gfm';
 import BlogBackdrop from '@/components/BlogBackdrop';
 import BlogChrome from '@/components/BlogChrome';
 import PostActions from '@/components/PostActions';
-import ProfileCard from '@/components/ProfileCard';
 import Reveal from '@/components/Reveal';
+import TableOfContents from '@/components/TableOfContents';
 import { mdxComponents } from '@/components/mdx-components';
 import { formatDate, getNextPost, getPost, getPostBody, getPosts, summarise } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
+import { rehypeToc, type TocItem } from '@/lib/toc';
 import manifest from '../../../../public/images/posts/manifest.json';
 
 const dimensions = manifest as Record<string, { width: number; height: number }>;
@@ -106,6 +107,8 @@ export default async function PostPage({ params }: PostPageProps) {
   if (!post) notFound();
 
   const [body, next] = await Promise.all([getPostBody(slug), getNextPost(slug)]);
+  // Filled in by rehypeToc while the body compiles — see src/lib/toc.ts.
+  const toc: TocItem[] = [];
   const { content } = await compileMDX({
     source: body,
     components: mdxComponents,
@@ -117,7 +120,7 @@ export default async function PostPage({ params }: PostPageProps) {
         // unclickable text — the same migration gap as the dead permalinks
         // above, just quieter.
         remarkPlugins: [remarkGfm],
-        rehypePlugins: [[rehypePrettyCode, prettyCode]],
+        rehypePlugins: [rehypeToc(toc), [rehypePrettyCode, prettyCode]],
       },
     },
   });
@@ -128,10 +131,10 @@ export default async function PostPage({ params }: PostPageProps) {
       <div className="relative z-1">
         <BlogChrome back={{ href: '/blog', label: 'All writing' }} trailing="Blog" />
 
-        {/* From a wide enough viewport the author card sits alongside the
-            article. The reading column keeps its 760px measure either way —
-            the card appears in the space beside it or not at all, rather than
-            narrowing the text to make room. */}
+        {/* From a wide enough viewport the table of contents sits alongside
+            the article. The reading column keeps its 760px measure either way —
+            the sidebar appears in the space beside it or not at all, rather
+            than narrowing the text to make room. */}
         <div className="ik-article-shell mx-auto max-w-[1120px] px-6 pt-[130px]">
           <div className="mx-auto w-full max-w-[760px]">
             {/* The posts are Bahasa Indonesia on an otherwise English site. */}
@@ -227,9 +230,10 @@ export default async function PostPage({ params }: PostPageProps) {
             </footer>
           </div>
 
-          <aside className="ik-article-side">
-            <ProfileCard />
-          </aside>
+          {/* A table of contents only earns its place with two sections or more;
+              a post without them — most of the older stories — leaves the column
+              empty rather than moving the article off its usual line. */}
+          <aside className="ik-article-side">{toc.length >= 2 && <TableOfContents items={toc} />}</aside>
         </div>
       </div>
     </>

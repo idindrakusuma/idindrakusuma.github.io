@@ -1,6 +1,6 @@
-import { getDeployStore, getStore } from '@netlify/blobs';
 import type { Config, Context } from '@netlify/functions';
-import { MAX_PER_VISITOR, addClaps, isSlug, readClaps, visitorKey, type ClapStore } from '../claps/core';
+import { MAX_PER_VISITOR, addClaps, isSlug, readClaps, visitorKey } from '../claps/core';
+import { clapStore } from '../claps/store';
 
 /**
  * The blog's clap counter: GET reads a post's claps, POST adds to them.
@@ -11,24 +11,14 @@ import { MAX_PER_VISITOR, addClaps, isSlug, readClaps, visitorKey, type ClapStor
  */
 
 /**
- * Production claps go to the site-wide store. Anything else — a deploy
- * preview, a branch deploy — gets a store of its own that disappears with the
- * deploy, so trying the button on a preview never touches the real counts.
+ * The salt that makes a visitor key unguessable, from the CLAP_SALT
+ * environment variable. It must be the same value in every context that can
+ * write: a preview salted differently would see every visitor as new and hand
+ * out a fresh ten claps per post. So there is no fallback — a context without
+ * it can read counts but not add to them.
  */
-function clapStore(context: Context): ClapStore {
-  const options = { name: 'claps', consistency: 'strong' as const };
-  return context.deploy.context === 'production' ? getStore(options) : getDeployStore(options);
-}
-
-/**
- * The salt that makes a visitor key unguessable. Required in production,
- * where it has to be set as the CLAP_SALT environment variable; elsewhere the
- * deploy's own id stands in, so a preview works without configuration.
- */
-function salt(context: Context): string | null {
-  const configured = Netlify.env.get('CLAP_SALT');
-  if (configured) return configured;
-  return context.deploy.context === 'production' ? null : context.deploy.id;
+function salt(): string | null {
+  return Netlify.env.get('CLAP_SALT') || null;
 }
 
 const json = (body: unknown, status = 200) =>
@@ -48,13 +38,13 @@ async function postExists(req: Request, slug: string): Promise<boolean> {
 }
 
 export default async (req: Request, context: Context) => {
-  const secret = salt(context);
+  const secret = salt();
 
   if (req.method === 'GET') {
     const slug = new URL(req.url).searchParams.get('slug');
     if (!isSlug(slug)) return json({ error: 'invalid slug' }, 400);
     const visitor = secret ? visitorKey(context.ip, secret) : null;
-    return json(await readClaps(clapStore(context), slug, visitor));
+    return json(await readClaps(clapStore(), slug, visitor));
   }
 
   if (!secret) return json({ error: 'claps are not configured' }, 503);
@@ -72,7 +62,7 @@ export default async (req: Request, context: Context) => {
   }
   if (!(await postExists(req, slug))) return json({ error: 'unknown post' }, 404);
 
-  return json(await addClaps(clapStore(context), slug, visitorKey(context.ip, secret), count));
+  return json(await addClaps(clapStore(), slug, visitorKey(context.ip, secret), count));
 };
 
 export const config: Config = {

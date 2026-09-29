@@ -13,6 +13,8 @@ import { createHash } from 'node:crypto';
  * The visitor cap is what a reader feels; the hourly cap bounds what anyone
  * with a pool of addresses can do to one post. The repository is public, so
  * none of this relies on the rules being secret — only CLAP_SALT is.
+ *
+ * topClaps() lists the total/ entries to rank posts for the blog index.
  */
 
 /** Claps one visitor can give one post. */
@@ -38,6 +40,7 @@ export type ClapStore = {
     data: unknown,
     options?: { onlyIfNew?: boolean } | { onlyIfMatch?: string },
   ): Promise<{ modified: boolean }>;
+  list(options: { prefix: string }): Promise<{ blobs: { key: string }[] }>;
 };
 
 /**
@@ -106,6 +109,25 @@ export async function increment(
 }
 
 const hourStamp = (now: Date) => now.toISOString().slice(0, 13).replace(/\D/g, '');
+
+/**
+ * Every post that has claps, most-clapped first, ties broken by slug so the
+ * order is stable. A post with none has no total entry and is simply absent —
+ * the page fills the rest of its list from the newest posts.
+ */
+export async function topClaps(store: ClapStore, limit: number) {
+  const { blobs } = await store.list({ prefix: 'total/' });
+  const counts = await Promise.all(
+    blobs.map(async ({ key }) => {
+      const entry = await store.getWithMetadata(key, { type: 'json' });
+      return { slug: key.slice('total/'.length), total: readCount(entry?.data ?? null) };
+    }),
+  );
+  return counts
+    .filter((c) => c.total > 0 && isSlug(c.slug))
+    .sort((a, b) => b.total - a.total || a.slug.localeCompare(b.slug))
+    .slice(0, limit);
+}
 
 export async function readClaps(store: ClapStore, slug: string, visitor: string | null) {
   const [total, mine] = await Promise.all([
