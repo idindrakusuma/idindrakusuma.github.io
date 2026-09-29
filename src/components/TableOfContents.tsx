@@ -105,8 +105,12 @@ export default function TableOfContents({ items }: { items: TocItem[] }) {
  * from a keyboard as well as a thumb. It is the panel that takes focus, not its
  * first link: iOS Safari draws a focus ring on any element focused from script,
  * which made the first section look selected whatever was being read. The panel
- * draws no ring, and Tab from it lands on the first link. Hidden by CSS from the breakpoint up, where the
- * sidebar takes over.
+ * draws no ring, and Tab from it lands on the first link.
+ *
+ * The panel stays in the page and animates open and shut (see .ik-toc-panel in
+ * globals.css) rather than mounting on open; while shut it is `inert`, so it
+ * can neither be focused nor read. Hidden by CSS from the breakpoint up, where
+ * the sidebar takes over.
  */
 export function FloatingTableOfContents({ items }: { items: TocItem[] }) {
   const active = useReadingSection(items);
@@ -139,29 +143,25 @@ export function FloatingTableOfContents({ items }: { items: TocItem[] }) {
 
   return (
     <div ref={root} className="ik-toc-fab fixed z-40">
-      {open && (
-        <nav
-          ref={panel}
-          tabIndex={-1}
-          id="toc-panel"
-          aria-labelledby="toc-panel-heading"
-          className="ik-toc-panel bg-surface border-line shadow-card absolute right-0 bottom-[calc(100%+12px)] rounded-[20px] border px-4 py-[18px]"
+      <nav
+        ref={panel}
+        tabIndex={-1}
+        id="toc-panel"
+        aria-labelledby="toc-panel-heading"
+        data-open={open || undefined}
+        inert={!open}
+        className="ik-toc-panel bg-surface border-line shadow-card absolute right-0 bottom-[calc(100%+12px)] rounded-[20px] border px-4 py-[18px]"
+      >
+        <h2
+          id="toc-panel-heading"
+          className="font-mono text-primary m-0 mb-2.5 px-1 text-[12px] tracking-[.08em] uppercase"
         >
-          <h2
-            id="toc-panel-heading"
-            className="font-mono text-primary m-0 mb-2.5 px-1 text-[12px] tracking-[.08em] uppercase"
-          >
-            On this page
-          </h2>
-          {/* Closed a tick later, so the link's own navigation runs before the
-              panel — and the link in it — leave the page. */}
-          <TocList
-            items={items}
-            active={active}
-            onPick={() => window.setTimeout(() => close(false), 0)}
-          />
-        </nav>
-      )}
+          On this page
+        </h2>
+        {/* Closed a tick later, so the link's own navigation runs before the
+            panel turns inert. */}
+        <TocList items={items} active={active} onPick={() => window.setTimeout(() => close(false), 0)} />
+      </nav>
       <button
         ref={button}
         type="button"
@@ -171,7 +171,10 @@ export function FloatingTableOfContents({ items }: { items: TocItem[] }) {
         aria-label={open ? 'Close table of contents' : 'Open table of contents'}
         className="bg-surface border-line shadow-card text-ink hover:border-primary grid h-12 w-12 place-items-center rounded-full border transition-[border-color,color]"
       >
-        {open ? <CloseIcon /> : <ListIcon />}
+        {/* Keyed so the icon remounts, and turns in, each time it changes. */}
+        <span key={open ? 'close' : 'list'} className="ik-toc-fab-icon grid place-items-center">
+          {open ? <CloseIcon /> : <ListIcon />}
+        </span>
       </button>
     </div>
   );

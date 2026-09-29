@@ -311,6 +311,35 @@ body {
   width: min(320px, calc(100vw - 32px));
   max-height: min(60vh, 480px);
   overflow-y: auto;
+  /* Grows out of the button it belongs to. Shut, it fades and shrinks back
+     towards that corner, then goes hidden once the fade is over — the delay on
+     visibility is what lets the closing half of the animation be seen. */
+  transform-origin: bottom right;
+  opacity: 0;
+  transform: translateY(8px) scale(0.96);
+  visibility: hidden;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0s linear 0.18s;
+}
+.ik-toc-panel[data-open] {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition:
+    opacity 0.22s var(--ease-smooth),
+    transform 0.22s var(--ease-smooth),
+    visibility 0s;
+}
+@keyframes ik-toc-icon-in {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+}
+.ik-toc-fab-icon {
+  animation: ik-toc-icon-in 0.2s var(--ease-smooth);
 }
 /* From the sidebar's breakpoint up the contents sit beside the article, so the
    floating button steps aside. Below it, a page that has the button gets room
