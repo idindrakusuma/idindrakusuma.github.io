@@ -27,7 +27,7 @@ pnpm for months while the committed lockfile was npm's.
 | `pnpm build` | Static export into `out/` |
 | `pnpm lint` | oxlint |
 | `pnpm typecheck` | `tsc --noEmit` |
-| `pnpm test` | Clap counter rules (Node 22+) |
+| `pnpm test` | Clap counter rules |
 | `pnpm assets` | Rebuild every generated asset |
 | `pnpm new-post` | Scaffold a new blog post |
 | `pnpm assets:posts` | Vendor blog images and measure them |
