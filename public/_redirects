@@ -32,3 +32,10 @@
 /2019/02/16/diterima-sebagai-engineer-tokopedia/  /blog/diterima-sebagai-engineer-tokopedia/  301
 /2019/02/16/mengenal-3-jenis-component-pada-ReactJS/  /blog/mengenal-3-jenis-component-pada-reactjs/  301
 /2019/07/14/meningkatkan-produktifitas-development-dengan-husky-dan-lint-staged/  /blog/meningkatkan-produktifitas-development-dengan-husky-dan-lint-staged/  301
+
+# GitHub Pages projects once served under this domain, proxied to where
+# GitHub serves them now.
+
+/thekusuma/*  https://idindrakusuma.github.io/thekusuma/:splat  200
+/simple-404-template/*  https://idindrakusuma.github.io/simple-404-template/:splat  200
+/me/*  /  301

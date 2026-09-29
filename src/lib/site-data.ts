@@ -321,10 +321,16 @@ export const AWARDS: Award[] = [
     desc: 'Runner-up for Markir, a QR-code parking-payment prototype (PoC).',
   },
   {
-    title: 'Best Graduate & PKM Research Grant',
+    title: 'PKM Research Grant & Outstanding Student Candidate',
     org: 'Academic Honors · 2017',
     year: 2017,
-    desc: 'Top graduate recognition plus a funded student research project (automatic fish feeder).',
+    desc: 'Funded student research project (automatic fish feeder) and nominated for Mahasiswa Berprestasi.',
+  },
+  {
+    title: 'Best Graduate',
+    org: 'SMK Muhammadiyah 03 Weleri · 2014',
+    year: 2014,
+    desc: 'Graduated as the top student of my class at vocational high school.',
   },
 ];
 
