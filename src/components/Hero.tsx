@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { YEARS_EXPERIENCE } from '@/lib/site-data';
+import HeroCodeCard from './HeroCodeCard';
 import Reveal from './Reveal';
 
 const floatCard = 'bg-surface border-line shadow-card-sm absolute border';
@@ -18,6 +19,11 @@ const driftLate = { animation: 'ik-float 6s ease-in-out infinite -3s' };
  * A dotted orbit behind the portrait — the same thin, dashed line the blog
  * header's illustration draws, in place of the old spinning atom. Its dashes
  * march slowly round it (.ik-orbit-march).
+ *
+ * Level, and nudged up to the window's centre rather than the square's (the
+ * window sits a little high in it), so it reaches equally far either side.
+ * Tilted, one end fell low by the code card and the other high by the chip,
+ * and the left side read as wider.
  */
 function Orbit() {
   return (
@@ -25,31 +31,19 @@ function Orbit() {
       aria-hidden="true"
       viewBox="0 0 400 400"
       fill="none"
-      className="pointer-events-none absolute -inset-[6%] overflow-visible"
+      className="pointer-events-none absolute -inset-[6%] -translate-y-[3.4%] overflow-visible"
     >
       <ellipse
         cx="200"
         cy="200"
         rx="215"
         ry="92"
-        transform="rotate(-14 200 200)"
         strokeWidth="1.3"
         strokeDasharray="3 8"
         className="ik-orbit-march"
         style={{ stroke: 'var(--primary)', opacity: 0.4 }}
       />
     </svg>
-  );
-}
-
-/** One `key: 'value'` line of the code card. */
-function CodeLine({ name, value, accent = false }: { name: string; value: string; accent?: boolean }) {
-  return (
-    <div className="whitespace-nowrap">
-      <span className="text-primary">{name}</span>
-      <span className="text-faint">: </span>
-      <span className={accent ? 'ik-gradient-text font-medium' : 'text-ink'}>&apos;{value}&apos;</span>
-    </div>
   );
 }
 
@@ -170,15 +164,11 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Code card: the role, where, and how. */}
-          <div
-            className={`${floatCard} bottom-[3%] left-[-5%] rounded-[14px] px-3 py-2 font-mono text-[10.5px] leading-[1.65] sm:bottom-[2%] sm:left-[-6%] sm:rounded-[16px] sm:px-4 sm:py-3 sm:text-[12.5px] sm:leading-[1.7]`}
+          {/* Code card: the roles, typed out in turn. */}
+          <HeroCodeCard
+            className={`${floatCard} bottom-[3%] left-[-5%] rounded-[14px] px-3 py-2 font-mono text-[9.5px] leading-[1.65] sm:bottom-[2%] sm:left-[-6%] sm:rounded-[16px] sm:px-4 sm:py-3 sm:text-[12.5px] sm:leading-[1.7]`}
             style={driftLate}
-          >
-            <CodeLine name="role" value="Full-stack" />
-            <CodeLine name="now" value="ByteDance" />
-            <CodeLine name="mode" value="AI-native" accent />
-          </div>
+          />
 
           {/* The AI tools I build with, taking turns in the chip — see .ik-ai-cycle. */}
           <div

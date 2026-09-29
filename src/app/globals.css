@@ -266,6 +266,21 @@ body {
 .ik-ai-cycle:nth-child(4) {
   animation-delay: -2.5s;
 }
+/* The typing caret in the hero's code card. */
+@keyframes ik-blink {
+  50% {
+    opacity: 0;
+  }
+}
+.ik-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.15em;
+  margin-left: 1px;
+  vertical-align: -0.2em;
+  background: var(--primary);
+  animation: ik-blink 1s steps(1) infinite;
+}
 @keyframes ik-ping {
   0% {
     transform: scale(0.9);
