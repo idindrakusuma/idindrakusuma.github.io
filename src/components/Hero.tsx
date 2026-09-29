@@ -75,22 +75,26 @@ export default function Hero() {
     <header className="isolate overflow-x-clip px-6 pt-[150px] pb-[90px]">
       <div className="ik-hero relative z-1 mx-auto grid max-w-[1160px] grid-cols-[1.2fr_1fr] items-center gap-[52px]">
         <div className="ik-hero-copy">
-          <Reveal immediate as="p" delay={60} className="font-mono mb-3.5 text-sm tracking-[.02em]">
-            <span className="ik-gradient-text font-medium">Hi, I’m Indra Kusuma.</span>
-          </Reveal>
-
-          <Reveal immediate
-            as="h1"
-            delay={100}
-            // The LCP element: rises in without fading — see .ik-reveal-rise.
-            className="ik-reveal-rise font-display mb-[22px] text-[clamp(42px,7vw,76px)] leading-[1.02] font-bold tracking-[-.03em]"
-          >
-            I build fast,
-            <br />
-            scalable web
-            <br />
-            <span className="ik-gradient-shine">experiences.</span>
-          </Reveal>
+          {/* One heading holds both the greeting and the headline, so the page's
+              h1 carries the name people search for. Each half keeps its own
+              look and its own staggered reveal, as blocks inside the h1. */}
+          <h1 className="m-0">
+            <Reveal immediate as="span" delay={60} className="font-mono mb-3.5 block text-sm tracking-[.02em]">
+              <span className="ik-gradient-text font-medium">Hi, I’m Indra Kusuma.</span>
+            </Reveal>{' '}
+            <Reveal immediate
+              as="span"
+              delay={100}
+              // The LCP element: rises in without fading — see .ik-reveal-rise.
+              className="ik-reveal-rise font-display mb-[22px] block text-[clamp(42px,7vw,76px)] leading-[1.02] font-bold tracking-[-.03em]"
+            >
+              I build fast,
+              <br />
+              scalable web
+              <br />
+              <span className="ik-gradient-shine">experiences.</span>
+            </Reveal>
+          </h1>
 
           <Reveal immediate
             as="p"
