@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 /** The roles the card types out in turn. */
 const ROLES = [
-  { role: 'Senior Front End Engineer', at: 'ByteDance' },
+  { role: 'Senior Frontend Engineer', at: 'ByteDance' },
   { role: 'Co-Founder & Tech Advisor', at: 'Invitato' },
 ];
 
@@ -75,24 +75,23 @@ export default function HeroCodeCard({ className, style }: { className: string; 
   return (
     <div className={className} style={style}>
       <p className="sr-only">
-        {ROLES.map(({ role, at }) => `${role} at ${at}`).join('; ')}. AI-native.
+        {ROLES.map(({ role, at }) => `${role} at ${at}`).join('; ')}.
       </p>
       {/* Wide enough for the longest line, so the card never resizes as it types. */}
       <div aria-hidden="true" className="min-w-[33ch]">
         <Line name="role" value={shown.role} caret={shown.editing === 'role'} />
         <Line name="at" value={shown.at} caret={shown.editing === 'at'} />
-        <Line name="mode" value="AI-native" accent />
       </div>
     </div>
   );
 }
 
-function Line({ name, value, caret = false, accent = false }: { name: string; value: string; caret?: boolean; accent?: boolean }) {
+function Line({ name, value, caret = false }: { name: string; value: string; caret?: boolean }) {
   return (
     <div className="whitespace-nowrap">
       <span className="text-primary">{name}</span>
       <span className="text-faint">: </span>
-      <span className={accent ? 'ik-gradient-text font-medium' : 'text-ink'}>
+      <span className="text-ink">
         &apos;{value}
         {caret && <span className="ik-caret" />}&apos;
       </span>

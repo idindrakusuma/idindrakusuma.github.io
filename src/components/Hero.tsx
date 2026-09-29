@@ -20,10 +20,11 @@ const driftLate = { animation: 'ik-float 6s ease-in-out infinite -3s' };
  * header's illustration draws, in place of the old spinning atom. Its dashes
  * march slowly round it (.ik-orbit-march).
  *
- * Level, and nudged up to the window's centre rather than the square's (the
- * window sits a little high in it), so it reaches equally far either side.
- * Tilted, one end fell low by the code card and the other high by the chip,
- * and the left side read as wider.
+ * Nudged up to the window's centre rather than the square's (the window sits
+ * a little high in it). The size is given as width and height, not as four
+ * insets: an absolutely positioned <svg> is a replaced element, and Safari
+ * sizes one from its own default width and ignores `right`, which pushed the
+ * orbit off to the left on iOS while Chrome stretched it evenly.
  */
 function Orbit() {
   return (
@@ -31,13 +32,14 @@ function Orbit() {
       aria-hidden="true"
       viewBox="0 0 400 400"
       fill="none"
-      className="pointer-events-none absolute -inset-[6%] -translate-y-[3.4%] overflow-visible"
+      className="pointer-events-none absolute top-[-6%] left-[-6%] h-[112%] w-[112%] -translate-y-[3.4%] overflow-visible"
     >
       <ellipse
         cx="200"
         cy="200"
         rx="215"
         ry="92"
+        transform="rotate(-14 200 200)"
         strokeWidth="1.3"
         strokeDasharray="3 8"
         className="ik-orbit-march"
@@ -173,8 +175,11 @@ export default function Hero() {
           {/* The AI tools I build with, taking turns in the chip — see .ik-ai-cycle. */}
           <div
             aria-hidden="true"
-            className={`${floatCard} top-[-3%] right-[-1%] h-10 w-10 rounded-[12px] sm:top-[-5%] sm:right-[-3%] sm:h-12 sm:w-12 sm:rounded-[14px]`}
-            style={driftLate}
+            // Centred on the window's top-right corner (the window spans 8%–92%
+            // across and starts 4% down) and drifting in step with it, so it stays
+            // pinned there rather than wandering off at wide sizes.
+            className={`${floatCard} top-[calc(4%-20px)] right-[calc(8%-20px)] h-10 w-10 rounded-[12px] sm:top-[calc(4%-24px)] sm:right-[calc(8%-24px)] sm:h-12 sm:w-12 sm:rounded-[14px]`}
+            style={drift}
           >
             {AI_TOOLS.map((tool) => (
               <Image
