@@ -20,11 +20,18 @@ type Shown = { role: string; at: string; editing: Field };
 
 const wait = (ms: number, signal: AbortSignal) =>
   new Promise<void>((resolve, reject) => {
-    const id = window.setTimeout(resolve, ms);
-    signal.addEventListener('abort', () => {
+    // The loop never ends, so each wait must take its abort listener back off
+    // the shared signal once it finishes, or they pile up for as long as the
+    // tab stays open.
+    const onAbort = () => {
       window.clearTimeout(id);
       reject(signal.reason);
-    });
+    };
+    const id = window.setTimeout(() => {
+      signal.removeEventListener('abort', onAbort);
+      resolve();
+    }, ms);
+    signal.addEventListener('abort', onAbort, { once: true });
   });
 
 /**
