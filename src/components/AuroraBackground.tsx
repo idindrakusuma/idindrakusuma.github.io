@@ -15,12 +15,20 @@
  * default) it could still be half-strength where the square ended, and without
  * a blur to hide it that showed as a hard circular rim — plainly on the blog's
  * off-centre orbs on a phone.
+ *
+ * The layer clips sideways only. The orbs hang past the viewport on purpose,
+ * and iOS Safari paints the page on under its status bar and toolbar — but a
+ * fixed `inset: 0` box stops at the layout viewport, so clipping it on every
+ * side cut the top orb off in a straight line just below the status bar.
+ * `overflow-x: clip` (unlike `hidden`) leaves the other axis visible, so the
+ * orbs carry on under the bars, while nothing past the sides can make the page
+ * pan horizontally. A fixed box's overflow never lengthens the scroll either.
  */
 export default function AuroraBackground() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-bg"
+      className="pointer-events-none fixed inset-0 z-0 overflow-x-clip bg-bg"
     >
       <div
         className="absolute -top-[15%] -left-[10%] h-[60vw] w-[60vw] opacity-[.16]"

@@ -5,11 +5,12 @@
  * on an article so the reading column stays calm. Purely decorative.
  *
  * Soft by gradient alone, with no `blur()` filter — see AuroraBackground,
- * including why every gradient is sized `closest-side`.
+ * including why every gradient is sized `closest-side` and why the layer clips
+ * only sideways.
  */
 export default function BlogBackdrop({ single = false }: { single?: boolean }) {
   return (
-    <div aria-hidden="true" className="bg-bg pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    <div aria-hidden="true" className="bg-bg pointer-events-none fixed inset-0 z-0 overflow-x-clip">
       <div
         className="absolute -top-[15%] right-[-11%]"
         style={{
