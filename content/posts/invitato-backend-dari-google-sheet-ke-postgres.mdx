@@ -55,17 +55,17 @@ flowchart TB
   Operator --> Intools["intools<br/>login operator"]
   Undangan -- "action publik" --> CF["Cloudflare<br/>rate limit + TLS"]
   Dashboard -- "Firebase ID token" --> CF
-  Intools -- "/admin + token operator" --> CF
-  CF -- "hanya IP Cloudflare,<br/>origin-pull cert" --> Nginx["nginx di VPS Singapore<br/>blue / green"]
-  Nginx --> API["be-legacy<br/>Fastify + Kysely"]
-  API --> DB[("Supabase Postgres<br/>Pro + PITR")]
+  Intools -- "token operator" --> CF
+  CF --> LB[Load Balancer]
+  LB --> API[VPS Backend App]
+  API --> DB[("Supabase<br/>Postgres")]
 ```
 
 Beberapa hal yang menurut saya paling penting dari arsitektur ini:
 
-- **Cloudflare di depan.** Rate limit dan TLS diurus Cloudflare, dan VPS cuma menerima traffic dari IP Cloudflare dengan sertifikat origin-pull. Jadi server nggak bisa ditembak langsung.
+- **Cloudflare di depan.** Rate limit dan TLS diurus Cloudflare, dan server cuma menerima traffic dari IP Cloudflare. Jadi server nggak bisa ditembak langsung.
 - **Guest list dan semua edit wajib login.** Klien login via Firebase, operator punya token sendiri. Action publik seperti `read_qrcode`, `get_options`, `get_web_info`, baca ucapan, RSVP, dan konfirmasi gift tetap bisa diakses tamu, tapi daftar tamu nggak lagi terbuka.
-- **Blue/green deploy.** nginx bisa switch antara dua instance, jadi deploy tanpa downtime.
+- **Load balancer dengan blue/green deploy.** Load balancer bisa switch antara dua instance backend app di VPS, jadi deploy tanpa downtime.
 - **Postgres dengan PITR.** Pengganti "version history" yang dulu kami suka dari Google Sheet. Kalau ada data yang salah, bisa di-restore ke titik waktu tertentu.
 
 ### Drop-in replacement
@@ -95,6 +95,8 @@ Dari dashboard Grafana di atas, dalam 3 jam terakhir di production:
 Bandingkan dengan sebelumnya yang 1,5–7 detik per request, dan di kondisi terburuk sampai 45 detik. Secara keseluruhan p95 sekarang ada di kisaran 40–130 ms. Ini bukan lagi soal "lebih cepat", tapi rasanya sudah beda kelas.
 
 Bonusnya, sekarang semua log dan metrik masuk ke Grafana. Dulu kalau ada klien complain, kami harus buka execution log Apps Script satu per satu. Sekarang tinggal buka dashboard, filter per action, dan langsung kelihatan mana yang lambat atau error.
+
+Kami juga pasang alert dari Grafana ke Telegram. Kalau error rate naik atau latency melonjak, notifikasinya langsung masuk ke grup tim. Jadi sekarang kami yang tahu duluan ada masalah, bukan klien yang harus complain dulu.
 
 ## Cost
 

@@ -44,6 +44,18 @@ const PALETTES = {
   },
 } as const;
 
+/**
+ * Nodes drawn like the site's own cards: a hairline border and soft corners,
+ * no drop shadow — Mermaid's default filter reads as a glow on the dark theme.
+ */
+const THEME_CSS = `
+  .node rect, .node polygon, .node path, .node circle { filter: none !important; stroke-width: 1px !important; }
+  .node rect { rx: 12px; ry: 12px; }
+  .nodeLabel { font-weight: 500; }
+  .edgeLabel, .edgeLabel p { font-size: 13px; color: var(--muted); }
+  .flowchart-link { stroke-width: 1.5px; }
+`;
+
 const currentTheme = () =>
   document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
 
@@ -73,8 +85,10 @@ export default function Mermaid({ chart }: { chart: string }) {
         startOnLoad: false,
         securityLevel: 'strict',
         theme: 'base',
+        look: 'classic',
         themeVariables: { ...PALETTES[theme], fontFamily, fontSize: '14px' },
-        flowchart: { curve: 'basis', htmlLabels: true },
+        themeCSS: THEME_CSS,
+        flowchart: { curve: 'basis', htmlLabels: true, padding: 18 },
       });
       try {
         const { svg } = await mermaid.render(`${id}-${theme}`, chart);
