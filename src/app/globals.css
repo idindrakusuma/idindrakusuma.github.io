@@ -230,6 +230,42 @@ body {
 .ik-orbit-march {
   animation: ik-march 1.4s linear infinite;
 }
+/* The hero's AI-tool chip: four logos stacked in one spot, each shown for a
+   quarter of a 10s loop and cross-fading into the next. Negative delays start
+   each one mid-loop, so the chip is never empty, even on the first frame.
+   Without motion the loop runs once and stops, leaving the first logo. */
+@keyframes ik-ai-cycle {
+  0%,
+  21% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  25%,
+  96% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.ik-ai-cycle {
+  opacity: 0;
+  animation: ik-ai-cycle 10s var(--ease-smooth) infinite;
+}
+.ik-ai-cycle:first-child {
+  opacity: 1;
+}
+.ik-ai-cycle:nth-child(2) {
+  animation-delay: -7.5s;
+}
+.ik-ai-cycle:nth-child(3) {
+  animation-delay: -5s;
+}
+.ik-ai-cycle:nth-child(4) {
+  animation-delay: -2.5s;
+}
 @keyframes ik-ping {
   0% {
     transform: scale(0.9);

@@ -4,6 +4,12 @@ import Reveal from './Reveal';
 
 const floatCard = 'bg-surface border-line shadow-card-sm absolute border';
 
+/**
+ * Logos from @lobehub/icons (MIT); the marks belong to Anthropic, OpenAI,
+ * ByteDance and Google. Four entries to match the four steps of ik-ai-cycle.
+ */
+const AI_TOOLS = ['claude', 'codex', 'trae', 'antigravity'];
+
 /** The pieces drift out of step, as in the blog header's illustration. */
 const drift = { animation: 'ik-float 6s ease-in-out infinite' };
 const driftLate = { animation: 'ik-float 6s ease-in-out infinite -3s' };
@@ -174,18 +180,22 @@ export default function Hero() {
             <CodeLine name="mode" value="AI-native" accent />
           </div>
 
-          {/* Spark chip. */}
+          {/* The AI tools I build with, taking turns in the chip — see .ik-ai-cycle. */}
           <div
             aria-hidden="true"
-            className={`${floatCard} top-[-3%] right-[-1%] grid h-10 w-10 place-items-center rounded-[12px] sm:top-[-5%] sm:right-[-3%] sm:h-12 sm:w-12 sm:rounded-[14px]`}
+            className={`${floatCard} top-[-3%] right-[-1%] h-10 w-10 rounded-[12px] sm:top-[-5%] sm:right-[-3%] sm:h-12 sm:w-12 sm:rounded-[14px]`}
             style={driftLate}
           >
-            <svg viewBox="0 0 24 24" className="h-1/2 w-1/2">
-              <path
-                d="M12 1c1.3 6 4.9 9.7 11 11-6.1 1.3-9.7 4.9-11 11-1.3-6.1-4.9-9.7-11-11 6.1-1.3 9.7-5 11-11z"
-                style={{ fill: 'var(--primary)' }}
+            {AI_TOOLS.map((tool) => (
+              <Image
+                key={tool}
+                src={`/logos/ai/${tool}.svg`}
+                alt=""
+                width={24}
+                height={24}
+                className="ik-ai-cycle absolute inset-0 m-auto h-[54%] w-[54%]"
               />
-            </svg>
+            ))}
           </div>
 
           {/* Years badge. Phones leave it out: at that width it can only sit on
