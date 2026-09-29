@@ -4,7 +4,7 @@ import BlogBackdrop from '@/components/BlogBackdrop';
 import BlogChrome from '@/components/BlogChrome';
 import CategoryFilter from '@/components/CategoryFilter';
 import PostCard from '@/components/PostCard';
-import ProfileCard from '@/components/ProfileCard';
+import PopularPosts from '@/components/PopularPosts';
 import Reveal from '@/components/Reveal';
 import { CATEGORIES, getPosts } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
@@ -73,7 +73,7 @@ export default async function BlogIndex() {
           </div>
 
           <aside className="ik-side sticky top-[88px]">
-            <ProfileCard />
+            <PopularPosts posts={posts.map(({ slug, title }) => ({ slug, title }))} />
           </aside>
         </main>
 

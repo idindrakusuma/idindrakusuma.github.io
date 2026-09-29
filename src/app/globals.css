@@ -296,6 +296,81 @@ body {
 .ik-clap:active {
   transform: scale(0.95);
 }
+/* Table of contents beside an article: scrolls itself if the post has more
+   sections than fit, and marks the one being read. */
+.ik-toc {
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+}
+.ik-toc-fab {
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+}
+.ik-toc-panel {
+  outline: none;
+  width: min(320px, calc(100vw - 32px));
+  max-height: min(60vh, 480px);
+  overflow-y: auto;
+  /* Grows out of the button it belongs to. Shut, it fades and shrinks back
+     towards that corner, then goes hidden once the fade is over — the delay on
+     visibility is what lets the closing half of the animation be seen. */
+  transform-origin: bottom right;
+  opacity: 0;
+  transform: translateY(8px) scale(0.96);
+  visibility: hidden;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0s linear 0.18s;
+}
+.ik-toc-panel[data-open] {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition:
+    opacity 0.22s var(--ease-smooth),
+    transform 0.22s var(--ease-smooth),
+    visibility 0s;
+}
+@keyframes ik-toc-icon-in {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+}
+.ik-toc-fab-icon {
+  animation: ik-toc-icon-in 0.2s var(--ease-smooth);
+}
+/* From the sidebar's breakpoint up the contents sit beside the article, so the
+   floating button steps aside. Below it, a page that has the button gets room
+   at the bottom so the footer's own link can scroll clear of it. */
+@media (min-width: 1180px) {
+  .ik-toc-fab {
+    display: none;
+  }
+}
+@media (max-width: 1179px) {
+  .ik-has-toc-fab {
+    padding-bottom: 72px;
+  }
+}
+.ik-toc-link {
+  color: var(--muted);
+  border-color: transparent;
+}
+.ik-toc-link:hover {
+  color: var(--text);
+}
+.ik-toc-link[aria-current] {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--surface-2);
+  font-weight: 600;
+}
+.ik-popular:hover .ik-popular-title,
+.ik-popular:focus-visible .ik-popular-title {
+  color: var(--primary);
+}
 .ik-clap[data-full] {
   border-color: var(--primary);
   color: var(--primary);
@@ -838,8 +913,9 @@ body {
    Article sidebar
 
    Desktop only, and on the article's terms: the reading column stays at its
-   760px measure, so the card appears in the room beside it or not at all. It
-   needs 760 + 40 gap + 260 card inside the shell's padding before there is any.
+   760px measure, so the table of contents appears in the room beside it or not
+   at all. It needs 760 + 40 gap + 260 sidebar inside the shell's padding before
+   there is any.
 --------------------------------------------------------------------------- */
 .ik-article-side {
   display: none;

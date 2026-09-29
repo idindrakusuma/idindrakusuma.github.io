@@ -24,6 +24,7 @@
   "dependencies": {
     "@netlify/blobs": "^11.1.1",
     "@next/third-parties": "16.3.3",
+    "github-slugger": "^2.0.0",
     "next": "16.3.3",
     "react": "19.2.8",
     "react-dom": "19.2.8"

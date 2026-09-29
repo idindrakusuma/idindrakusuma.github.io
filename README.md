@@ -175,20 +175,42 @@ Posts are in Bahasa Indonesia on an otherwise English site; each article carries
 
 The end of every post has a Clap button and a Share button (`PostActions.tsx`).
 Share needs no server: the device's share sheet where there is one, otherwise
-copy the link. Claps are the one part of the site that runs on a server — the
-Netlify function `netlify/functions/claps.ts` at `/api/claps`, storing counts in
-Netlify Blobs. Its rules live in `netlify/claps/core.ts` and are tested by
-`pnpm test`.
+copy the link. Claps are the one part of the site that runs on a server — two
+Netlify functions storing counts in Netlify Blobs:
+
+| | |
+| --- | --- |
+| `/api/claps` (`netlify/functions/claps.ts`) | `GET ?slug=` reads a post's claps, `POST` adds to them |
+| `/api/claps/top` (`netlify/functions/claps-top.ts`) | The most-clapped posts, cached at the edge for five minutes |
+
+Their rules live in `netlify/claps/core.ts` and are tested by `pnpm test`.
 
 The repository is public, so the limits hold without being secret: 10 claps per
 visitor per post (an IPv6 visitor counts per /64), 100 claps per post per hour
 from everyone, and a Netlify rate limit of 30 requests a minute per IP. A
 visitor is a salted hash of their address, never the address itself.
 
-**Production needs `CLAP_SALT`** — any long random string, set under the site's
-environment variables in Netlify. Without it clapping is refused in production
-(reading counts still works). Deploy previews use their own throwaway store and
-salt, so trying the button on a preview never touches the real counts.
+Every deploy — production and deploy previews alike — reads and writes the one
+production store, so a preview shows the real counts and a clap given there is
+real. That is why **`CLAP_SALT`** must be set, to the same value, for both the
+production and deploy-preview contexts (a secret, functions scope, under the
+site's environment variables in Netlify): a preview salted differently would
+treat every visitor as new. A context without it can read counts but refuses
+to add any.
+
+### Beside the posts
+
+On wide screens the blog index's sidebar is **Popular posts**
+(`PopularPosts.tsx`): the most-clapped posts from `/api/claps/top`, topped up
+with the newest while fewer than five have claps. The static HTML carries the
+newest five, so the list reads — at the same height — before the ranking
+arrives or if it never does.
+
+An article's sidebar is its **table of contents** (`TableOfContents.tsx`): its
+`##` and `###` headings, the one being read highlighted. The ids and the list
+come from the same pass while the post compiles (`src/lib/toc.ts`), so a link
+cannot point at a heading that is not there. A post with fewer than two
+headings leaves the sidebar empty.
 
 ## Theming
 

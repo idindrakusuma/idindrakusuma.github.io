@@ -2,7 +2,7 @@
 // core.ts relies on: JSON entries with ETags and conditional writes.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { addClaps, readClaps, visitorKey, increment, isSlug, MAX_PER_VISITOR, MAX_PER_POST_PER_HOUR } from './core.ts';
+import { addClaps, readClaps, topClaps, visitorKey, increment, isSlug, MAX_PER_VISITOR, MAX_PER_POST_PER_HOUR } from './core.ts';
 
 function memoryStore({ conflictOnce = false } = {}) {
   const data = new Map(); let v = 0; let conflicts = conflictOnce ? 1 : 0;
@@ -16,6 +16,7 @@ function memoryStore({ conflictOnce = false } = {}) {
       if (opts.onlyIfMatch && (!e || e.etag !== opts.onlyIfMatch)) return { modified: false };
       data.set(key, { value, etag: String(++v) }); return { modified: true };
     },
+    async list({ prefix }) { return { blobs: [...data.keys()].filter((k) => k.startsWith(prefix)).map((key) => ({ key })) }; },
   };
 }
 
@@ -62,4 +63,19 @@ test('visitor keys: salted, IPv6 grouped by /64', () => {
   assert.notEqual(visitorKey('1.2.3.4', 's'), visitorKey('1.2.3.4', 't'));
   assert.equal(visitorKey('1.2.3.4', 's').length, 32);
   assert.ok(!visitorKey('1.2.3.4', 's').includes('1.2.3.4'));
+});
+
+test('top posts: most-clapped first, ties by slug, zero-clap posts absent', async () => {
+  const s = memoryStore();
+  await addClaps(s, 'beta', 'v1', 3);
+  await addClaps(s, 'alpha', 'v1', 3);
+  await addClaps(s, 'gamma', 'v1', 7);
+  await addClaps(s, 'gamma', 'v2', 2);
+  await addClaps(s, 'delta', 'v1', 1);
+  assert.deepEqual(await topClaps(s, 3), [
+    { slug: 'gamma', total: 9 },
+    { slug: 'alpha', total: 3 },
+    { slug: 'beta', total: 3 },
+  ]);
+  assert.deepEqual(await topClaps(memoryStore(), 5), []);
 });
