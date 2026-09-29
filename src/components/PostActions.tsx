@@ -45,16 +45,29 @@ export default function PostActions({ slug, title }: { slug: string; title: stri
   const pendingRef = useRef(0);
   const timer = useRef<number | undefined>(undefined);
 
+  /**
+   * Counts only ever go up, so a response is merged by taking the larger of
+   * each number. Two batches can be in flight at once and answer out of order,
+   * and the first read can land after a write; neither may pull the count back
+   * down to an older snapshot.
+   */
+  const merge = useCallback((next: Counts) => {
+    setCounts((prev) =>
+      prev ? { total: Math.max(prev.total, next.total), mine: Math.max(prev.mine, next.mine) } : next,
+    );
+  }, []);
+
   useEffect(() => {
     const controller = new AbortController();
     fetch(`/api/claps?slug=${slug}`, { signal: controller.signal })
       .then((res) => (res.ok ? (res.json() as Promise<Counts>) : null))
-      .then((data) => data && setCounts(data))
+      .then((data) => data && merge(data))
       .catch(() => {});
     return () => controller.abort();
-  }, [slug]);
+  }, [slug, merge]);
 
   const flush = useCallback(async () => {
+    window.clearTimeout(timer.current);
     const count = pendingRef.current;
     if (!count) return;
     pendingRef.current = 0;
@@ -67,17 +80,32 @@ export default function PostActions({ slug, title }: { slug: string; title: stri
         body: JSON.stringify({ slug, count }),
       });
       if (res.ok) {
-        setCounts((await res.json()) as Counts);
+        merge((await res.json()) as Counts);
         track('clap', { slug, count });
       }
     } catch {
       /* the optimistic claps simply fall away below */
     }
     setPending((p) => Math.max(0, p - count));
-  }, [slug]);
+  }, [slug, merge]);
 
   // A batch still waiting when the reader leaves is sent rather than lost.
-  useEffect(() => () => void flush(), [flush]);
+  // Closing the tab, reloading or following a link elsewhere never unmounts
+  // the component, so the page's own hide events send it; the unmount
+  // cleanup covers navigating to another post inside the app.
+  useEffect(() => {
+    const onHide = () => {
+      if (document.visibilityState === 'hidden') void flush();
+    };
+    const onPageHide = () => void flush();
+    document.addEventListener('visibilitychange', onHide);
+    window.addEventListener('pagehide', onPageHide);
+    return () => {
+      document.removeEventListener('visibilitychange', onHide);
+      window.removeEventListener('pagehide', onPageHide);
+      void flush();
+    };
+  }, [flush]);
 
   const mine = (counts?.mine ?? 0) + pending;
   const total = (counts?.total ?? 0) + pending;
