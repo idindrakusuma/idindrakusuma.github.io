@@ -13,6 +13,8 @@
  * draws its own chrome over the page — so it read as a circle cut off by the
  * bar. Lowered to behind the title, it glows the way it does on a desktop,
  * where the same numbers already put its centre well clear of the top edge.
+ * The index's bottom orb rises for the same reason at the other end: the
+ * toolbar there is drawn over the page too.
  * Classes are whole strings on purpose: Tailwind only generates what it can
  * read in the source.
  */
@@ -34,7 +36,7 @@ export default function BlogBackdrop({ single = false }: { single?: boolean }) {
       />
       {!single && (
         <div
-          className="absolute bottom-[-20%] left-[-12%] h-[52vw] w-[52vw] opacity-[.12]"
+          className="absolute bottom-[-20%] left-[-12%] h-[52vw] w-[52vw] opacity-[.12] max-sm:bottom-[12%] max-sm:left-[-30%] max-sm:h-[85vw] max-sm:w-[85vw]"
           style={{
             background: 'radial-gradient(closest-side,var(--a3),transparent)',
             animation: 'ik-aur2 32s ease-in-out infinite',
