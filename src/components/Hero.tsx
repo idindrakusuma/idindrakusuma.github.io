@@ -1,69 +1,59 @@
 import Image from 'next/image';
 import { YEARS_EXPERIENCE } from '@/lib/site-data';
+import HeroCodeCard from './HeroCodeCard';
 import Reveal from './Reveal';
 
-/**
- * Decorative React-atom that sits behind the portrait: three orbital ellipses on
- * a very slow rotation with an electron gliding along each. SMIL drives the
- * electrons because animateMotion follows the ellipse path exactly, which a CSS
- * transform cannot do without recreating the geometry.
- */
-function AtomBackdrop() {
-  const ORBIT_PATH = 'M44,0 A44,17 0 1,1 -44,0 A44,17 0 1,1 44,0';
-  const electrons = [
-    { rotate: 0, begin: '0s' },
-    { rotate: 60, begin: '-4s' },
-    { rotate: 120, begin: '-8s' },
-  ];
+const floatCard = 'bg-surface border-line shadow-card-sm absolute border';
 
+/**
+ * Logos from @lobehub/icons (MIT); the marks belong to Anthropic, OpenAI,
+ * ByteDance and Google. Four entries to match the four steps of ik-ai-cycle.
+ */
+const AI_TOOLS = ['claude', 'codex', 'trae', 'antigravity'];
+
+/** The pieces drift out of step, as in the blog header's illustration. */
+const drift = { animation: 'ik-float 6s ease-in-out infinite' };
+const driftLate = { animation: 'ik-float 6s ease-in-out infinite -3s' };
+
+/**
+ * A dotted orbit behind the portrait — the same thin, dashed line the blog
+ * header's illustration draws, in place of the old spinning atom. Its dashes
+ * march slowly round it (.ik-orbit-march).
+ *
+ * Nudged up to the window's centre rather than the square's (the window sits
+ * a little high in it). The size is given as width and height, not as four
+ * insets: an absolutely positioned <svg> is a replaced element, and Safari
+ * sizes one from its own default width and ignores `right`, which pushed the
+ * orbit off to the left on iOS while Chrome stretched it evenly.
+ */
+function Orbit() {
   return (
-    <div
+    <svg
       aria-hidden="true"
-      className="pointer-events-none absolute top-1/2 left-1/2 z-0 aspect-square w-[210%] -translate-x-1/2 -translate-y-1/2 opacity-50"
-      style={{
-        WebkitMaskImage: 'radial-gradient(closest-side,#000 60%,transparent 100%)',
-        maskImage: 'radial-gradient(closest-side,#000 60%,transparent 100%)',
-      }}
+      viewBox="0 0 400 400"
+      fill="none"
+      className="pointer-events-none absolute top-[-6%] left-[-6%] h-[112%] w-[112%] -translate-y-[3.4%] overflow-visible"
     >
-      <svg width="100%" height="100%" viewBox="-50 -50 100 100" fill="none" className="overflow-visible">
-        <g style={{ color: 'var(--primary)' }}>
-          <g
-            style={{
-              transformBox: 'fill-box',
-              transformOrigin: 'center',
-              animation: 'ik-spin 120s linear infinite',
-            }}
-          >
-            <g stroke="currentColor" strokeWidth="0.7" fill="none" opacity="0.32">
-              <ellipse rx="44" ry="17" />
-              <ellipse rx="44" ry="17" transform="rotate(60)" />
-              <ellipse rx="44" ry="17" transform="rotate(120)" />
-            </g>
-            {electrons.map(({ rotate, begin }) => (
-              <g key={rotate} transform={`rotate(${rotate})`}>
-                <circle r="2" style={{ fill: 'var(--primary-2)' }}>
-                  <animateMotion
-                    dur="12s"
-                    calcMode="linear"
-                    begin={begin}
-                    repeatCount="indefinite"
-                    path={ORBIT_PATH}
-                  />
-                </circle>
-              </g>
-            ))}
-          </g>
-        </g>
-      </svg>
-    </div>
+      <ellipse
+        cx="200"
+        cy="200"
+        rx="215"
+        ry="92"
+        transform="rotate(-14 200 200)"
+        strokeWidth="1.3"
+        strokeDasharray="3 8"
+        className="ik-orbit-march"
+        style={{ stroke: 'var(--primary)', opacity: 0.4 }}
+      />
+    </svg>
   );
 }
 
 export default function Hero() {
-  // The atom backdrop is wider and taller than the header, and the two axes need
-  // opposite treatment:
+  // The portrait's orbit and floating cards reach past the header, and the two
+  // axes need opposite treatment:
   //
-  //   vertically   it must overhang, or the orbits get cut off mid-fade — the
+  //   vertically   they must overhang, or the orbit gets cut off mid-line — the
   //                prototype's `overflow: hidden` left a hard edge below the portrait
   //   horizontally it must be clipped, or on a phone the overflow makes the browser
   //                widen the layout viewport and shrink the whole page to fit
@@ -72,7 +62,7 @@ export default function Hero() {
   // and reintroduce the vertical cut. `isolate` keeps the overhang painting beneath
   // the sections that follow, which dropping the clip would otherwise break.
   return (
-    <header className="isolate overflow-x-clip px-6 pt-[150px] pb-[90px]">
+    <header className="isolate overflow-x-clip px-6 pt-[150px] pb-[90px] max-sm:pt-[112px] max-sm:pb-[64px]">
       <div className="ik-hero relative z-1 mx-auto grid max-w-[1160px] grid-cols-[1.2fr_1fr] items-center gap-[52px]">
         <div className="ik-hero-copy">
           {/* One heading holds both the greeting and the headline, so the page's
@@ -130,25 +120,32 @@ export default function Hero() {
           // portrait stayed at 84% of the screen on every phone and pushed the
           // opening paragraph off the first viewport. 400px was a desktop decision
           // that mobile inherited when the grid collapses to one column.
-          className="ik-hero-media relative w-[clamp(200px,60vw,400px)] justify-self-center"
+          //
+          // On a phone the portrait outsizes the headline and becomes the page's
+          // LCP element, so it rises in without fading too — see .ik-reveal-rise.
+          className="ik-hero-media ik-reveal-rise relative aspect-square w-[clamp(250px,66vw,420px)] justify-self-center"
         >
-          <AtomBackdrop />
+          <Orbit />
 
-          {/* Glowing halo behind the portrait. */}
+          {/* Soft glow behind the window. */}
           <div
             aria-hidden="true"
-            className="absolute -inset-4 rounded-full opacity-55 blur-[22px]"
-            style={{
-              background: 'conic-gradient(from 0deg,var(--a1),var(--a3),var(--a2),var(--a1))',
-              animation: 'ik-spin 14s linear infinite',
-            }}
+            className="absolute inset-[12%] opacity-40 blur-[60px]"
+            style={{ background: 'radial-gradient(closest-side,var(--a1),transparent)' }}
           />
 
+          {/* The portrait, framed as an app window. */}
           <div
-            className="shadow-card relative aspect-square rounded-full p-1.5"
-            style={{ background: 'linear-gradient(135deg,var(--a1),var(--a3))' }}
+            className="bg-surface border-line shadow-card absolute top-[4%] left-[8%] w-[84%] rounded-[clamp(16px,5.5%,24px)] border p-[2.4%]"
+            style={drift}
           >
-            <div className="bg-surface-2 h-full w-full overflow-hidden rounded-full">
+            <div aria-hidden="true" className="flex items-center gap-1.5 px-[3%] pt-[1%] pb-[3%]">
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'var(--primary)' }} />
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'var(--primary-2)' }} />
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'var(--faint)', opacity: 0.6 }} />
+              <span className="text-faint ml-3 font-mono text-[11px]">indra.tsx</span>
+            </div>
+            <div className="bg-surface-2 aspect-[1/0.92] overflow-hidden rounded-[clamp(11px,4%,16px)]">
               <Image
                 src="/profile.webp"
                 alt="Indra Kusuma"
@@ -164,30 +161,56 @@ export default function Hero() {
                 // parser.
                 loading="eager"
                 fetchPriority="high"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover object-[50%_20%]"
               />
             </div>
           </div>
 
+          {/* Code card: the roles, typed out in turn. */}
+          <HeroCodeCard
+            className={`${floatCard} bottom-[3%] left-[-5%] rounded-[14px] px-3 py-2 font-mono text-[9.5px] leading-[1.65] sm:bottom-[2%] sm:left-[-6%] sm:rounded-[16px] sm:px-4 sm:py-3 sm:text-[12.5px] sm:leading-[1.7]`}
+            style={driftLate}
+          />
+
+          {/* The AI tools I build with, taking turns in the chip — see .ik-ai-cycle. */}
           <div
-            className="bg-surface border-line shadow-card-sm absolute right-[-10px] bottom-1.5 rounded-[14px] border px-4 py-2.5"
-            style={{ animation: 'ik-float 5s ease-in-out infinite' }}
+            aria-hidden="true"
+            // Centred on the window's top-right corner (the window spans 8%–92%
+            // across and starts 4% down) and drifting in step with it, so it stays
+            // pinned there rather than wandering off at wide sizes.
+            className={`${floatCard} top-[calc(4%-20px)] right-[calc(8%-20px)] h-10 w-10 rounded-[12px] sm:top-[calc(4%-24px)] sm:right-[calc(8%-24px)] sm:h-12 sm:w-12 sm:rounded-[14px]`}
+            style={drift}
           >
-            <div className="ik-gradient-text font-display text-base leading-[1.05] font-bold whitespace-nowrap">
-              Full-stack
-            </div>
-            <div className="text-muted text-[11px] whitespace-nowrap">Engineer</div>
+            {AI_TOOLS.map((tool) => (
+              <Image
+                key={tool}
+                src={`/logos/ai/${tool}.svg`}
+                alt=""
+                width={24}
+                height={24}
+                className="ik-ai-cycle absolute inset-0 m-auto h-[54%] w-[54%]"
+              />
+            ))}
           </div>
 
+          {/* Years badge. Phones leave it out: at that width it can only sit on
+              top of the code card or the face. */}
           <div
-            className="bg-surface border-line shadow-card-sm absolute top-[-2px] left-[-18px] flex items-center gap-2 rounded-[14px] border px-3.5 py-[9px]"
-            style={{ animation: 'ik-float 5s ease-in-out infinite .8s' }}
+            className={`${floatCard} right-[-4%] bottom-[16%] hidden items-center gap-2 rounded-full px-3.5 py-2 sm:flex`}
+            style={drift}
           >
             <span
-              className="h-2 w-2 flex-none rounded-full"
-              style={{ background: 'linear-gradient(135deg,var(--a1),var(--a2))' }}
-            />
-            <span className="font-mono text-ink text-[13px] font-medium">AI-Native</span>
+              aria-hidden="true"
+              className="grid h-5 w-5 place-items-center rounded-full"
+              style={{ background: 'var(--primary-2)' }}
+            >
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                <path d="M2.5 6.2l2.2 2.2 4.8-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            <span className="text-ink text-[12.5px] font-semibold whitespace-nowrap">
+              {YEARS_EXPERIENCE}+ yrs shipping
+            </span>
           </div>
         </Reveal>
       </div>

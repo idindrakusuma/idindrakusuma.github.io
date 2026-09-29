@@ -220,6 +220,67 @@ body {
 .ik-art-float-late {
   animation-delay: -3s;
 }
+/* Dashes that travel along their path: one dash-and-gap (3 + 8) per step, so
+   the loop is seamless. */
+@keyframes ik-march {
+  to {
+    stroke-dashoffset: -11;
+  }
+}
+.ik-orbit-march {
+  animation: ik-march 1.4s linear infinite;
+}
+/* The hero's AI-tool chip: four logos stacked in one spot, each shown for a
+   quarter of a 10s loop and cross-fading into the next. Negative delays start
+   each one mid-loop, so the chip is never empty, even on the first frame.
+   Without motion the loop runs once and stops, leaving the first logo. */
+@keyframes ik-ai-cycle {
+  0%,
+  21% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  25%,
+  96% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.ik-ai-cycle {
+  opacity: 0;
+  animation: ik-ai-cycle 10s var(--ease-smooth) infinite;
+}
+.ik-ai-cycle:first-child {
+  opacity: 1;
+}
+.ik-ai-cycle:nth-child(2) {
+  animation-delay: -7.5s;
+}
+.ik-ai-cycle:nth-child(3) {
+  animation-delay: -5s;
+}
+.ik-ai-cycle:nth-child(4) {
+  animation-delay: -2.5s;
+}
+/* The typing caret in the hero's code card. */
+@keyframes ik-blink {
+  50% {
+    opacity: 0;
+  }
+}
+.ik-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.15em;
+  margin-left: 1px;
+  vertical-align: -0.2em;
+  background: var(--primary);
+  animation: ik-blink 1s steps(1) infinite;
+}
 @keyframes ik-ping {
   0% {
     transform: scale(0.9);
@@ -237,11 +298,6 @@ body {
   }
   100% {
     background-position: 200% 50%;
-  }
-}
-@keyframes ik-spin {
-  to {
-    transform: rotate(360deg);
   }
 }
 @keyframes ik-reveal {
@@ -625,6 +681,7 @@ body {
 @media (max-width: 860px) {
   .ik-hero {
     grid-template-columns: 1fr;
+    row-gap: 30px;
   }
   .ik-hero-copy {
     text-align: center;

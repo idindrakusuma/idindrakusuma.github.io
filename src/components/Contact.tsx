@@ -34,14 +34,25 @@ export default function Contact() {
   return (
     <section id="contact" className="mx-auto max-w-[1160px] px-6 pt-[70px] pb-10">
       <Reveal className="border-line-2 bg-surface shadow-card relative overflow-hidden rounded-[26px] border p-[clamp(32px,6vw,64px)]">
-        {/* Slow gradient sheen drifting across the card. */}
+        {/* A soft glow from the card's right edge, behind the mark, and a fainter
+            one low on the left — the page's own orbs, in miniature. It used to be
+            a 10% gradient over the whole card, which tinted every surface on it:
+            pink in light, a muddy purple in dark, with the social buttons'
+            cool grey clashing against it. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-10"
+          className="pointer-events-none absolute top-[-30%] right-[-14%] aspect-square w-[min(640px,80%)] opacity-[.16]"
           style={{
-            background: 'linear-gradient(120deg,var(--a1),var(--a3))',
-            backgroundSize: '200% 200%',
-            animation: 'ik-drift 12s ease-in-out infinite',
+            background: 'radial-gradient(closest-side,var(--a1),transparent)',
+            animation: 'ik-aur1 24s ease-in-out infinite',
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-[-40%] left-[-18%] aspect-square w-[min(460px,60%)] opacity-[.08]"
+          style={{
+            background: 'radial-gradient(closest-side,var(--a3),transparent)',
+            animation: 'ik-aur2 30s ease-in-out infinite',
           }}
         />
 
@@ -75,11 +86,31 @@ export default function Contact() {
 
         {/* Fills the empty right half of the card, from `lg` up — narrower than that and
             the card has no room to spare beside the 640px copy column. Absolute inside
-            the card's own overflow-hidden box, so it can never push the page wide. */}
-        <span
+            the card's own overflow-hidden box, so it can never push the page wide. The
+            dotted orbit is the hero portrait's, marching the same way. */}
+        <div
           aria-hidden="true"
-          className="ik-mark absolute top-1/2 right-[clamp(32px,6vw,64px)] hidden w-[clamp(150px,15vw,210px)] -translate-y-1/2 lg:block"
-        />
+          className="absolute top-1/2 right-[clamp(32px,6vw,64px)] hidden w-[clamp(150px,15vw,210px)] -translate-y-1/2 lg:block"
+        >
+          <svg
+            viewBox="0 0 400 400"
+            fill="none"
+            className="pointer-events-none absolute top-[-20%] left-[-20%] h-[140%] w-[140%] overflow-visible"
+          >
+            <ellipse
+              cx="200"
+              cy="200"
+              rx="200"
+              ry="96"
+              transform="rotate(-14 200 200)"
+              strokeWidth="1.6"
+              strokeDasharray="3 8"
+              className="ik-orbit-march"
+              style={{ stroke: 'var(--primary)', opacity: 0.4 }}
+            />
+          </svg>
+          <span className="ik-mark relative block" />
+        </div>
       </Reveal>
     </section>
   );

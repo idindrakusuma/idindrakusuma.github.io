@@ -23,6 +23,11 @@
  * `overflow-x: clip` (unlike `hidden`) leaves the other axis visible, so the
  * orbs carry on under the bars, while nothing past the sides can make the page
  * pan horizontally. A fixed box's overflow never lengthens the scroll either.
+ *
+ * On a phone the top orb moves down and the bottom one up, and both grow, as
+ * the blog's do (see BlogBackdrop): hung off the edges they sat behind iOS's
+ * status bar and toolbar, where the page is painted on but this fixed layer
+ * stops, and read as circles cut off in a straight line.
  */
 export default function AuroraBackground() {
   return (
@@ -31,14 +36,14 @@ export default function AuroraBackground() {
       className="pointer-events-none fixed inset-0 z-0 overflow-x-clip bg-bg"
     >
       <div
-        className="absolute -top-[15%] -left-[10%] h-[60vw] w-[60vw] opacity-[.16]"
+        className="absolute -top-[15%] -left-[10%] h-[60vw] w-[60vw] opacity-[.16] max-sm:top-[8%] max-sm:left-[-30%] max-sm:h-[85vw] max-sm:w-[85vw]"
         style={{
           background: 'radial-gradient(closest-side,var(--a1),transparent)',
           animation: 'ik-aur1 24s ease-in-out infinite',
         }}
       />
       <div
-        className="absolute right-[-12%] bottom-[-20%] h-[58vw] w-[58vw] opacity-[.13]"
+        className="absolute right-[-12%] bottom-[-20%] h-[58vw] w-[58vw] opacity-[.13] max-sm:right-[-30%] max-sm:bottom-[12%] max-sm:h-[85vw] max-sm:w-[85vw]"
         style={{
           background: 'radial-gradient(closest-side,var(--a3),transparent)',
           animation: 'ik-aur2 30s ease-in-out infinite',
