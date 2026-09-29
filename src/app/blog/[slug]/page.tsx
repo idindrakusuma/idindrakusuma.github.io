@@ -9,6 +9,7 @@ import rehypePrettyCode from 'rehype-pretty-code';
 import remarkGfm from 'remark-gfm';
 import BlogBackdrop from '@/components/BlogBackdrop';
 import BlogChrome from '@/components/BlogChrome';
+import PostActions from '@/components/PostActions';
 import ProfileCard from '@/components/ProfileCard';
 import Reveal from '@/components/Reveal';
 import { mdxComponents } from '@/components/mdx-components';
@@ -192,6 +193,8 @@ export default async function PostPage({ params }: PostPageProps) {
               </Reveal>
 
               <Reveal className="ik-prose">{content}</Reveal>
+
+              <PostActions slug={slug} title={post.title} />
 
               <Reveal className="border-line mt-[52px] flex flex-wrap items-center justify-between gap-3.5 border-t pt-[30px]">
                 <Link

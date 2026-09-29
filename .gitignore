@@ -9,3 +9,6 @@ next-env.d.ts
 .vercel
 package-lock.json
 yarn.lock
+
+# Netlify CLI state
+.netlify

@@ -27,6 +27,7 @@ pnpm for months while the committed lockfile was npm's.
 | `pnpm build` | Static export into `out/` |
 | `pnpm lint` | oxlint |
 | `pnpm typecheck` | `tsc --noEmit` |
+| `pnpm test` | Clap counter rules (Node 22+) |
 | `pnpm assets` | Rebuild every generated asset |
 | `pnpm new-post` | Scaffold a new blog post |
 | `pnpm assets:posts` | Vendor blog images and measure them |
@@ -169,6 +170,25 @@ theme's own, and a fence with no language is left as plain monospace.
 
 Posts are in Bahasa Indonesia on an otherwise English site; each article carries
 `lang="id"`.
+
+### Claps and sharing
+
+The end of every post has a Clap button and a Share button (`PostActions.tsx`).
+Share needs no server: the device's share sheet where there is one, otherwise
+copy the link. Claps are the one part of the site that runs on a server — the
+Netlify function `netlify/functions/claps.ts` at `/api/claps`, storing counts in
+Netlify Blobs. Its rules live in `netlify/claps/core.ts` and are tested by
+`pnpm test`.
+
+The repository is public, so the limits hold without being secret: 10 claps per
+visitor per post (an IPv6 visitor counts per /64), 100 claps per post per hour
+from everyone, and a Netlify rate limit of 30 requests a minute per IP. A
+visitor is a salted hash of their address, never the address itself.
+
+**Production needs `CLAP_SALT`** — any long random string, set under the site's
+environment variables in Netlify. Without it clapping is refused in production
+(reading counts still works). Deploy previews use their own throwaway store and
+salt, so trying the button on a preview never touches the real counts.
 
 ## Theming
 
