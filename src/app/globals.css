@@ -239,11 +239,6 @@ body {
     background-position: 200% 50%;
   }
 }
-@keyframes ik-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 @keyframes ik-reveal {
   from {
     opacity: 0;
