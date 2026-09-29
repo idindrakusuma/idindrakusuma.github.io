@@ -281,6 +281,13 @@ body {
   background: var(--primary);
   animation: ik-blink 1s steps(1) infinite;
 }
+/* Scrolls, but draws no scrollbar — for a single line that may overflow. */
+.ik-no-scrollbar {
+  scrollbar-width: none;
+}
+.ik-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 @keyframes ik-ping {
   0% {
     transform: scale(0.9);

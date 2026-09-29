@@ -40,7 +40,9 @@ export default function Experience() {
               <div className="mb-[18px] flex flex-wrap items-center justify-between gap-2.5">
                 <h3 className="font-display m-0 text-xl font-semibold">{exp.company}</h3>
                 {exp.award && (
-                  <span className="text-primary bg-surface-3 border-line rounded-full border px-[11px] py-[5px] text-xs font-medium">
+                  // One line always: where it doesn't fit beside (or under) the
+                  // company name, it scrolls sideways, with no scrollbar drawn.
+                  <span className="ik-no-scrollbar text-primary bg-surface-3 border-line max-w-full overflow-x-auto rounded-full border px-[11px] py-[5px] text-xs font-medium whitespace-nowrap">
                     ★ {exp.award}
                   </span>
                 )}
