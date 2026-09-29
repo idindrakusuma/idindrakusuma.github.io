@@ -36,9 +36,6 @@
 # GitHub Pages projects once served under this domain, proxied to where
 # GitHub serves them now.
 
-/thekusuma  /thekusuma/  301
 /thekusuma/*  https://idindrakusuma.github.io/thekusuma/:splat  200
-/simple-404-template  /simple-404-template/  301
 /simple-404-template/*  https://idindrakusuma.github.io/simple-404-template/:splat  200
-/me  /me/  301
 /me/*  https://idindrakusuma.github.io/me/:splat  200
