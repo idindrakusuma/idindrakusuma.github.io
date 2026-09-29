@@ -202,7 +202,8 @@ to add any.
 
 On wide screens the blog index's sidebar is **Popular posts**
 (`PopularPosts.tsx`): the most-clapped posts from `/api/claps/top`, topped up
-with the newest while fewer than five have claps. The static HTML carries the
+with the newest while fewer than five have claps. Claps decide the order only;
+the list shows no counts. The static HTML carries the
 newest five, so the list reads — at the same height — before the ranking
 arrives or if it never does.
 

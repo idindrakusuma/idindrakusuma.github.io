@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import ClapIcon from './ClapIcon';
 
 type Entry = { slug: string; title: string };
+/** What /api/claps/top returns; only the order is used here. */
 type Ranked = { slug: string; total: number };
 
 const SHOWN = 5;
@@ -30,14 +30,11 @@ export default function PopularPosts({ posts }: { posts: Entry[] }) {
   }, []);
 
   const bySlug = new Map(posts.map((post) => [post.slug, post]));
-  const clapped = ranked.flatMap(({ slug, total }) => {
-    const post = bySlug.get(slug);
-    return post ? [{ ...post, total }] : [];
-  });
+  const clapped = ranked.flatMap(({ slug }) => bySlug.get(slug) ?? []);
   const taken = new Set(clapped.map((post) => post.slug));
   const list = [
     ...clapped,
-    ...posts.filter((post) => !taken.has(post.slug)).map((post) => ({ ...post, total: 0 })),
+    ...posts.filter((post) => !taken.has(post.slug)),
   ].slice(0, SHOWN);
 
   return (
@@ -61,22 +58,13 @@ export default function PopularPosts({ posts }: { posts: Entry[] }) {
               >
                 {index + 1}
               </span>
-              {/* Two lines are always reserved for the title, and the count sits
-                  beside it rather than under it, so every row is the same height
-                  whether or not the ranking has arrived. The rest of a long title
-                  opens on hover — see .ik-popular-title. */}
+              {/* Two lines are always reserved for the title, so every row is the
+                  same height whether or not the ranking has arrived. The rest of a
+                  long title opens on hover — see .ik-popular-title. The ranking
+                  orders the list; the clap counts themselves are not shown. */}
               <span className="ik-popular-title font-display line-clamp-2 min-h-[2.6em] min-w-0 flex-1 text-[14px] leading-[1.3] font-semibold">
                 {post.title}
               </span>
-              {post.total > 0 && (
-                <span className="text-muted font-mono flex flex-none items-center gap-1 pt-px text-[11.5px] leading-[1.6]">
-                  <ClapIcon size={13} />
-                  <span>
-                    {post.total}
-                    <span className="sr-only"> claps</span>
-                  </span>
-                </span>
-              )}
             </Link>
           </li>
         ))}
