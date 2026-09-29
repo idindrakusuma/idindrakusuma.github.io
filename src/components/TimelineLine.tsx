@@ -48,8 +48,15 @@ export default function TimelineLine() {
     <span
       ref={ref}
       aria-hidden="true"
-      className="absolute top-2 bottom-2 left-6 w-0.5 opacity-55"
-      style={{ background: 'linear-gradient(var(--primary),var(--border) 60%)' }}
+      className="absolute top-2 bottom-2 left-6 w-0.5 rounded-full"
+      // Brand colour the whole way down, fading only to a lighter tint of it.
+      // It used to fade into --border at 60% under a 55% opacity — the border
+      // colour is within a few shades of the page background in both themes,
+      // so past the first company the line simply wasn't there.
+      style={{
+        background:
+          'linear-gradient(var(--primary),color-mix(in srgb,var(--primary) 45%,transparent) 55%,color-mix(in srgb,var(--primary) 25%,transparent))',
+      }}
     />
   );
 }
