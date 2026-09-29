@@ -54,19 +54,16 @@ function TocList({
   items,
   active,
   onPick,
-  firstLink,
 }: {
   items: TocItem[];
   active: string | null;
   onPick?: () => void;
-  firstLink?: React.Ref<HTMLAnchorElement>;
 }) {
   return (
     <ol className="m-0 flex list-none flex-col gap-0.5 p-0">
-      {items.map((item, index) => (
+      {items.map((item) => (
         <li key={item.id} className={item.depth === 3 ? 'pl-3.5' : undefined}>
           <a
-            ref={index === 0 ? firstLink : undefined}
             href={`#${item.id}`}
             onClick={onPick}
             aria-current={active === item.id ? 'location' : undefined}
@@ -104,8 +101,11 @@ export default function TableOfContents({ items }: { items: TocItem[] }) {
  * that opens the list above itself.
  *
  * Picking a section, tapping anywhere else, or Escape closes it. Opening moves
- * focus into the list and closing returns it to the button, so it works from a
- * keyboard as well as a thumb. Hidden by CSS from the breakpoint up, where the
+ * focus to the panel itself and closing returns it to the button, so it works
+ * from a keyboard as well as a thumb. It is the panel that takes focus, not its
+ * first link: iOS Safari draws a focus ring on any element focused from script,
+ * which made the first section look selected whatever was being read. The panel
+ * draws no ring, and Tab from it lands on the first link. Hidden by CSS from the breakpoint up, where the
  * sidebar takes over.
  */
 export function FloatingTableOfContents({ items }: { items: TocItem[] }) {
@@ -113,7 +113,7 @@ export function FloatingTableOfContents({ items }: { items: TocItem[] }) {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
-  const firstLink = useRef<HTMLAnchorElement>(null);
+  const panel = useRef<HTMLElement>(null);
 
   const close = useCallback((returnFocus: boolean) => {
     setOpen(false);
@@ -122,7 +122,7 @@ export function FloatingTableOfContents({ items }: { items: TocItem[] }) {
 
   useEffect(() => {
     if (!open) return;
-    firstLink.current?.focus({ preventScroll: true });
+    panel.current?.focus({ preventScroll: true });
     const onPointer = (event: PointerEvent) => {
       if (!root.current?.contains(event.target as Node)) close(false);
     };
@@ -141,6 +141,8 @@ export function FloatingTableOfContents({ items }: { items: TocItem[] }) {
     <div ref={root} className="ik-toc-fab fixed z-40">
       {open && (
         <nav
+          ref={panel}
+          tabIndex={-1}
           id="toc-panel"
           aria-labelledby="toc-panel-heading"
           className="ik-toc-panel bg-surface border-line shadow-card absolute right-0 bottom-[calc(100%+12px)] rounded-[20px] border px-4 py-[18px]"
@@ -157,7 +159,6 @@ export function FloatingTableOfContents({ items }: { items: TocItem[] }) {
             items={items}
             active={active}
             onPick={() => window.setTimeout(() => close(false), 0)}
-            firstLink={firstLink}
           />
         </nav>
       )}

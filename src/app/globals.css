@@ -307,6 +307,7 @@ body {
   bottom: calc(16px + env(safe-area-inset-bottom));
 }
 .ik-toc-panel {
+  outline: none;
   width: min(320px, calc(100vw - 32px));
   max-height: min(60vh, 480px);
   overflow-y: auto;
