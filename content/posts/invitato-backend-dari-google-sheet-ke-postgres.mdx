@@ -1,5 +1,5 @@
 ---
-title: 'Cara Kami Mempercepat API Invitato dari 4 Detik ke 24 ms'
+title: 'Cara Kami Mempercepat API Invitato dari 4s ke 24ms'
 date: '2026-09-30 09:00:00'
 category: Development
 tags: ['invitato', 'backend', 'performance', 'postgres', 'google-sheets']
@@ -89,6 +89,18 @@ Jadi undangan yang sudah live nggak perlu di-deploy ulang dengan logic baru. Unt
 3. Kalau hasilnya sudah identik, tim tinggal klik **accept**, dan endpoint klien pindah ke API baru.
 
 Satu klien cuma butuh **3–5 menit** untuk migrasi. Karena ada langkah perbandingan ini, kami yakin tamu nggak akan melihat perbedaan apa pun, kecuali undangannya sekarang jauh lebih cepat.
+
+## Dikerjakan full dengan AI agent
+
+Satu hal yang menurut saya paling menarik: seluruh backend baru ini dikerjakan **full oleh AI agent**. Proses pengerjaannya cuma butuh **2 hari**, ditambah waktu untuk testing.
+
+Tiga skill yang paling membantu:
+
+- **`/grill-me-with-docs`**: sebelum menulis kode, agent "menginterogasi" saya soal rencana migrasinya sampai semua keputusan jelas dan terdokumentasi.
+- **`/goal`**: menetapkan target akhir yang jelas, supaya agent terus bekerja sampai target itu benar-benar tercapai.
+- **`/code-review`**: setiap perubahan di-review untuk mencari bug sebelum di-merge.
+
+Peran saya lebih banyak di menentukan arah, menjawab pertanyaan agent, dan memastikan hasilnya benar. Persis seperti yang saya tulis di [Jadi Software Engineer: 2018 vs Sekarang di Era Agentic AI](/blog/software-engineer-2018-vs-era-ai/).
 
 ## Result
 
