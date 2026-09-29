@@ -28,20 +28,20 @@ Complain mulai masuk dari klien beneran. Tamu buka undangan, loading lama. Tamu 
 
 Selain performa, ada juga masalah lain yang makin lama makin kerasa:
 
-- **Nggak ada auth sama sekali.** Endpoint `/exec` terbuka, dan seluruh daftar tamu bisa diakses siapa saja yang tahu URL-nya.
-- **Onboarding klien manual.** Setiap klien baru, operator harus duplicate sheet, deploy Apps Script, lalu tempel URL-nya ke profil klien di intools.
+- **Kontrol akses terbatas.** Apps Script nggak punya mekanisme autentikasi yang proper, jadi kami nggak bisa membatasi siapa boleh baca dan ubah data apa.
+- **Onboarding klien manual.** Setiap klien baru, tim kami harus menyiapkan sheet dan Apps Script sendiri, lalu menghubungkannya ke undangan klien satu per satu.
 
 Kira-kira begini arsitektur lamanya:
 
 ```mermaid
 flowchart TB
-  Tamu --> Undangan["Undangan<br/>(GitHub Pages)"]
+  Tamu --> Undangan[Invitation Page]
   Klien --> Dashboard[Client Dashboard]
-  Operator --> Intools[intools]
-  Undangan --> AppsScript["Apps Script /exec<br/>milik klien itu"]
+  Operator --> Intools[Internal Tools]
+  Undangan --> AppsScript["Apps Script<br/>per klien"]
   Dashboard --> AppsScript
   AppsScript --> Sheet[("Google Sheet<br/>per klien")]
-  Intools -. "duplicate sheet manual,<br/>tempel URL ke profil klien" .-> Sheet
+  Intools -. "setup manual<br/>per klien" .-> Sheet
 ```
 
 ## Arsitektur baru
@@ -50,12 +50,12 @@ Kami ubah jadi **satu backend endpoint dengan satu database utama**. Semua klien
 
 ```mermaid
 flowchart TB
-  Tamu --> Undangan["Undangan<br/>(GitHub Pages)"]
-  Klien --> Dashboard["Client Dashboard<br/>login Firebase"]
-  Operator --> Intools["intools<br/>login operator"]
-  Undangan -- "action publik" --> CF["Cloudflare<br/>rate limit + TLS"]
-  Dashboard -- "Firebase ID token" --> CF
-  Intools -- "token operator" --> CF
+  Tamu --> Undangan[Invitation Page]
+  Klien --> Dashboard[Client Dashboard]
+  Operator --> Intools[Internal Tools]
+  Undangan -- "Public Request" --> CF["Cloudflare<br/>rate limit + TLS"]
+  Dashboard -- "Account Credentials" --> CF
+  Intools -- "Account Credentials" --> CF
   CF --> LB[Load Balancer]
   LB --> API[VPS Backend App]
   API --> DB[("Supabase<br/>Postgres")]
@@ -63,14 +63,14 @@ flowchart TB
 
 Beberapa hal yang menurut saya paling penting dari arsitektur ini:
 
-- **Cloudflare di depan.** Rate limit dan TLS diurus Cloudflare, dan server cuma menerima traffic dari IP Cloudflare. Jadi server nggak bisa ditembak langsung.
-- **Guest list dan semua edit wajib login.** Klien login via Firebase, operator punya token sendiri. Action publik seperti `read_qrcode`, `get_options`, `get_web_info`, baca ucapan, RSVP, dan konfirmasi gift tetap bisa diakses tamu, tapi daftar tamu nggak lagi terbuka.
+- **Cloudflare di depan.** Rate limit dan TLS diurus Cloudflare, dan server nggak bisa diakses langsung dari luar.
+- **Data sensitif wajib login.** Klien dan tim internal harus login dulu untuk melihat daftar tamu atau mengubah data. Tamu tetap bisa buka undangan, kirim RSVP, dan kirim ucapan seperti biasa.
 - **Load balancer dengan blue/green deploy.** Load balancer bisa switch antara dua instance backend app di VPS, jadi deploy tanpa downtime.
 - **Postgres dengan PITR.** Pengganti "version history" yang dulu kami suka dari Google Sheet. Kalau ada data yang salah, bisa di-restore ke titik waktu tertentu.
 
 ### Drop-in replacement
 
-Yang paling saya syukuri: backend baru ini **drop-in replacement**. Nggak ada perubahan API sama sekali. Nama action-nya sama, bentuk request dan response-nya sama. Makanya nama service-nya `be-legacy`, karena tugasnya memang meniru kontrak API yang lama, persis.
+Yang paling saya syukuri: backend baru ini **drop-in replacement**. Nggak ada perubahan API sama sekali. Nama action-nya sama, bentuk request dan response-nya sama. Tugasnya memang meniru kontrak API yang lama, persis.
 
 Jadi undangan yang sudah live nggak perlu di-deploy ulang dengan logic baru. Alur migrasi per klien cukup:
 
@@ -84,7 +84,7 @@ Satu klien cuma butuh **3–5 menit** untuk migrasi.
 
 Dan hasilnya... performanya benar-benar instan!
 
-![Dashboard Grafana be-legacy: success rate 100%, buka undangan p95 24 ms, submit p95 46 ms](/images/posts/invitato-backend-dari-google-sheet-ke-postgres-1.webp)
+![Dashboard Grafana: success rate 100%, buka undangan p95 24 ms, submit p95 46 ms](/images/posts/invitato-backend-dari-google-sheet-ke-postgres-1.webp)
 
 Dari dashboard Grafana di atas, dalam 3 jam terakhir di production:
 
