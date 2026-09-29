@@ -38,4 +38,4 @@
 
 /thekusuma/*  https://idindrakusuma.github.io/thekusuma/:splat  200
 /simple-404-template/*  https://idindrakusuma.github.io/simple-404-template/:splat  200
-/me/*  https://idindrakusuma.github.io/me/:splat  200
+/me/*  /  301
