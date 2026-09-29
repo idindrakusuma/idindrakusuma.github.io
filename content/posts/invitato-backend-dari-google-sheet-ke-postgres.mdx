@@ -2,9 +2,8 @@
 title: 'Backend Invitato: dari 4 Detik Jadi Hitungan Milidetik'
 date: '2026-09-30 09:00:00'
 category: Development
-tags: []
-thumbnail: ''
-draft: true
+tags: ['invitato', 'backend', 'performance', 'postgres', 'google-sheets']
+thumbnail: '/images/posts/invitato-backend-dari-google-sheet-ke-postgres-thumb.webp'
 ---
 
 Selama bertahun-tahun, backend Invitato cuma Google Spreadsheet dan Apps Script: gratis, simpel, dan cukup untuk project sampingan. Tapi begitu kliennya tumbuh jadi puluhan sampai ratusan tiap bulan, satu request bisa makan 4 detik, bahkan sampai 45 detik. Di artikel ini saya cerita kenapa dulu kami pakai spreadsheet, kenapa akhirnya pindah, bagaimana arsitektur barunya, dan hasilnya: sekarang p95 cuma 24 ms untuk buka undangan.
