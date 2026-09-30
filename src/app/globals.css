@@ -1015,19 +1015,55 @@ body {
    at all. It needs 760 + 40 gap + 260 sidebar inside the shell's padding before
    there is any.
 --------------------------------------------------------------------------- */
+/* A post page: one 760px column, and from 1180px a two-column grid —
+     head | art
+     body | side
+   The illustration sits beside the title and the table of contents starts
+   level with the body. Without a table of contents (.ik-article-wide) the
+   body takes both columns, and the footer matches the article's width. */
+.ik-article,
+.ik-article-foot {
+  max-width: 760px;
+  margin-inline: auto;
+}
+.ik-article-art,
 .ik-article-side {
   display: none;
 }
 
 @media (min-width: 1180px) {
-  .ik-article-shell {
+  .ik-article,
+  .ik-article-foot {
+    max-width: 1060px;
+  }
+  .ik-article {
     display: grid;
     grid-template-columns: minmax(0, 760px) 260px;
-    gap: 40px;
-    justify-content: center;
+    grid-template-areas:
+      'head art'
+      'body side';
+    column-gap: 40px;
     align-items: start;
   }
+  .ik-article-wide {
+    grid-template-areas:
+      'head art'
+      'body body';
+  }
+  .ik-article-head {
+    grid-area: head;
+  }
+  .ik-article-body {
+    grid-area: body;
+    min-width: 0;
+  }
+  .ik-article-art {
+    grid-area: art;
+    display: block;
+    align-self: center;
+  }
   .ik-article-side {
+    grid-area: side;
     display: block;
     position: sticky;
     /* Clears the fixed nav island, same as the index sidebar. */

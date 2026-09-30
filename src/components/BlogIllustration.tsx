@@ -22,9 +22,10 @@ const CODE: [number, number, number, string, number][] = [
   [118, 164, 30, '--primary', 1],
 ];
 
-export default function BlogIllustration() {
+/** `className` sets its width; the art keeps its own aspect ratio. */
+export default function BlogIllustration({ className = 'w-[340px]' }: { className?: string }) {
   return (
-    <div aria-hidden="true" className="pointer-events-none w-[340px] select-none">
+    <div aria-hidden="true" className={`pointer-events-none select-none ${className}`}>
       <svg viewBox="0 0 380 320" width="100%" fill="none" className="overflow-visible">
         {/* Orbit behind everything, as on the homepage portrait. */}
         <g transform="rotate(-14 190 175)">

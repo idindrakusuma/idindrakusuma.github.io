@@ -24,6 +24,12 @@ export type Post = {
   title: string;
   /** The post's own words — everything before its `<!-- more -->` marker. */
   excerpt: string;
+  /**
+   * The meta description, when the post writes its own. Otherwise the excerpt
+   * is cut to length — see summarise — which can drop exactly the part worth
+   * showing in a search result when the opening paragraph runs long.
+   */
+  description?: string;
   /** ISO 8601, as written in the original frontmatter. */
   date: string;
   category: Category;
@@ -139,6 +145,9 @@ function toPost(slug: string, data: Record<string, unknown>, body: string): Post
     slug,
     title: need('title'),
     excerpt,
+    ...(typeof data.description === 'string' && data.description.trim()
+      ? { description: data.description.trim() }
+      : {}),
     date,
     category,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
