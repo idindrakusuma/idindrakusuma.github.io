@@ -29,7 +29,7 @@ Komplain mulai masuk dari klien beneran. Tamu buka undangan, loading lama. Tamu 
 
 Selain performa, ada juga masalah lain yang makin lama makin kerasa:
 
-- **Kontrol akses terbatas.** Apps Script nggak punya mekanisme autentikasi yang proper, jadi kami nggak bisa membatasi siapa boleh baca dan ubah data apa.
+- **Kontrol akses terbatas.** Autentikasi yang bisa kami pasang di Apps Script terbatas, jadi keamanannya belum semaksimal yang kami mau. Apalagi setiap lapisan keamanan tambahan bikin request yang sudah lambat jadi makin lama.
 - **Onboarding klien manual.** Setiap klien baru, tim kami harus menyiapkan sheet dan Apps Script sendiri, lalu menghubungkannya ke undangan klien satu per satu.
 
 ### Kenapa Google Sheet lambat untuk use case kami?
@@ -107,7 +107,7 @@ Peran saya lebih banyak di menentukan arah, menjawab pertanyaan agent, dan memas
 
 Dan hasilnya... performanya benar-benar instan!
 
-![Dashboard Grafana: success rate 100%, buka undangan p95 24 ms, submit p95 46 ms](/images/posts/invitato-backend-dari-google-sheet-ke-postgres-1.webp)
+![Grafana: success rate 100%, buka undangan p95 24 ms, submit p95 46 ms](/images/posts/invitato-backend-dari-google-sheet-ke-postgres-1.webp)
 
 Dari dashboard Grafana di atas, dalam 3 jam terakhir di production:
 
@@ -131,7 +131,7 @@ Kami juga pasang alert dari Grafana ke Telegram. Kalau error rate naik atau late
 
 ## Cost
 
-Ini satu-satunya trade-off: tadinya **$0**, sekarang kami harus bayar VPS dan database (Supabase Pro).
+Ini trade-off terbesarnya: tadinya **$0**, sekarang kami harus bayar VPS dan database (Supabase Pro). Selain itu, sekarang ada server yang harus kami rawat sendiri, sesuatu yang dulu sepenuhnya diurus Google.
 
 Tapi menurut saya ini sangat worth it. Klien bayar untuk undangan yang bisa dibuka tamunya dengan cepat, terutama di hari H ketika ratusan tamu buka undangan dan scan QR code di waktu yang hampir bersamaan. Kehilangan satu klien karena undangannya lambat jauh lebih mahal daripada biaya server per bulan.
 
