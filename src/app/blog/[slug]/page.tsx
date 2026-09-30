@@ -15,6 +15,7 @@ import TableOfContents, { FloatingTableOfContents } from '@/components/TableOfCo
 import { mdxComponents } from '@/components/mdx-components';
 import { formatDate, getNextPost, getPost, getPostBody, getPosts, summarise } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
+import { remarkMermaid } from '@/lib/mermaid';
 import { rehypeToc, type TocItem } from '@/lib/toc';
 import manifest from '../../../../public/images/posts/manifest.json';
 
@@ -119,7 +120,7 @@ export default async function PostPage({ params }: PostPageProps) {
         // not autolink by default, which left 28 of them across 16 posts as
         // unclickable text — the same migration gap as the dead permalinks
         // above, just quieter.
-        remarkPlugins: [remarkGfm],
+        remarkPlugins: [remarkGfm, remarkMermaid],
         rehypePlugins: [rehypeToc(toc), [rehypePrettyCode, prettyCode]],
       },
     },

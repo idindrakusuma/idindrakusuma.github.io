@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { ComponentProps } from 'react';
+import Mermaid from './Mermaid';
 import manifest from '../../public/images/posts/manifest.json';
 
 /**
@@ -18,6 +19,9 @@ const dimensions = manifest as Record<string, Dimensions>;
 const MAX_UNBROKEN = 24;
 
 export const mdxComponents = {
+  /** A ```mermaid fence, lifted out of the code path by remarkMermaid. */
+  Mermaid,
+
   /**
    * Markdown image syntax carries no dimensions, and an unsized image in a
    * 760px column shifts the layout as it loads. Every vendored image is

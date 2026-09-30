@@ -1062,3 +1062,36 @@ body {
     display: none;
   }
 }
+
+/* A ```mermaid fence, drawn by the Mermaid component. The diagram sits on the
+   same card surface as a code block, centred, and scales down to the column
+   rather than scrolling — a diagram is read whole, not panned. */
+.ik-prose .ik-mermaid {
+  margin: 0 0 24px;
+  padding: 22px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.ik-prose .ik-mermaid pre {
+  margin: 0;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  background: none;
+}
+.ik-prose .ik-mermaid svg p {
+  /* Labels are HTML inside the SVG, measured before .ik-prose p could apply —
+     the article's paragraph size and margins would overflow every box. */
+  margin: 0;
+  font-size: inherit;
+  line-height: 1.5;
+  color: inherit;
+}
+.ik-prose .ik-mermaid svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
