@@ -8,6 +8,7 @@ import { compileMDX } from 'next-mdx-remote/rsc';
 import rehypePrettyCode from 'rehype-pretty-code';
 import remarkGfm from 'remark-gfm';
 import BlogBackdrop from '@/components/BlogBackdrop';
+import BlogIllustration from '@/components/BlogIllustration';
 import BlogChrome from '@/components/BlogChrome';
 import PostActions from '@/components/PostActions';
 import Reveal from '@/components/Reveal';
@@ -132,26 +133,33 @@ export default async function PostPage({ params }: PostPageProps) {
       <div className="relative z-1">
         <BlogChrome back={{ href: '/blog', label: 'All writing' }} trailing="Blog" />
 
-        {/* From a wide enough viewport the table of contents sits alongside
-            the article. The reading column keeps its 760px measure either way —
-            the sidebar appears in the space beside it or not at all, rather
-            than narrowing the text to make room. */}
+        {/* From 1180px the article is a two-column grid (see .ik-article):
+
+              header   | illustration
+              body     | table of contents
+
+            The illustration fills the space beside the title, and the table of
+            contents starts level with the body, where there is something to
+            navigate, instead of beside the title. A post without a table of
+            contents lets its body take both columns. Narrower than that it is
+            one 760px column, with no illustration and the contents folded into
+            a floating button.
+
+            Class lists are whole, space-separated strings: Tailwind finds
+            classes by scanning the source, and one glued to a `${` is not seen
+            as a class at all — which is how pt-[130px] once went missing. */}
         <div
-          // Kept as whole, space-separated strings: Tailwind finds classes by
-          // scanning the source, and one glued to a `${` is not seen as a class
-          // at all — which is how pt-[130px] once went missing from the CSS.
-          className={[
-            'ik-article-shell mx-auto max-w-[1120px] px-6 pt-[130px]',
-            toc.length >= 2 && 'ik-has-toc-fab',
-          ]
+          className={['mx-auto max-w-[1120px] px-6 pt-[130px]', toc.length >= 2 && 'ik-has-toc-fab']
             .filter(Boolean)
             .join(' ')}
         >
-          <div className="mx-auto w-full max-w-[760px]">
-            {/* The posts are Bahasa Indonesia on an otherwise English site. */}
-            {/* The archive is Bahasa Indonesia on an otherwise English site, so
-                each post declares its own language rather than inheriting one. */}
-            <article lang={post.lang} className="pb-10">
+          {/* The archive is Bahasa Indonesia on an otherwise English site, so
+              each post declares its own language rather than inheriting one. */}
+          <article
+            lang={post.lang}
+            className={['ik-article pb-10', toc.length < 2 && 'ik-article-wide'].filter(Boolean).join(' ')}
+          >
+            <div className="ik-article-head">
               <Reveal immediate className="font-mono text-faint mb-5 flex flex-wrap items-center gap-2.5 text-[12.5px]">
                 <span className="text-primary tracking-[.04em] uppercase">{post.category}</span>
                 <span aria-hidden="true">·</span>
@@ -206,6 +214,13 @@ export default async function PostPage({ params }: PostPageProps) {
                 </span>
               </Reveal>
 
+            </div>
+
+            <Reveal immediate delay={120} className="ik-article-art">
+              <BlogIllustration className="w-full" />
+            </Reveal>
+
+            <div className="ik-article-body">
               <Reveal className="ik-prose">{content}</Reveal>
 
               <PostActions slug={slug} title={post.title} />
@@ -229,22 +244,23 @@ export default async function PostPage({ params }: PostPageProps) {
                   </Link>
                 )}
               </Reveal>
-            </article>
+            </div>
 
-            <footer className="border-line text-faint flex flex-wrap items-center justify-between gap-3 border-t py-6 text-[13px]">
-              <span>
-                © {new Date().getFullYear()} {SITE.name}
-              </span>
-              <Link href="/" className="text-primary font-semibold no-underline">
-                Back to site →
-              </Link>
-            </footer>
-          </div>
+            {toc.length >= 2 && (
+              <aside className="ik-article-side">
+                <TableOfContents items={toc} />
+              </aside>
+            )}
+          </article>
 
-          {/* A table of contents only earns its place with two sections or more;
-              a post without them — most of the older stories — leaves the column
-              empty rather than moving the article off its usual line. */}
-          <aside className="ik-article-side">{toc.length >= 2 && <TableOfContents items={toc} />}</aside>
+          <footer className="ik-article-foot border-line text-faint flex flex-wrap items-center justify-between gap-3 border-t py-6 text-[13px]">
+            <span>
+              © {new Date().getFullYear()} {SITE.name}
+            </span>
+            <Link href="/" className="text-primary font-semibold no-underline">
+              Back to site →
+            </Link>
+          </footer>
         </div>
 
         {/* The same contents below the sidebar's breakpoint, folded into a
