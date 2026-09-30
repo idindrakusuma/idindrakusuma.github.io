@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   const post = await getPost(slug);
   if (!post) return {};
 
-  const description = summarise(post.excerpt);
+  const description = post.description ?? summarise(post.excerpt);
   const images = shareImage(slug, post.thumbnail, post.title, post.draft);
   return {
     title: `${post.title} — ${SITE.name}`,

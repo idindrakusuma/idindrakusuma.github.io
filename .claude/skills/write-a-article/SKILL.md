@@ -75,6 +75,10 @@ Only when the user says it is ready:
    copy that link previews use (WhatsApp will not show a WebP), and the build
    fails for a published post that has none.
 2. Add `tags` if they want them. Optional, and free-form.
+   Add a `description` (under ~155 characters) when the first paragraph runs
+   longer than that: it becomes the meta description for search results and
+   link previews. Without it the first paragraph is cut at 155 characters,
+   which can drop the headline number or point. Lead with that.
 3. Delete `draft: true`.
 4. `pnpm build` to confirm.
 
