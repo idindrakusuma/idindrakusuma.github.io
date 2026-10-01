@@ -143,7 +143,7 @@ export default function Hero() {
               <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'var(--primary)' }} />
               <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'var(--primary-2)' }} />
               <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'var(--faint)', opacity: 0.6 }} />
-              <span className="text-faint ml-3 font-mono text-[11px]">indra.tsx</span>
+              <span className="text-faint ml-3 font-mono text-[11px]">indrakusuma.md</span>
             </div>
             <div className="bg-surface-2 aspect-[1/0.92] overflow-hidden rounded-[clamp(11px,4%,16px)]">
               <Image
