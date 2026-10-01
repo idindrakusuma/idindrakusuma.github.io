@@ -1,6 +1,6 @@
 ---
 name: write-a-article
-description: Start a new blog post for indrakusuma.web.id. Scaffolds content/posts/<slug>.mdx with its frontmatter filled in and a draft flag, so the next thing to do is write. Use when the user wants to write, draft, or start a new article or blog post.
+description: Start a new blog post for indrakusuma.dev. Scaffolds content/posts/<slug>.mdx with its frontmatter filled in and a draft flag, so the next thing to do is write. Use when the user wants to write, draft, or start a new article or blog post.
 ---
 
 # Write an article

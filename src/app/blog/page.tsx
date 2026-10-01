@@ -54,7 +54,7 @@ export default async function BlogIndex() {
               Tutorials, engineering notes and a few career stories — written mostly in Bahasa
               Indonesia over the years at{' '}
               <Link href="/" className="text-primary font-semibold no-underline">
-                indrakusuma.web.id
+                indrakusuma.dev
               </Link>
               .
             </Reveal>

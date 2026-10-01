@@ -1,4 +1,4 @@
-# indrakusuma.web.id
+# indrakusuma.dev
 
 Personal site of Indra Kusuma. Next.js 15 App Router with `output: 'export'`, so
 the whole site builds to static HTML for GitHub Pages. Tailwind v4 over CSS custom

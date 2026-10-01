@@ -1,4 +1,4 @@
-# indrakusuma.web.id
+# indrakusuma.dev
 
 A single-page personal site, statically exported. The page is a fixed sequence of
 **Sections**; this file names the concepts that recur across them so the code and
