@@ -20,7 +20,7 @@ export const SITE = {
   role: 'Fullstack Engineer · AI-Native',
   location: 'Jakarta, Indonesia',
   url: 'https://indrakusuma.web.id',
-  email: 'hello@indrakusuma.web.id',
+  email: 'hi@indrakusuma.dev',
   description: `${YEARS_EXPERIENCE}+ years building end-to-end — from top-traffic commerce frontends to Go services and AI-native tooling. Currently at ByteDance, previously Tokopedia.`,
 } as const;
 
