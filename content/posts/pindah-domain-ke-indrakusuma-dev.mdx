@@ -1,0 +1,55 @@
+---
+title: 'Pindah Rumah Lagi: Dari indrakusuma.web.id ke indrakusuma.dev'
+date: '2026-10-01 15:22:05'
+category: Story
+tags: ['domain', 'website']
+thumbnail: ''
+draft: true
+---
+
+Mulai hari ini, blog ini resmi pindah alamat dari **indrakusuma.web.id** ke **indrakusuma.dev**. Domain `.web.id` sudah menemani saya bertahun-tahun sejak zaman kuliah, dan sekarang saatnya pindah ke alamat yang lebih profesional. Tenang, semua link lama tetap jalan dan otomatis diarahkan ke domain baru. Di artikel ini saya cerita kenapa dulu pakai `.web.id`, kenapa sekarang pindah ke `.dev`, dan harapan saya dengan domain baru ini.
+
+## Kenapa Dulu Pakai .web.id?
+
+Jawabannya sederhana: **karena murah** 😄
+
+Waktu itu saya masih mahasiswa. Rencananya tentu mau beli `indrakusuma.com`, tapi ternyata sudah diambil orang. Alternatif lain yang masih masuk akal dan ramah di kantong mahasiswa ya `.web.id`, cuma **55 ribu per tahun**. Buat mahasiswa, itu harga yang pas banget untuk punya "rumah" sendiri di internet.
+
+Dan domain ini ternyata awet. Dari zaman blog ini masih pakai Hexo, sampai di tahun 2018 saya pernah nulis [Tahun Baru, Domain Baru dan Semangat Baru](/blog/tahun-baru-domain-baru-dan-semangat-baru/) waktu blog ini pindah ke `indrakusuma.web.id/blog`, sampai akhirnya hidup lagi tahun ini setelah 7 tahun mati suri. Banyak cerita yang lahir di domain ini.
+
+## Kenapa Sekarang .dev?
+
+Sekarang saya sudah bukan mahasiswa lagi, dan blog ini juga jadi portofolio saya sebagai Software Engineer. Rasanya sudah waktunya punya alamat yang **lebih profesional** dan lebih "nyambung" dengan apa yang saya kerjakan sehari-hari.
+
+`.dev` pas untuk itu. Namanya jelas untuk developer, pendek, dan gampang diingat. Bonusnya, `indrakusuma.dev` masih tersedia, jadi nama saya tetap utuh tanpa harus ditambah embel-embel aneh.
+
+Ada satu hal menarik dari `.dev`: seluruh domain `.dev` masuk ke daftar **HSTS preload** di browser. Artinya, browser akan selalu memaksa koneksi lewat HTTPS, nggak ada pilihan HTTP biasa. Jadi waktu migrasi, saya harus pastikan sertifikat HTTPS untuk domain baru sudah aktif dulu sebelum domain lama diarahkan ke sana. Kalau kebalik, pengunjung yang datang dari domain lama malah ketemu halaman error.
+
+Sekalian pindah domain, alamat email saya juga ikut pindah ke **hi@indrakusuma.dev**.
+
+## Link Lama Tetap Jalan
+
+Ini bagian yang paling penting buat saya. Artikel-artikel lama di blog ini sudah tersebar di mana-mana: di hasil pencarian Google, di grup WhatsApp, atau mungkin di bookmark seseorang. Saya nggak mau link-link itu tiba-tiba mati.
+
+Solusinya pakai **redirect 301** (permanent redirect). Semua alamat di domain lama diarahkan ke path yang sama di domain baru. Di Netlify, cukup tambahkan beberapa baris di file `_redirects`:
+
+```bash
+https://indrakusuma.web.id/*      https://indrakusuma.dev/:splat  301!
+https://www.indrakusuma.web.id/*  https://indrakusuma.dev/:splat  301!
+```
+
+Tanda `!` di akhir artinya redirect ini dipaksa, walaupun file di path tersebut sebenarnya ada. Jadi `indrakusuma.web.id/blog/apa-saja` akan dibawa ke `indrakusuma.dev/blog/apa-saja`. Bahkan link lama dari zaman Hexo (yang formatnya masih pakai tanggal) tetap sampai ke artikel yang benar, cukup lewat dua kali redirect.
+
+Karena pakai 301, Google juga paham bahwa ini perpindahan permanen, sehingga "reputasi" halaman lama ikut pindah ke alamat yang baru.
+
+## Domain Baru, Semangat Baru (Lagi)
+
+Kalau kamu baca artikel saya tahun 2018 tadi, di situ saya menulis:
+
+> Dengan domain baru ini, aku berharap jadi rajin menulis di blog ini, amiin :)
+
+Kenyataannya? Setelah itu blog ini malah vakum lebih dari 7 tahun 🤣
+
+Jadi kali ini saya nggak mau janji muluk-muluk. Semoga domain baru ini membawa semangat baru, dan saya jadi lebih rajin mendokumentasikan apa yang saya pelajari dan alami, baik soal development, cerita kerja, maupun kehidupan sehari-hari.
+
+Terima kasih **indrakusuma.web.id** yang sudah menemani sejak zaman kuliah. Selamat datang **indrakusuma.dev**, bismillah! 🚀
