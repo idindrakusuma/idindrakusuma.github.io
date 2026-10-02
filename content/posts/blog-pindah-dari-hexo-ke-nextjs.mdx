@@ -6,7 +6,7 @@ tags: []
 thumbnail: '/images/posts/blog-pindah-dari-hexo-ke-nextjs-thumb.webp'
 ---
 
-Tahun 2017 saya pernah nulis kenapa blog ini pindah dari Blogger ke Hexo. Sekarang, setelah 7 tahun lebih blog ini "mati suri", saya pindah lagi — kali ini ke Next.js dengan konten berbasis MDX. Semua 31 artikel lama ikut pindah, link lamanya tetap jalan, dan websitenya tetap statis seperti dulu. Di artikel ini saya cerita kenapa pindah, gimana cara migrasinya, dan apa saja yang saya dapat dari proses ini.
+Tahun 2017 saya pernah nulis kenapa blog ini pindah dari Blogger ke Hexo. Sekarang, setelah 7 tahun lebih blog ini "mati suri", saya pindah lagi — kali ini ke Next.js dengan konten berbasis MDX. Semua 31 artikel lama ikut pindah, link lamanya tetap jalan, dan halamannya tetap statis seperti dulu. Di artikel ini saya cerita kenapa pindah, gimana cara migrasinya, dan apa saja yang saya dapat dari proses ini.
 
 ## Kenapa Nggak Tetap Pakai Hexo?
 
@@ -18,7 +18,7 @@ Di sisi lain, sehari-hari saya kerja pakai React dan Next.js. Jadi daripada bela
 
 ## Tetap Statis, Tetap Ringan
 
-Satu hal yang saya pertahankan dari zaman Hexo: **website ini harus statis**. Nggak ada server, nggak ada database, cukup file HTML yang bisa di-hosting di mana saja.
+Satu hal yang saya pertahankan dari zaman Hexo: **halaman website ini harus statis**. Setiap halaman sudah jadi HTML saat build, jadi nggak ada server yang harus merender halaman setiap kali ada pengunjung.
 
 Untungnya Next.js punya fitur static export. Cukup satu baris di konfigurasi:
 
@@ -30,6 +30,16 @@ const nextConfig: NextConfig = {
 ```
 
 Dengan `output: 'export'`, `pnpm build` menghasilkan folder `out/` berisi HTML statis. `trailingSlash` dipakai supaya setiap halaman jadi `index.html` di foldernya sendiri, karena hosting statis melayani direktori, bukan route.
+
+### Tapi nggak 100% statis lagi
+
+Awalnya saya pikir blog ini bisa di-hosting di mana saja, persis seperti zaman Hexo. Ternyata seiring jalan ada beberapa fitur yang butuh sedikit bantuan dari hosting-nya, dan di sini saya pakai fitur-fitur Netlify:
+
+- **Clap counter.** Tombol clap di bawah artikel dan daftar artikel populer di halaman blog butuh tempat untuk menyimpan jumlah clap. Untuk ini saya pakai Netlify Functions sebagai API kecil (`/api/claps`) dan Netlify Blobs sebagai storage-nya. Nggak perlu setup database sendiri.
+- **Redirect.** Link lama dari zaman Hexo dan dari domain lama diarahkan lewat file `_redirects` (lebih lengkapnya di bagian berikutnya).
+- **Cache header.** File JS, CSS, dan font di-cache permanen di browser lewat file `_headers`, jadi kunjungan berikutnya terasa lebih cepat.
+
+Jadi sekarang blog ini sudah "terikat" sama Netlify. Tapi intinya tetap sama: semua halaman tetap HTML statis. Kalau suatu hari pindah hosting, yang perlu disesuaikan cuma bagian-bagian kecil di atas.
 
 ## Migrasi 31 Artikel Lama
 
@@ -43,7 +53,7 @@ Beberapa penyesuaian kecil juga terjadi di sini. Misalnya, Hexo dulu punya enam 
 
 Dulu URL artikel formatnya `/tahun/bulan/tanggal/judul/`, sekarang jadi `/blog/slug/`. Masalahnya, link lama itu yang masih tersebar di Google dan di blog orang lain. Kalau dibiarkan, semuanya bakal 404.
 
-Solusinya, saya generate file redirect otomatis dari data artikel itu sendiri. Tanggal dan slug yang dipakai untuk bikin URL lama sama persis dengan yang tersimpan di frontmatter, jadi nggak mungkin nggak sinkron. Cukup jalankan:
+Solusinya, saya generate file `_redirects` untuk Netlify secara otomatis dari data artikel itu sendiri. Tanggal dan slug yang dipakai untuk bikin URL lama sama persis dengan yang tersimpan di frontmatter, jadi nggak mungkin nggak sinkron. Cukup jalankan:
 
 ```bash
 pnpm assets:redirects
