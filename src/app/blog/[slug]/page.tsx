@@ -71,6 +71,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
       title: post.title,
       description,
       publishedTime: new Date(post.date).toISOString(),
+      ...(post.updated ? { modifiedTime: new Date(post.updated).toISOString() } : {}),
       images,
     },
     // Set in full, not left to the layout: Next merges metadata one top-level
@@ -166,6 +167,16 @@ export default async function PostPage({ params }: PostPageProps) {
                 <time dateTime={new Date(post.date).toISOString()}>{formatDate(post.date)}</time>
                 <span aria-hidden="true">·</span>
                 <span>{post.readingMinutes} min read</span>
+                {/* Last, and on a phone a line of its own: four items do not fit
+                    one line there, and a wrap mid-row leaves a dot hanging. */}
+                {post.updated && (
+                  <>
+                    <span aria-hidden="true" className="max-sm:hidden">·</span>
+                    <span className="max-sm:basis-full">
+                      Updated <time dateTime={new Date(post.updated).toISOString()}>{formatDate(post.updated)}</time>
+                    </span>
+                  </>
+                )}
               </Reveal>
 
               <Reveal

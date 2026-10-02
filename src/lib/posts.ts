@@ -32,6 +32,12 @@ export type Post = {
   description?: string;
   /** ISO 8601, as written in the original frontmatter. */
   date: string;
+  /**
+   * When the post was last revised in substance, if it has been. Same form as
+   * `date`, and never before it. Shown beside the publish date and given to
+   * search engines as the modified time.
+   */
+  updated?: string;
   category: Category;
   tags: string[];
   /**
@@ -138,6 +144,15 @@ function toPost(slug: string, data: Record<string, unknown>, body: string): Post
     throw new Error(`content/posts/${slug}.mdx: date "${date}" is not a date`);
   }
 
+  const updated = typeof data.updated === 'string' && data.updated.trim() ? data.updated.trim() : undefined;
+  if (updated !== undefined) {
+    const time = new Date(updated).getTime();
+    if (Number.isNaN(time)) throw new Error(`content/posts/${slug}.mdx: updated "${updated}" is not a date`);
+    if (time < new Date(date).getTime()) {
+      throw new Error(`content/posts/${slug}.mdx: updated "${updated}" is before date "${date}"`);
+    }
+  }
+
   const { excerpt } = splitLead(data, body);
   if (!excerpt) throw new Error(`content/posts/${slug}.mdx: no excerpt, and none could be derived`);
 
@@ -149,6 +164,7 @@ function toPost(slug: string, data: Record<string, unknown>, body: string): Post
       ? { description: data.description.trim() }
       : {}),
     date,
+    ...(updated ? { updated } : {}),
     category,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     // A draft is allowed to not have one yet; publishing without one is not.

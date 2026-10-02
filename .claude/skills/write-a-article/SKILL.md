@@ -82,6 +82,11 @@ Only when the user says it is ready:
 3. Delete `draft: true`.
 4. `pnpm build` to confirm.
 
+When a published post is later revised in substance (a correction, a section
+rewritten, not a typo), add `updated: 'YYYY-MM-DD HH:mm:ss'` to its frontmatter.
+The post header then shows "Updated …" beside the publish date, and the sitemap
+and link-preview tags carry it as the modified time. Leave `date` as it was.
+
 `excerpt` and `readingMinutes` stay absent unless the user wants to override
 what is derived — the first paragraph and a word count respectively.
 
