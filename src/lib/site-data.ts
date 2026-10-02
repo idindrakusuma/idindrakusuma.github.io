@@ -106,6 +106,11 @@ export const STATS: Stat[] = [
 export type Role = {
   title: string;
   period: string;
+  /**
+   * Employment type, shown as a badge beside the title. Left out for
+   * full-time roles, which is the default a reader assumes.
+   */
+  type?: 'Part-time' | 'Freelance';
   location: string;
   current?: boolean;
   points: string[];
@@ -189,6 +194,7 @@ export const EXPERIENCES: Experience[] = [
       {
         title: 'Co-Founder & Tech Advisor',
         period: 'Oct 2021 — Now',
+        type: 'Part-time',
         location: 'Remote',
         points: [
           'Built the foundation for the Wedding Website Template.',
@@ -206,6 +212,7 @@ export const EXPERIENCES: Experience[] = [
       {
         title: 'Course Instructor',
         period: 'Nov 2019 — Dec 2019',
+        type: 'Freelance',
         location: 'Jakarta',
         points: [
           'Collaborated with a SkillAcademy content analyst to create the HTML Basic curriculum.',
@@ -221,6 +228,7 @@ export const EXPERIENCES: Experience[] = [
       {
         title: 'Software Engineer',
         period: 'Sep 2017 — Sep 2018',
+        type: 'Part-time',
         location: 'Semarang',
         points: [
           'Worked closely under the CMO to prototype and develop innovative digital solutions.',
@@ -237,6 +245,7 @@ export const EXPERIENCES: Experience[] = [
       {
         title: 'Web Developer — Career Center',
         period: 'Jan 2016 — Aug 2017',
+        type: 'Part-time',
         location: 'Semarang',
         points: [
           'Developed and maintained cc.dinus.ac.id, improving accessibility and engagement for students and alumni.',

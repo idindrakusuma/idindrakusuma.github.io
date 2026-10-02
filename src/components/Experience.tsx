@@ -36,7 +36,7 @@ export default function Experience() {
               />
             </div>
 
-            <div className="bg-surface border-line shadow-card-sm hover:border-line-2 hover:shadow-card rounded-[18px] border px-[26px] py-6 transition-[translate,border-color,box-shadow] duration-400 hover:-translate-y-[4px]">
+            <div className="bg-surface border-line shadow-card-sm hover:border-line-2 hover:shadow-card rounded-[18px] border px-[26px] py-6 max-sm:px-5 transition-[translate,border-color,box-shadow] duration-400 hover:-translate-y-[4px]">
               <div className="mb-[18px] flex flex-wrap items-center justify-between gap-2.5">
                 <h3 className="font-display m-0 text-xl font-semibold">{exp.company}</h3>
                 {exp.award && (
@@ -61,10 +61,17 @@ export default function Experience() {
                           CURRENT
                         </span>
                       )}
+                      {/* Employment type sits with the title, not in the period
+                          row below, so that row stays one line on a phone. */}
+                      {role.type && (
+                        <span className="text-muted bg-surface-3 border-line ml-2 inline-flex translate-y-[-1px] rounded-full border px-[9px] py-[2px] text-[11px] font-semibold whitespace-nowrap">
+                          {role.type}
+                        </span>
+                      )}
                     </span>
                   </div>
 
-                  <div className="font-mono text-faint mb-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs">
+                  <div className="ik-no-scrollbar font-mono text-faint mb-3 flex gap-x-4 overflow-x-auto text-xs whitespace-nowrap max-sm:gap-x-2 max-sm:text-[11px]">
                     <span>{role.period}</span>
                     <span aria-hidden="true">·</span>
                     <span>{role.location}</span>
