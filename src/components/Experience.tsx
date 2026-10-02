@@ -50,15 +50,29 @@ export default function Experience() {
 
               {exp.roles.map((role) => (
                 <div key={role.title} className="border-line border-t py-3.5">
-                  {/* Badges are flex items spaced by `gap`, not by a margin of
-                      their own: a badge that wraps under a long title starts
-                      flush left instead of indented by a gap with nothing
-                      beside it. */}
-                  <div className="mb-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5">
-                    <span className="text-ink text-[15.5px] font-semibold">{role.title}</span>
+                  {/* The badges flow inline after the title, so a long title
+                      keeps its badge on its last line when there is room. The
+                      gap comes from the margin on the element *before* each
+                      badge, never from the badge itself: an inline margin-right
+                      stays at the end of its own line, so a badge that wraps
+                      starts flush left instead of indented. */}
+                  <div className="mb-2.5">
+                    <span
+                      className={
+                        role.current || role.type
+                          ? 'text-ink mr-2 text-[15.5px] font-semibold'
+                          : 'text-ink text-[15.5px] font-semibold'
+                      }
+                    >
+                      {role.title}
+                    </span>
                     {role.current && (
                       <span
-                        className="inline-flex rounded-full px-[9px] py-[3px] text-[11px] font-semibold"
+                        className={
+                          role.type
+                            ? 'mr-2 inline-flex translate-y-[-1px] rounded-full px-[9px] py-[3px] text-[11px] font-semibold'
+                            : 'inline-flex translate-y-[-1px] rounded-full px-[9px] py-[3px] text-[11px] font-semibold'
+                        }
                         style={{ color: '#34c77b', background: 'rgb(52 199 123 / 0.12)' }}
                       >
                         CURRENT
@@ -67,7 +81,7 @@ export default function Experience() {
                     {/* Employment type sits with the title, not in the period
                         row below, so that row stays one line on a phone. */}
                     {role.type && (
-                      <span className="text-muted bg-surface-3 border-line inline-flex rounded-full border px-[9px] py-[2px] text-[11px] font-semibold whitespace-nowrap">
+                      <span className="text-muted bg-surface-3 border-line inline-flex translate-y-[-1px] rounded-full border px-[9px] py-[2px] text-[11px] font-semibold whitespace-nowrap">
                         {role.type}
                       </span>
                     )}
