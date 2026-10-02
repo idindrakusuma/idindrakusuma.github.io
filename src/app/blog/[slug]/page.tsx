@@ -71,6 +71,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
       title: post.title,
       description,
       publishedTime: new Date(post.date).toISOString(),
+      ...(post.updated ? { modifiedTime: new Date(post.updated).toISOString() } : {}),
       images,
     },
     // Set in full, not left to the layout: Next merges metadata one top-level
@@ -208,9 +209,17 @@ export default async function PostPage({ params }: PostPageProps) {
                     className="h-full w-full rounded-full object-cover"
                   />
                 </span>
-                <span className="flex flex-col">
-                  <span className="text-[15px] font-semibold">{SITE.name}</span>
-                  <span className="text-muted text-[13px]">Fullstack Engineer · Jakarta</span>
+                <span className="flex flex-col gap-2">
+                  <span className="text-[15px] font-semibold">By {SITE.name}</span>
+                  <span className="flex gap-[22px]">
+                    <PostDate label="Published" iso={post.date} />
+                    {post.updated && (
+                      <>
+                        <span aria-hidden="true" className="bg-line-2 w-px" />
+                        <PostDate label="Updated" iso={post.updated} />
+                      </>
+                    )}
+                  </span>
                 </span>
               </Reveal>
 
@@ -268,6 +277,18 @@ export default async function PostPage({ params }: PostPageProps) {
         {toc.length >= 2 && <FloatingTableOfContents items={toc} />}
       </div>
     </>
+  );
+}
+
+/** One labelled date in the author card: a small mono label over the date. */
+function PostDate({ label, iso }: { label: string; iso: string }) {
+  return (
+    <span className="flex flex-col">
+      <span className="font-mono text-faint text-[11px] tracking-[.06em] uppercase">{label}</span>
+      <time dateTime={new Date(iso).toISOString()} className="text-muted text-[13px] whitespace-nowrap">
+        {formatDate(iso)}
+      </time>
+    </span>
   );
 }
 
