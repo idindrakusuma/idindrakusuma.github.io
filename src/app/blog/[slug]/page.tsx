@@ -167,16 +167,6 @@ export default async function PostPage({ params }: PostPageProps) {
                 <time dateTime={new Date(post.date).toISOString()}>{formatDate(post.date)}</time>
                 <span aria-hidden="true">·</span>
                 <span>{post.readingMinutes} min read</span>
-                {/* Last, and on a phone a line of its own: four items do not fit
-                    one line there, and a wrap mid-row leaves a dot hanging. */}
-                {post.updated && (
-                  <>
-                    <span aria-hidden="true" className="max-sm:hidden">·</span>
-                    <span className="max-sm:basis-full">
-                      Updated <time dateTime={new Date(post.updated).toISOString()}>{formatDate(post.updated)}</time>
-                    </span>
-                  </>
-                )}
               </Reveal>
 
               <Reveal
@@ -221,8 +211,24 @@ export default async function PostPage({ params }: PostPageProps) {
                 </span>
                 <span className="flex flex-col">
                   <span className="text-[15px] font-semibold">{SITE.name}</span>
-                  <span className="text-muted text-[13px]">Fullstack Engineer · Jakarta</span>
+                  {/* Beside an update date a phone has no room for the city:
+                      it would wrap the role onto a second line. */}
+                  <span className="text-muted text-[13px] whitespace-nowrap">
+                    Fullstack Engineer
+                    <span className={post.updated ? 'max-sm:hidden' : undefined}> · Jakarta</span>
+                  </span>
                 </span>
+                {/* A revised post says when, in the card's spare right-hand side
+                    rather than as a fourth item in the meta row, which on a
+                    phone wrapped into two crowded lines. */}
+                {post.updated && (
+                  <span className="ml-auto flex flex-col items-end pl-3 text-right">
+                    <span className="font-mono text-faint text-[11px] tracking-[.04em] uppercase">Updated</span>
+                    <time dateTime={new Date(post.updated).toISOString()} className="text-muted text-[13px] whitespace-nowrap">
+                      {formatDate(post.updated)}
+                    </time>
+                  </span>
+                )}
               </Reveal>
 
             </div>
