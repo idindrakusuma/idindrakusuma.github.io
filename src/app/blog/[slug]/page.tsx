@@ -209,26 +209,18 @@ export default async function PostPage({ params }: PostPageProps) {
                     className="h-full w-full rounded-full object-cover"
                   />
                 </span>
-                <span className="flex flex-col">
-                  <span className="text-[15px] font-semibold">{SITE.name}</span>
-                  {/* Beside an update date a phone has no room for the city:
-                      it would wrap the role onto a second line. */}
-                  <span className="text-muted text-[13px] whitespace-nowrap">
-                    Fullstack Engineer
-                    <span className={post.updated ? 'max-sm:hidden' : undefined}> · Jakarta</span>
+                <span className="flex flex-col gap-2">
+                  <span className="text-[15px] font-semibold">By {SITE.name}</span>
+                  <span className="flex gap-[22px]">
+                    <PostDate label="Published" iso={post.date} />
+                    {post.updated && (
+                      <>
+                        <span aria-hidden="true" className="bg-line-2 w-px" />
+                        <PostDate label="Updated" iso={post.updated} />
+                      </>
+                    )}
                   </span>
                 </span>
-                {/* A revised post says when, in the card's spare right-hand side
-                    rather than as a fourth item in the meta row, which on a
-                    phone wrapped into two crowded lines. */}
-                {post.updated && (
-                  <span className="ml-auto flex flex-col items-end pl-3 text-right">
-                    <span className="font-mono text-faint text-[11px] tracking-[.04em] uppercase">Updated</span>
-                    <time dateTime={new Date(post.updated).toISOString()} className="text-muted text-[13px] whitespace-nowrap">
-                      {formatDate(post.updated)}
-                    </time>
-                  </span>
-                )}
               </Reveal>
 
             </div>
@@ -285,6 +277,18 @@ export default async function PostPage({ params }: PostPageProps) {
         {toc.length >= 2 && <FloatingTableOfContents items={toc} />}
       </div>
     </>
+  );
+}
+
+/** One labelled date in the author card: a small mono label over the date. */
+function PostDate({ label, iso }: { label: string; iso: string }) {
+  return (
+    <span className="flex flex-col">
+      <span className="font-mono text-faint text-[11px] tracking-[.06em] uppercase">{label}</span>
+      <time dateTime={new Date(iso).toISOString()} className="text-muted text-[13px] whitespace-nowrap">
+        {formatDate(iso)}
+      </time>
+    </span>
   );
 }
 
