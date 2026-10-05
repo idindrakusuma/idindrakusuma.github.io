@@ -12,6 +12,13 @@ import { formatDate, type Post } from '@/lib/posts';
  * The first card's thumbnail is the index's Largest Contentful Paint, so it is
  * fetched eagerly and at high priority; lazy-loading the one image the page is
  * measured on only delays it.
+ *
+ * Thumbnails decode synchronously. Coming back to the index through the nav is
+ * a client-side navigation, and React mounts every <img> afresh; next/image's
+ * default `decoding="async"` lets the browser paint those frames before the
+ * (already cached) image is decoded, so the thumbnails blinked empty — most
+ * visibly in Safari. Sync decoding presents each image with the card. A
+ * thumbnail is a ~560px WebP, so the decode costs next to nothing.
  */
 export default function PostCard({ post, lcp = false }: { post: Post; lcp?: boolean }) {
   return (
@@ -31,6 +38,7 @@ export default function PostCard({ post, lcp = false }: { post: Post; lcp?: bool
             height={385}
             loading={lcp ? 'eager' : 'lazy'}
             fetchPriority={lcp ? 'high' : undefined}
+            decoding="sync"
             className="block h-full w-full object-cover"
           />
         )}
