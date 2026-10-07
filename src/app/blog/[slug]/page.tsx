@@ -154,113 +154,115 @@ export default async function PostPage({ params }: PostPageProps) {
             .filter(Boolean)
             .join(' ')}
         >
-          {/* The archive is Bahasa Indonesia on an otherwise English site, so
-              each post declares its own language rather than inheriting one. */}
-          <article
-            lang={post.lang}
-            className={['ik-article pb-10', toc.length < 2 && 'ik-article-wide'].filter(Boolean).join(' ')}
-          >
-            <div className="ik-article-head">
-              <Reveal immediate className="font-mono text-faint mb-5 flex flex-wrap items-center gap-2.5 text-[12.5px]">
-                <span className="text-primary tracking-[.04em] uppercase">{post.category}</span>
-                <span aria-hidden="true">·</span>
-                <time dateTime={new Date(post.date).toISOString()}>{formatDate(post.date)}</time>
-                <span aria-hidden="true">·</span>
-                <span>{post.readingMinutes} min read</span>
-              </Reveal>
-
-              <Reveal
-                immediate
-                as="h1"
-                className="font-display m-0 mb-[22px] text-[clamp(32px,5.4vw,50px)] leading-[1.08] font-bold tracking-[-.03em]"
-              >
-                {post.title}
-              </Reveal>
-
-              <Reveal immediate as="p" className="text-muted m-0 mb-[26px] text-[19px] leading-[1.65]">
-                {post.excerpt}
-              </Reveal>
-
-              {post.tags.length > 0 && (
-                <Reveal immediate className="mb-[34px] flex flex-wrap gap-2">
-                  {post.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="font-mono text-muted bg-surface-2 border-line rounded-full border px-3 py-1.5 text-xs"
-                    >
-                      {`#${tag}`}
-                    </span>
-                  ))}
+          <main>
+            {/* The archive is Bahasa Indonesia on an otherwise English site, so
+                each post declares its own language rather than inheriting one. */}
+            <article
+              lang={post.lang}
+              className={['ik-article pb-10', toc.length < 2 && 'ik-article-wide'].filter(Boolean).join(' ')}
+            >
+              <div className="ik-article-head">
+                <Reveal immediate className="font-mono text-faint mb-5 flex flex-wrap items-center gap-2.5 text-[12.5px]">
+                  <span className="text-primary tracking-[.04em] uppercase">{post.category}</span>
+                  <span aria-hidden="true">·</span>
+                  <time dateTime={new Date(post.date).toISOString()}>{formatDate(post.date)}</time>
+                  <span aria-hidden="true">·</span>
+                  <span>{post.readingMinutes} min read</span>
                 </Reveal>
-              )}
 
-              <Reveal immediate className="bg-surface border-line shadow-card-sm mb-11 flex items-center gap-3.5 rounded-[18px] border px-5 py-4">
-                {/* The design used "IK" initials here; the ring is what is left of that
-                    gradient once the photograph fills the circle. */}
-                <span
-                  className="h-11 w-11 flex-none rounded-full p-[2px]"
-                  style={{ background: 'linear-gradient(135deg,var(--a1),var(--a3))' }}
+                <Reveal
+                  immediate
+                  as="h1"
+                  className="font-display m-0 mb-[22px] text-[clamp(32px,5.4vw,50px)] leading-[1.08] font-bold tracking-[-.03em]"
                 >
-                  <Image
-                    src="/profile-avatar.webp"
-                    alt={SITE.name}
-                    width={152}
-                    height={152}
-                    className="h-full w-full rounded-full object-cover"
-                  />
-                </span>
-                <span className="flex flex-col gap-2">
-                  <span className="text-[15px] font-semibold">By {SITE.name}</span>
-                  <span className="flex gap-[22px]">
-                    <PostDate label="Published" iso={post.date} />
-                    {post.updated && (
-                      <>
-                        <span aria-hidden="true" className="bg-line-2 w-px" />
-                        <PostDate label="Updated" iso={post.updated} />
-                      </>
-                    )}
-                  </span>
-                </span>
-              </Reveal>
+                  {post.title}
+                </Reveal>
 
-            </div>
+                <Reveal immediate as="p" className="text-muted m-0 mb-[26px] text-[19px] leading-[1.65]">
+                  {post.excerpt}
+                </Reveal>
 
-            <Reveal immediate delay={120} className="ik-article-art">
-              <BlogIllustration className="w-full" />
-            </Reveal>
-
-            <div className="ik-article-body">
-              <Reveal className="ik-prose">{content}</Reveal>
-
-              <PostActions slug={slug} title={post.title} />
-
-              <Reveal className="border-line mt-[52px] flex flex-wrap items-center justify-between gap-3.5 border-t pt-[30px]">
-                <Link
-                  href="/blog"
-                  className="bg-surface border-line text-ink hover:border-primary inline-flex items-center gap-2.5 rounded-[13px] border px-6 py-3.5 text-[15px] font-semibold no-underline transition-[translate,border-color] hover:-translate-y-[3px]"
-                >
-                  <ArrowLeft />
-                  <span>All writing</span>
-                </Link>
-
-                {next && (
-                  <Link
-                    href={`/blog/${next.slug}`}
-                    className="ik-btn-primary inline-flex items-center gap-2.5 rounded-[13px] px-6 py-3.5 text-[15px] font-semibold text-white no-underline transition-[translate,box-shadow] hover:-translate-y-[3px]"
-                  >
-                    <span>Next article</span>
-                    <ArrowRight />
-                  </Link>
+                {post.tags.length > 0 && (
+                  <Reveal immediate className="mb-[34px] flex flex-wrap gap-2">
+                    {post.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="font-mono text-muted bg-surface-2 border-line rounded-full border px-3 py-1.5 text-xs"
+                      >
+                        {`#${tag}`}
+                      </span>
+                    ))}
+                  </Reveal>
                 )}
-              </Reveal>
-            </div>
 
-            {toc.length >= 2 && (
-              <aside className="ik-article-side">
-                <TableOfContents items={toc} />
-              </aside>
-            )}
-          </article>
+                <Reveal immediate className="bg-surface border-line shadow-card-sm mb-11 flex items-center gap-3.5 rounded-[18px] border px-5 py-4">
+                  {/* The design used "IK" initials here; the ring is what is left of that
+                      gradient once the photograph fills the circle. */}
+                  <span
+                    className="h-11 w-11 flex-none rounded-full p-[2px]"
+                    style={{ background: 'linear-gradient(135deg,var(--a1),var(--a3))' }}
+                  >
+                    <Image
+                      src="/profile-avatar.webp"
+                      alt={SITE.name}
+                      width={152}
+                      height={152}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  </span>
+                  <span className="flex flex-col gap-2">
+                    <span className="text-[15px] font-semibold">By {SITE.name}</span>
+                    <span className="flex gap-[22px]">
+                      <PostDate label="Published" iso={post.date} />
+                      {post.updated && (
+                        <>
+                          <span aria-hidden="true" className="bg-line-2 w-px" />
+                          <PostDate label="Updated" iso={post.updated} />
+                        </>
+                      )}
+                    </span>
+                  </span>
+                </Reveal>
+
+              </div>
+
+              <Reveal immediate delay={120} className="ik-article-art">
+                <BlogIllustration className="w-full" />
+              </Reveal>
+
+              <div className="ik-article-body">
+                <Reveal className="ik-prose">{content}</Reveal>
+
+                <PostActions slug={slug} title={post.title} />
+
+                <Reveal className="border-line mt-[52px] flex flex-wrap items-center justify-between gap-3.5 border-t pt-[30px]">
+                  <Link
+                    href="/blog"
+                    className="bg-surface border-line text-ink hover:border-primary inline-flex items-center gap-2.5 rounded-[13px] border px-6 py-3.5 text-[15px] font-semibold no-underline transition-[translate,border-color] hover:-translate-y-[3px]"
+                  >
+                    <ArrowLeft />
+                    <span>All writing</span>
+                  </Link>
+
+                  {next && (
+                    <Link
+                      href={`/blog/${next.slug}`}
+                      className="ik-btn-primary inline-flex items-center gap-2.5 rounded-[13px] px-6 py-3.5 text-[15px] font-semibold text-white no-underline transition-[translate,box-shadow] hover:-translate-y-[3px]"
+                    >
+                      <span>Next article</span>
+                      <ArrowRight />
+                    </Link>
+                  )}
+                </Reveal>
+              </div>
+
+              {toc.length >= 2 && (
+                <aside className="ik-article-side">
+                  <TableOfContents items={toc} />
+                </aside>
+              )}
+            </article>
+          </main>
 
           <footer className="ik-article-foot border-line text-faint flex flex-wrap items-center justify-between gap-3 border-t py-6 text-[13px]">
             <span>
