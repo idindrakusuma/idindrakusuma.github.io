@@ -14,11 +14,14 @@
   --surface-3: #eaf0fb;
   --text: #0a1224;
   --muted: #55648a;
-  --faint: #8b98b5;
+  /* Darkest it can be and still read as a step below --muted: small meta text
+     in it needs 4.5:1 on --bg (WCAG AA), which the old #8b98b5 missed at 2.5:1. */
+  --faint: #616b82;
   --border: #e2e8f5;
   --border-2: #d6def0;
   /* Code block ground — a touch cooler than --surface-2 so `pre` reads as inset. */
   --code: #f5f7fc;
+  --success: #1e7e4c;
   --primary: #c0203f;
   --primary-2: #e0627a;
   --primary-3: #8a1c50;
@@ -46,10 +49,11 @@
   --surface-3: #141f33;
   --text: #eaf0fb;
   --muted: #93a3c4;
-  --faint: #5f708f;
+  --faint: #7788a8;
   --border: #1b2740;
   --border-2: #26375a;
   --code: #0c1524;
+  --success: #34c77b;
   --primary: #ff5c76;
   --primary-2: #ff89a0;
   --primary-3: #c8477f;

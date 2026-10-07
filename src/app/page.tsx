@@ -52,13 +52,15 @@ export default function Home() {
       <AuroraBackground />
       <div className="relative z-1">
         <SiteChrome />
-        <span id="top" />
-        <Hero />
-        <About />
-        <Experience />
-        <Skills />
-        <Awards />
-        <Contact />
+        <main>
+          <span id="top" />
+          <Hero />
+          <About />
+          <Experience />
+          <Skills />
+          <Awards />
+          <Contact />
+        </main>
         <Footer />
       </div>
     </>

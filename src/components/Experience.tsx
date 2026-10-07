@@ -73,7 +73,7 @@ export default function Experience() {
                             ? 'mr-2 inline-flex translate-y-[-1px] rounded-full px-[9px] py-[3px] text-[11px] font-semibold'
                             : 'inline-flex translate-y-[-1px] rounded-full px-[9px] py-[3px] text-[11px] font-semibold'
                         }
-                        style={{ color: '#34c77b', background: 'rgb(52 199 123 / 0.12)' }}
+                        style={{ color: 'var(--success)', background: 'rgb(52 199 123 / 0.12)' }}
                       >
                         CURRENT
                       </span>
