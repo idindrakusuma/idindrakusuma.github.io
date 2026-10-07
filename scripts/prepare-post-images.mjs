@@ -17,6 +17,7 @@
 import { mkdir, readdir, readFile, writeFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import matter from 'gray-matter';
 import sharp from 'sharp';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -164,18 +165,33 @@ await writeFile(
 // points og:image and twitter:image at. Always rewritten: it is a pure function
 // of the thumbnail, so a replaced thumbnail can never leave a stale copy behind.
 await mkdir(shareDir, { recursive: true });
+
+/**
+ * A post's local thumbnail path, read the way the site reads it. A regex over
+ * the frontmatter missed valid forms (double quotes, no quotes, a PNG) and
+ * skipped those posts silently, after which the build demanded a copy this
+ * script would never write.
+ */
+async function localThumbnail(file) {
+  const { data } = matter(await readFile(join(postsDir, file), 'utf8'));
+  const thumb = typeof data.thumbnail === 'string' ? data.thumbnail.trim() : '';
+  return thumb.startsWith('/images/posts/') ? thumb : null;
+}
+
 const shared = new Set();
 for (const file of files) {
   const slug = file.replace(/\.mdx$/, '');
-  const { 1: thumb } = /^thumbnail:\s*'(\/images\/posts\/[^']+\.webp)'$/m.exec(
-    await readFile(join(postsDir, file), 'utf8'),
-  ) ?? [];
+  const thumb = await localThumbnail(file);
   if (!thumb) continue;
-  await sharp(join(root, 'public', thumb))
-    .flatten({ background: '#ffffff' })
-    .jpeg({ quality: 85, mozjpeg: true })
-    .toFile(join(shareDir, `${slug}.jpg`));
-  shared.add(`${slug}.jpg`);
+  try {
+    await sharp(join(root, 'public', thumb))
+      .flatten({ background: '#ffffff' })
+      .jpeg({ quality: 85, mozjpeg: true })
+      .toFile(join(shareDir, `${slug}.jpg`));
+    shared.add(`${slug}.jpg`);
+  } catch (error) {
+    failures.push(`${slug}: share image from ${thumb} — ${error.message}`);
+  }
 }
 const staleShares = (await readdir(shareDir)).filter((f) => f.endsWith('.jpg') && !shared.has(f));
 
@@ -185,29 +201,51 @@ const staleShares = (await readdir(shareDir)).filter((f) => f.endsWith('.jpg') &
 // lazy images well before they scroll into view), and they competed with the
 // fonts on the page's first paint. So each card gets copies at its own sizes,
 // which PostCard offers as a srcset: 240 and 360 cover 120px at 2x and 3x, and
-// 560 is 280px at 2x. Kept in their own folder so they stay out of the manifest and
-// the orphan check, and rewritten every run for the same reason as the JPEGs.
+// 560 is 280px at 2x. Kept in their own folder so they stay out of the image
+// manifest and the orphan check, and rewritten every run for the same reason as
+// the JPEGs.
+//
+// The widths written for each post, and the thumbnail they were cut from, go
+// to cards/manifest.json. The site builds the srcset from that record alone, so
+// the two can never list different widths, and it can tell when a post's
+// thumbnail has changed since its copies were made.
 const cardDir = join(outDir, 'cards');
 const CARD_WIDTHS = [240, 360, 560];
 await mkdir(cardDir, { recursive: true });
 const cards = new Set();
+const cardManifest = {};
 for (const file of files) {
   const slug = file.replace(/\.mdx$/, '');
-  const { 1: thumb } = /^thumbnail:\s*'(\/images\/posts\/[^']+\.webp)'$/m.exec(
-    await readFile(join(postsDir, file), 'utf8'),
-  ) ?? [];
+  const thumb = await localThumbnail(file);
   if (!thumb) continue;
-  for (const width of CARD_WIDTHS) {
-    // Exactly `width` wide, even from a smaller source: the srcset descriptor
-    // promises that width, and the few square 320px thumbnails gain nothing
-    // visible from the small upscale.
-    await sharp(join(root, 'public', thumb))
-      .resize({ width })
-      .webp({ quality: 80 })
-      .toFile(join(cardDir, `${slug}-${width}.webp`));
-    cards.add(`${slug}-${width}.webp`);
+  try {
+    // Decoded once, cloned per width.
+    const base = sharp(join(root, 'public', thumb));
+    const { width: sourceWidth } = await base.metadata();
+    // Never upscaled: the widths below the source, then the source itself
+    // capped at the largest. A 320px square thumbnail gets 240 and 320.
+    const largest = Math.min(sourceWidth, CARD_WIDTHS[CARD_WIDTHS.length - 1]);
+    const widths = [...CARD_WIDTHS.filter((w) => w < largest), largest];
+    await Promise.all(
+      widths.map((width) =>
+        base
+          .clone()
+          .resize({ width })
+          .webp({ quality: 80 })
+          .toFile(join(cardDir, `${slug}-${width}.webp`)),
+      ),
+    );
+    for (const width of widths) cards.add(`${slug}-${width}.webp`);
+    cardManifest[slug] = { thumbnail: thumb, widths };
+  } catch (error) {
+    failures.push(`${slug}: card images from ${thumb} — ${error.message}`);
   }
 }
+await writeFile(
+  join(cardDir, 'manifest.json'),
+  `${JSON.stringify(Object.fromEntries(Object.entries(cardManifest).sort()), null, 2)}\n`,
+  'utf8',
+);
 const staleCards = (await readdir(cardDir)).filter((f) => f.endsWith('.webp') && !cards.has(f));
 
 const written = onDisk;
@@ -220,7 +258,7 @@ console.log(
 console.log(`Share images: ${shared.size} JPEGs in public/images/og`);
 console.log(`Card images: ${cards.size} WebPs in public/images/posts/cards`);
 if (staleCards.length) {
-  console.log(`Orphaned card images — no post has these slugs: ${staleCards.join(', ')}`);
+  console.log(`Orphaned card images — no post uses these: ${staleCards.join(', ')}`);
 }
 if (staleShares.length) {
   console.log(`Orphaned share images — no post has these slugs: ${staleShares.join(', ')}`);
@@ -230,7 +268,7 @@ if (orphans.length) {
 }
 
 if (failures.length) {
-  console.error(`\n${failures.length} could not be fetched:`);
+  console.error(`\n${failures.length} could not be processed:`);
   for (const f of failures) console.error(`  - ${f}`);
   process.exit(1);
 }

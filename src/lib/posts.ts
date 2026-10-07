@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import matter from 'gray-matter';
@@ -236,25 +236,45 @@ export async function getNextPost(slug: string): Promise<Post | null> {
   return index === -1 ? null : (posts[index + 1] ?? null);
 }
 
-/** Widths scripts/prepare-post-images.mjs writes each card thumbnail at. */
-const CARD_WIDTHS = [240, 360, 560] as const;
+type CardManifest = Record<string, { thumbnail: string; widths: number[] }>;
+
+let cards: CardManifest | null = null;
+
+/**
+ * What scripts/prepare-post-images.mjs recorded about the card copies: for each
+ * post, the thumbnail they were cut from and the widths it wrote. Read once,
+ * like the posts themselves.
+ */
+function cardManifest(): CardManifest {
+  if (cards) return cards;
+  try {
+    cards = JSON.parse(readFileSync(join(process.cwd(), 'public', 'images', 'posts', 'cards', 'manifest.json'), 'utf8'));
+  } catch {
+    cards = {};
+  }
+  return cards!;
+}
 
 /**
  * The index card's thumbnail as a srcset, from the card-sized copies that
  * scripts/prepare-post-images.mjs writes. The thumbnail itself can be 1200px,
- * which is a lot to download for a slot 120px wide on a phone. A draft that has
- * not been prepared yet falls back to the full thumbnail; a published post
- * without its copies fails the build, like a missing share image does.
+ * which is a lot to download for a slot 120px wide on a phone.
+ *
+ * The copies count only if they were cut from the post's current thumbnail, so
+ * a changed thumbnail cannot leave the index showing the old picture. A draft
+ * without up-to-date copies falls back to the full thumbnail; a published post
+ * fails the build, like a missing share image does.
  */
 export function cardImage(post: Post): { src: string; srcSet?: string } | null {
   if (!post.thumbnail) return null;
-  const files = CARD_WIDTHS.map((width) => ({ width, href: `/images/posts/cards/${post.slug}-${width}.webp` }));
-  if (!files.every(({ href }) => existsSync(join(process.cwd(), 'public', href)))) {
+  const entry = cardManifest()[post.slug];
+  if (entry?.thumbnail !== post.thumbnail) {
     if (post.draft) return { src: post.thumbnail };
-    throw new Error(`No card images for "${post.slug}" — run \`pnpm assets:posts\``);
+    throw new Error(`Card images for "${post.slug}" are missing or out of date — run \`pnpm assets:posts\``);
   }
+  const href = (width: number) => `/images/posts/cards/${post.slug}-${width}.webp`;
   return {
-    src: files[files.length - 1].href,
-    srcSet: files.map(({ width, href }) => `${href} ${width}w`).join(', '),
+    src: href(entry.widths[entry.widths.length - 1]),
+    srcSet: entry.widths.map((width) => `${href(width)} ${width}w`).join(', '),
   };
 }
