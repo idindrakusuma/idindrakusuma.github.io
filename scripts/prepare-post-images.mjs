@@ -179,6 +179,37 @@ for (const file of files) {
 }
 const staleShares = (await readdir(shareDir)).filter((f) => f.endsWith('.jpg') && !shared.has(f));
 
+// The index card shows the thumbnail at 280px, and at 120px on a phone, but the
+// drawn thumbnails are 1200px — the size the share copy above needs. Served
+// as-is, a phone on the index pulled about a dozen of them (the browser fetches
+// lazy images well before they scroll into view), and they competed with the
+// fonts on the page's first paint. So each card gets copies at its own sizes,
+// which PostCard offers as a srcset: 240 and 360 cover 120px at 2x and 3x, and
+// 560 is 280px at 2x. Kept in their own folder so they stay out of the manifest and
+// the orphan check, and rewritten every run for the same reason as the JPEGs.
+const cardDir = join(outDir, 'cards');
+const CARD_WIDTHS = [240, 360, 560];
+await mkdir(cardDir, { recursive: true });
+const cards = new Set();
+for (const file of files) {
+  const slug = file.replace(/\.mdx$/, '');
+  const { 1: thumb } = /^thumbnail:\s*'(\/images\/posts\/[^']+\.webp)'$/m.exec(
+    await readFile(join(postsDir, file), 'utf8'),
+  ) ?? [];
+  if (!thumb) continue;
+  for (const width of CARD_WIDTHS) {
+    // Exactly `width` wide, even from a smaller source: the srcset descriptor
+    // promises that width, and the few square 320px thumbnails gain nothing
+    // visible from the small upscale.
+    await sharp(join(root, 'public', thumb))
+      .resize({ width })
+      .webp({ quality: 80 })
+      .toFile(join(cardDir, `${slug}-${width}.webp`));
+    cards.add(`${slug}-${width}.webp`);
+  }
+}
+const staleCards = (await readdir(cardDir)).filter((f) => f.endsWith('.webp') && !cards.has(f));
+
 const written = onDisk;
 let bytes = 0;
 for (const f of written) bytes += (await stat(join(outDir, f))).size;
@@ -187,6 +218,10 @@ console.log(
   `Fetched ${fetched}, reused ${reused}, measured ${measured} — ${written.length} images, ${(bytes / 1024 / 1024).toFixed(1)} MB`,
 );
 console.log(`Share images: ${shared.size} JPEGs in public/images/og`);
+console.log(`Card images: ${cards.size} WebPs in public/images/posts/cards`);
+if (staleCards.length) {
+  console.log(`Orphaned card images — no post has these slugs: ${staleCards.join(', ')}`);
+}
 if (staleShares.length) {
   console.log(`Orphaned share images — no post has these slugs: ${staleShares.join(', ')}`);
 }

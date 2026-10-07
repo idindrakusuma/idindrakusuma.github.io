@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import matter from 'gray-matter';
@@ -233,4 +234,27 @@ export async function getNextPost(slug: string): Promise<Post | null> {
   const posts = await getPosts();
   const index = posts.findIndex((post) => post.slug === slug);
   return index === -1 ? null : (posts[index + 1] ?? null);
+}
+
+/** Widths scripts/prepare-post-images.mjs writes each card thumbnail at. */
+const CARD_WIDTHS = [240, 360, 560] as const;
+
+/**
+ * The index card's thumbnail as a srcset, from the card-sized copies that
+ * scripts/prepare-post-images.mjs writes. The thumbnail itself can be 1200px,
+ * which is a lot to download for a slot 120px wide on a phone. A draft that has
+ * not been prepared yet falls back to the full thumbnail; a published post
+ * without its copies fails the build, like a missing share image does.
+ */
+export function cardImage(post: Post): { src: string; srcSet?: string } | null {
+  if (!post.thumbnail) return null;
+  const files = CARD_WIDTHS.map((width) => ({ width, href: `/images/posts/cards/${post.slug}-${width}.webp` }));
+  if (!files.every(({ href }) => existsSync(join(process.cwd(), 'public', href)))) {
+    if (post.draft) return { src: post.thumbnail };
+    throw new Error(`No card images for "${post.slug}" — run \`pnpm assets:posts\``);
+  }
+  return {
+    src: files[files.length - 1].href,
+    srcSet: files.map(({ width, href }) => `${href} ${width}w`).join(', '),
+  };
 }

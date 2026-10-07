@@ -1,6 +1,5 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import { formatDate, type Post } from '@/lib/posts';
+import { cardImage, formatDate, type Post } from '@/lib/posts';
 
 /**
  * One post in the blog index: thumbnail, meta line, title, excerpt.
@@ -9,11 +8,17 @@ import { formatDate, type Post } from '@/lib/posts';
  * colour, the slow push-in on the thumbnail — is one `:hover` in globals.css
  * rather than four handlers here.
  *
- * The first card's thumbnail is the index's Largest Contentful Paint, so it is
- * fetched eagerly and at high priority; lazy-loading the one image the page is
- * measured on only delays it.
+ * The first card's thumbnail can be the index's Largest Contentful Paint, so it
+ * is fetched eagerly and at high priority; lazy-loading the one image the page
+ * is measured on only delays it.
+ *
+ * A plain <img> rather than next/image: the static export turns the image
+ * optimizer off, and with it next/image's srcset. The card-sized copies come
+ * from scripts/prepare-post-images.mjs instead, and `sizes` mirrors the slot's
+ * width in globals.css — 120px below 760px, 280px above.
  */
 export default function PostCard({ post, lcp = false }: { post: Post; lcp?: boolean }) {
+  const image = cardImage(post);
   return (
     <Link
       href={`/blog/${post.slug}`}
@@ -23,14 +28,18 @@ export default function PostCard({ post, lcp = false }: { post: Post; lcp?: bool
       {/* A draft may not have a thumbnail yet; the slot's own background is the
           empty state, which is why the design gave it one. */}
       <span className="ik-thumb bg-surface-3 block aspect-16/11 w-[280px] flex-none overflow-hidden rounded-[13px]">
-        {post.thumbnail && (
-          <Image
-            src={post.thumbnail}
+        {image && (
+          // oxlint-disable-next-line nextjs/no-img-element -- see the note above
+          <img
+            src={image.src}
+            srcSet={image.srcSet}
+            sizes={image.srcSet ? '(max-width: 760px) 120px, 280px' : undefined}
             alt=""
             width={560}
             height={385}
             loading={lcp ? 'eager' : 'lazy'}
             fetchPriority={lcp ? 'high' : undefined}
+            decoding="async"
             className="block h-full w-full object-cover"
           />
         )}
