@@ -68,8 +68,8 @@ Only when the user says it is ready:
 
 1. Set `thumbnail`. Three ways, in order of preference:
    - a path under `/images/posts/`, or a URL followed by `pnpm assets:posts`
-   - `pnpm assets:thumbnail <slug>` to draw one from the post's title and
-     category, in the site's gradient and typeface, when there is no image to use
+   - when there is no image to use, draw an illustrated one with the
+     `generate-thumbnail` skill — never ship the plain title-only card
    Required either way; the build fails without it and names the file.
    Then run `pnpm assets:posts` whichever way it was set — it writes the JPEG
    copy that link previews use (WhatsApp will not show a WebP), and the build
