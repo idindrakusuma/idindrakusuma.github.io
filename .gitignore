@@ -12,3 +12,6 @@ yarn.lock
 
 # Netlify CLI state
 .netlify
+
+# Thumbnail options drawn with `pnpm assets:thumbnail <slug> --variant <name>`
+.thumbnails

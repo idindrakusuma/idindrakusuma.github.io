@@ -11,14 +11,30 @@
  * machine running this happens to have. The two faces are vendored under
  * assets/fonts for the same reason — they are the site's own, under the OFL.
  *
- *   pnpm assets:thumbnail <slug>
+ *   pnpm assets:thumbnail <slug> [--force]
+ *   pnpm assets:thumbnail <slug> --variant <name>
  *
- * Writes public/images/posts/<slug>-thumb.webp and points the post's frontmatter
- * at it. Refuses to overwrite a thumbnail that is already set.
+ * A plain title card looks unfinished next to the illustrated ones, so a post
+ * can bring its own illustration: assets/thumbnails/<slug>.mjs, picked up when
+ * it exists. It default-exports
+ *
+ *   { panels: [{ svg, label, sub }, …], connector?: svg }
+ *
+ * — usually a before and an after — drawn in a row between the category and the
+ * title, with `connector` between each pair. The SVGs carry shapes only; labels
+ * are set here so they share the site's typefaces. The file stays in the repo so
+ * the thumbnail can be redrawn when the title changes.
+ *
+ * --variant draws assets/thumbnails/<slug>.<name>.mjs instead, to
+ * .thumbnails/<slug>.<name>.webp (gitignored), and leaves the post alone — for
+ * putting a few options side by side before one is chosen.
+ *
+ * Otherwise writes public/images/posts/<slug>-thumb.webp and points the post's
+ * frontmatter at it. Refuses to overwrite a thumbnail that is already set unless --force.
  */
 import { createRequire } from 'node:module';
-import { readFile, writeFile } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
+import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 import matter from 'gray-matter';
 import sharp from 'sharp';
@@ -44,9 +60,13 @@ const PAD_Y = 120;
 const A1 = '#c0203f';
 const A3 = '#8a1c50';
 
-const slug = process.argv[2];
+const args = process.argv.slice(2);
+const force = args.includes('--force');
+const variantAt = args.indexOf('--variant');
+const variant = variantAt >= 0 ? args[variantAt + 1] : null;
+const slug = args.find((arg, i) => !arg.startsWith('--') && i !== variantAt + 1);
 if (!slug) {
-  console.error('\n  Usage: pnpm assets:thumbnail <slug>\n');
+  console.error('\n  Usage: pnpm assets:thumbnail <slug> [--force | --variant <name>]\n');
   process.exit(1);
 }
 
@@ -60,8 +80,10 @@ try {
 }
 
 const { data } = matter(raw);
-if (typeof data.thumbnail === 'string' && data.thumbnail.trim()) {
-  console.error(`\n  ${slug} already has a thumbnail: ${data.thumbnail}\n  Clear it first to regenerate.\n`);
+const name = `${slug}-thumb.webp`;
+const href = `/images/posts/${name}`;
+if (!variant && typeof data.thumbnail === 'string' && data.thumbnail.trim() && !(force && data.thumbnail === href)) {
+  console.error(`\n  ${slug} already has a thumbnail: ${data.thumbnail}\n  Clear it (or pass --force to redraw ${href}) to regenerate.\n`);
   process.exit(1);
 }
 
@@ -70,9 +92,61 @@ const [display, mono] = await Promise.all([
   readFile(join(root, 'assets', 'fonts', 'JetBrainsMono.ttf')),
 ]);
 
+const artFile = join(root, 'assets', 'thumbnails', variant ? `${slug}.${variant}.mjs` : `${slug}.mjs`);
+if (variant && !(await access(artFile).then(() => true, () => false))) {
+  console.error(`\n  assets/thumbnails/${slug}.${variant}.mjs does not exist.\n`);
+  process.exit(1);
+}
+const art = await access(artFile).then(
+  async () => (await import(pathToFileURL(artFile).href)).default,
+  () => null,
+);
+
 const title = String(data.title ?? slug);
-/** Long titles step down a size rather than overflowing the card. */
-const titleSize = title.length > 68 ? 60 : title.length > 44 ? 72 : 84;
+/** Long titles step down a size rather than overflowing the card; an illustration leaves less room. */
+const titleSize = art ? (title.length > 44 ? 60 : 72) : title.length > 68 ? 60 : title.length > 44 ? 72 : 84;
+
+const svgImage = (svg) => {
+  const [, w, h] = svg.match(/<svg[^>]*\bwidth="(\d+)"[^>]*\bheight="(\d+)"/) ?? [];
+  return {
+    type: 'img',
+    props: {
+      src: `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`,
+      width: Number(w),
+      height: Number(h),
+    },
+  };
+};
+
+const illustration = art && {
+  type: 'div',
+  props: {
+    style: { display: 'flex', alignItems: 'center', justifyContent: 'space-around', marginTop: -10 },
+    children: art.panels.flatMap((panel, i) => [
+      ...(i > 0 && art.connector ? [{ type: 'div', props: { style: { display: 'flex', marginTop: -70 }, children: svgImage(art.connector) } }] : []),
+      {
+        type: 'div',
+        props: {
+          style: { display: 'flex', flexDirection: 'column', alignItems: 'center' },
+          children: [
+            svgImage(panel.svg),
+            {
+              type: 'div',
+              props: { style: { fontSize: 30, fontWeight: 700, marginTop: 18 }, children: panel.label },
+            },
+            panel.sub && {
+              type: 'div',
+              props: {
+                style: { fontFamily: 'JetBrains Mono', fontSize: 20, letterSpacing: '0.08em', opacity: 0.7, marginTop: 6 },
+                children: panel.sub,
+              },
+            },
+          ].filter(Boolean),
+        },
+      },
+    ]),
+  },
+};
 
 const element = {
   type: 'div',
@@ -83,8 +157,10 @@ const element = {
       justifyContent: 'space-between',
       width: '100%',
       height: '100%',
-      padding: `${PAD_Y}px 80px`,
-      backgroundImage: `linear-gradient(135deg, ${A1} 0%, ${A3} 100%)`,
+      padding: art ? `${PAD_Y - 10}px 80px ${PAD_Y - 20}px` : `${PAD_Y}px 80px`,
+      backgroundImage: art
+        ? `radial-gradient(circle at 82% 18%, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 32%), linear-gradient(135deg, ${A1} 0%, ${A3} 100%)`
+        : `linear-gradient(135deg, ${A1} 0%, ${A3} 100%)`,
       color: '#ffffff',
       fontFamily: 'Space Grotesk',
     },
@@ -102,6 +178,7 @@ const element = {
           children: String(data.category ?? ''),
         },
       },
+      illustration,
       {
         type: 'div',
         props: {
@@ -109,14 +186,14 @@ const element = {
           children: title,
         },
       },
-      {
+      !art && {
         type: 'div',
         props: {
           style: { display: 'flex', justifyContent: 'flex-end', fontSize: 30, fontWeight: 700, opacity: 0.8 },
           children: 'iK',
         },
       },
-    ],
+    ].filter(Boolean),
   },
 };
 
@@ -131,11 +208,17 @@ const png = Buffer.from(
   }).arrayBuffer(),
 );
 
-const name = `${slug}-thumb.webp`;
+if (variant) {
+  const previewDir = join(root, '.thumbnails');
+  await mkdir(previewDir, { recursive: true });
+  const { size } = await sharp(png).webp({ quality: 88 }).toFile(join(previewDir, `${slug}.${variant}.webp`));
+  console.log(`\n  .thumbnails/${slug}.${variant}.webp   ${WIDTH}x${HEIGHT}  ${(size / 1024).toFixed(0)} KB   (preview only)\n`);
+  process.exit(0);
+}
+
 const outFile = join(root, 'public', 'images', 'posts', name);
 const { size } = await sharp(png).webp({ quality: 88 }).toFile(outFile);
 
-const href = `/images/posts/${name}`;
 await writeFile(postFile, raw.replace(/^thumbnail: *''$/m, `thumbnail: '${href}'`), 'utf8');
 
 console.log(`
