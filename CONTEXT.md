@@ -84,6 +84,7 @@ _Avoid_: autoplay, scroll
 - A **Marquee** **Drifts** unless it is hovered, dragged, or the visitor asked for reduced motion
 - Awards is the page's only **Marquee**; Skills is a static grid of **Capabilities**
 - **Posts** live outside the Section sequence — the homepage has Sections, `/blog` has Posts
+- **Projects** live outside the Section sequence too, listed on their own route at `/projects`
 - A **Post** has exactly one **Category** and any number of **Tags**; only Category is filterable
 - A **Post**'s **Excerpt** is quoted from the Post, never written for it
 - `SECTIONS` is the ordering authority: it numbers the **Sections** and tells the **Spy** what to watch
