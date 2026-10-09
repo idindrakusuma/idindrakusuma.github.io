@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { ViewTransition } from 'react';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import rehypePrettyCode from 'rehype-pretty-code';
 import remarkGfm from 'remark-gfm';
@@ -171,13 +172,15 @@ export default async function PostPage({ params }: PostPageProps) {
                   <span>{post.readingMinutes} min read</span>
                 </Reveal>
 
-                <Reveal
-                  immediate
-                  as="h1"
-                  className="font-display m-0 mb-[22px] text-[clamp(32px,5.4vw,50px)] leading-[1.08] font-bold tracking-[-.03em]"
-                >
-                  {post.title}
-                </Reveal>
+                {/* The blog card's title grows into this one (PostCard). A plain
+                    h1 rather than a Reveal: an entrance animation on the morph's
+                    target fades and slides it under the morph, and keeps going
+                    after the morph has landed. */}
+                <ViewTransition name={`post-title-${post.slug}`} share="ik-title" default="none">
+                  <h1 className="font-display m-0 mb-[22px] text-[clamp(32px,5.4vw,50px)] leading-[1.08] font-bold tracking-[-.03em]">
+                    {post.title}
+                  </h1>
+                </ViewTransition>
 
                 <Reveal immediate as="p" className="text-muted m-0 mb-[26px] text-[19px] leading-[1.65]">
                   {post.excerpt}
@@ -227,9 +230,12 @@ export default async function PostPage({ params }: PostPageProps) {
 
               </div>
 
-              <Reveal immediate delay={120} className="ik-article-art">
+              {/* Not a Reveal, as the title above is not: the art flies in from
+                  the blog index, and a fade on its wrapper would dim it again
+                  the moment it lands. */}
+              <div className="ik-article-art">
                 <BlogIllustration className="w-full" />
-              </Reveal>
+              </div>
 
               <div className="ik-article-body">
                 <Reveal className="ik-prose">{content}</Reveal>

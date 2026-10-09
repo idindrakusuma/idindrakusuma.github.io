@@ -95,7 +95,13 @@ export default function useTheme(): { toggle: (event?: MouseEvent<HTMLElement>) 
     // is also how long the page ignores its visitor. At 1s that is a knowingly
     // paid price: the sweep is the feature, and it only reads as one when it is
     // slow enough to watch.
-    document.startViewTransition(() => applyTheme(next));
+    // The sweep's CSS keys off this class, so that only the toggle's own
+    // transition sweeps; navigations are view transitions too.
+    const root = document.documentElement;
+    root.classList.add('ik-theme-sweep');
+    document
+      .startViewTransition(() => applyTheme(next))
+      .finished.finally(() => root.classList.remove('ik-theme-sweep'));
   }, []);
 
   useEffect(() => {

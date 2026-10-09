@@ -510,17 +510,20 @@ body {
   }
 }
 
-::view-transition-old(root),
-::view-transition-new(root) {
+/* Scoped to the toggle's own transition (the class is set by useTheme for its
+   length): route changes and the Project modal are view transitions too, and
+   left unscoped they would all arrive as this sweep. */
+:root.ik-theme-sweep::view-transition-old(root),
+:root.ik-theme-sweep::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
 
-::view-transition-old(root) {
+:root.ik-theme-sweep::view-transition-old(root) {
   z-index: 0;
 }
 
-::view-transition-new(root) {
+:root.ik-theme-sweep::view-transition-new(root) {
   z-index: 1;
   animation: ik-theme-reveal var(--dur-theme) var(--ease-sweep);
 }
@@ -1139,25 +1142,100 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   Project detail transitions
+   Shared-element transitions
 
-   React's <ViewTransition> names these (ProjectCard, ProjectDetail). The
-   image morphs between the card and the modal; the modal itself rises in and
-   sinks out around it. Reduced motion keeps the swap and drops the movement.
+   React's <ViewTransition> names the elements that carry across a change:
+   the nav island and a post's title and art between routes (SiteChrome,
+   BlogChrome, PostCard, BlogIllustration, the article page), and a
+   Project's image into its modal (ProjectCard, ProjectDetail). Every morph
+   shares one timing. Reduced motion keeps the swap and drops the movement.
+
+   Layering, bottom to top: the page (root), the morphing title, art and
+   image, the Project modal's close button, the nav island — which stays
+   above everything, as the fixed nav does on the page.
 --------------------------------------------------------------------------- */
-html:has(dialog.ik-modal[open]) {
-  overflow: hidden;
-}
-/* Above the modal's own group. Left to paint order, the image travels under
-   the rising dialog's snapshot, vanishes behind its panel, and pops back in
-   when the transition ends. */
-::view-transition-group(.ik-morph) {
-  z-index: 1;
+::view-transition-group(.ik-morph),
+::view-transition-group(.ik-title),
+::view-transition-group(.ik-island) {
   animation-duration: 420ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
+/* Above the Project modal's own group. Left to paint order, its image travels
+   under the rising dialog's snapshot, vanishes behind its panel, and pops
+   back in when the transition ends. */
+::view-transition-group(.ik-morph),
+::view-transition-group(.ik-title) {
+  z-index: 1;
+}
 ::view-transition-group(ik-project-close) {
   z-index: 2;
+}
+::view-transition-group(.ik-island) {
+  z-index: 3;
+}
+
+@keyframes ik-vt-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The nav island between the homepage and a route. The two islands differ in
+   width, and a snapshot left to the defaults is stretched to the group's size
+   while it morphs — squashed text, warped corners. Instead each snapshot
+   keeps its own size, centred, and they crossfade inside a group that clips
+   to the pill's shape. The snapshots carry the island's own border and fill;
+   the group adds none, or the pill would show two outlines and a darker,
+   doubled fill. */
+::view-transition-group(.ik-island) {
+  overflow: clip;
+  border-radius: 9999px;
+}
+::view-transition-old(.ik-island),
+::view-transition-new(.ik-island) {
+  inset: auto;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: auto;
+  translate: -50% -50%;
+  animation-duration: 260ms;
+}
+
+/* A post's title between its card and its article. The two headings wrap
+   differently, so stretching one snapshot onto the other only warps the text.
+   Each keeps its own size, pinned to the group's top-left as the group moves
+   and grows, and the old one is gone before the new one arrives, so the
+   words are never doubled. */
+::view-transition-old(.ik-title),
+::view-transition-new(.ik-title) {
+  inset: auto;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+}
+::view-transition-old(.ik-title) {
+  animation: ik-vt-fade 160ms ease-out reverse both;
+}
+::view-transition-new(.ik-title) {
+  animation: ik-vt-fade 260ms 140ms ease-in both;
+}
+
+/* The blog art is hidden on narrower screens (.ik-blog-art below 860px, the
+   article's below 1180px), so between those widths only one side of the pair
+   exists. Alone, it would hang over the new page above everything else while
+   it fades; it gets out of the way quickly instead. */
+::view-transition-old(ik-blog-art):only-child {
+  animation: ik-vt-fade 160ms ease-out reverse both;
+}
+::view-transition-new(ik-blog-art):only-child {
+  animation: ik-vt-fade 260ms 140ms ease-in both;
+}
+
+/* The Project modal rises in and sinks out around its morphing image. */
+html:has(dialog.ik-modal[open]) {
+  overflow: hidden;
 }
 ::view-transition-new(.ik-modal-in):only-child {
   animation: ik-modal-rise 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -1171,6 +1249,7 @@ html:has(dialog.ik-modal[open]) {
     transform: translateY(24px) scale(0.98);
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
   ::view-transition-old(*),

@@ -33,6 +33,11 @@ holds meanings only, never implementation.
 - **Colour** comes from the CSS tokens in `src/app/globals.css` (`var(--primary)`,
   `var(--surface)`…), which carry both themes. Inline SVG art uses the same
   tokens, so it follows the theme toggle with no second image.
+- **View transitions** are React `<ViewTransition>`s with a shared `name`:
+  the nav island (`ik-island`), the blog art, a post's title, a Project's
+  image. Their CSS is at the end of `globals.css`. Navigations through
+  `<Link>` animate; the browser's Back does not, because React applies
+  `popstate` updates synchronously.
 - **Tailwind class lists are whole strings.** Tailwind finds classes by
   scanning the source; a class assembled from parts (`` `pt-[${n}px]` ``) is
   never generated.

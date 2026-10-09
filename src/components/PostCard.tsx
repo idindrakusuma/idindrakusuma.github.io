@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ViewTransition } from 'react';
 import { cardImage, formatDate, type Post } from '@/lib/posts';
 
 /**
@@ -56,9 +57,12 @@ export default function PostCard({ post, lcp = false }: { post: Post; lcp?: bool
           <span className="ik-hide-sm">{post.readingMinutes} min read</span>
         </span>
 
-        <h2 className="font-display text-ink m-0 text-[16.5px] leading-[1.3] font-semibold tracking-[-.01em] transition-colors">
-          {post.title}
-        </h2>
+        {/* Named for the article's own heading, which it grows into on open. */}
+        <ViewTransition name={`post-title-${post.slug}`} share="ik-title" default="none">
+          <h2 className="font-display text-ink m-0 text-[16.5px] leading-[1.3] font-semibold tracking-[-.01em] transition-colors">
+            {post.title}
+          </h2>
+        </ViewTransition>
 
         <span className="ik-hide-sm ik-post-excerpt text-muted text-[13.5px] leading-[1.5]">
           {post.excerpt}

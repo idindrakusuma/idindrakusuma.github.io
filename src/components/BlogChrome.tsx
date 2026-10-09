@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { ViewTransition, type ReactNode } from 'react';
 import useTheme from '@/hooks/useTheme';
 
 /**
@@ -29,34 +29,37 @@ export default function BlogChrome({
 
   return (
     <nav className="fixed top-4 right-0 left-0 z-50 flex justify-center px-3">
-      <div
-        className="border-line flex max-w-[calc(100vw-24px)] items-center gap-2.5 rounded-full border py-2 pr-2 pl-4 backdrop-blur-[20px]"
-        style={{ background: 'var(--nav)' }}
-      >
-        <Link
-          href={back.href}
-          className="text-muted hover:text-primary flex items-center gap-2 text-sm font-semibold whitespace-nowrap no-underline transition-colors"
+      {/* Named as SiteChrome's island is, so the two morph into each other. */}
+      <ViewTransition name="ik-island" share="ik-island" default="none">
+        <div
+          className="border-line flex max-w-[calc(100vw-24px)] items-center gap-2.5 rounded-full border py-2 pr-2 pl-4 backdrop-blur-[20px]"
+          style={{ background: 'var(--nav)' }}
         >
-          <ArrowLeft />
-          <span>{back.label}</span>
-        </Link>
+          <Link
+            href={back.href}
+            className="text-muted hover:text-primary flex items-center gap-2 text-sm font-semibold whitespace-nowrap no-underline transition-colors"
+          >
+            <ArrowLeft />
+            <span>{back.label}</span>
+          </Link>
 
-        <span aria-hidden="true" className="bg-line h-5 w-px flex-none" />
+          <span aria-hidden="true" className="bg-line h-5 w-px flex-none" />
 
-        <span className="font-display text-ink pr-1 text-sm font-semibold whitespace-nowrap">
-          {trailing}
-        </span>
+          <span className="font-display text-ink pr-1 text-sm font-semibold whitespace-nowrap">
+            {trailing}
+          </span>
 
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label="Toggle theme"
-          className="border-line bg-surface text-ink hover:border-primary grid h-9 w-9 flex-none cursor-pointer place-items-center rounded-full border transition-[border-color,rotate] hover:rotate-[20deg]"
-        >
-          <Sun />
-          <Moon />
-        </button>
-      </div>
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label="Toggle theme"
+            className="border-line bg-surface text-ink hover:border-primary grid h-9 w-9 flex-none cursor-pointer place-items-center rounded-full border transition-[border-color,rotate] hover:rotate-[20deg]"
+          >
+            <Sun />
+            <Moon />
+          </button>
+        </div>
+      </ViewTransition>
     </nav>
   );
 }
