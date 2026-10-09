@@ -1156,6 +1156,58 @@ html:has(dialog.ik-modal[open]) {
   animation-duration: 420ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
+/* The nav island between the homepage and a route. The two islands differ in
+   width, and a snapshot left to the defaults is stretched to the group's size
+   while it morphs — squashed text, warped corners. Instead the group draws
+   the pill itself and clips, and each snapshot keeps its own size, centred,
+   while they crossfade. */
+::view-transition-group(.ik-island) {
+  overflow: clip;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: var(--nav);
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-old(.ik-island),
+::view-transition-new(.ik-island) {
+  inset: auto;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: auto;
+  translate: -50% -50%;
+  animation-duration: 260ms;
+}
+/* A post's title between its card and its article. The two headings wrap
+   differently, so stretching one snapshot onto the other only warps the text.
+   Each keeps its own size, pinned to the group's top-left as the group moves
+   and grows, and the old one is gone before the new one arrives, so the
+   words are never doubled. */
+::view-transition-group(.ik-title) {
+  z-index: 1;
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-old(.ik-title),
+::view-transition-new(.ik-title) {
+  inset: auto;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+}
+::view-transition-old(.ik-title) {
+  animation: ik-vt-fade 160ms ease-out reverse both;
+}
+::view-transition-new(.ik-title) {
+  animation: ik-vt-fade 260ms 140ms ease-in both;
+}
+@keyframes ik-vt-fade {
+  from {
+    opacity: 0;
+  }
+}
 ::view-transition-group(ik-project-close) {
   z-index: 2;
 }
