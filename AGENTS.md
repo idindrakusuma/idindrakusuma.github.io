@@ -1,3 +1,31 @@
+# AGENTS.md
+
+indrakusuma.dev: a statically exported Next.js personal site — homepage, blog,
+projects. Setup, commands, layout and the blog workflow are in
+[README.md](./README.md).
+
+## Vocabulary
+
+[CONTEXT.md](./CONTEXT.md) is the glossary — Section, Site Chrome, Route Chrome,
+Post, Project and the rest. Read it before naming anything: a component, a type,
+a nav label, a commit message. When a new term settles, add it there; the
+glossary holds meanings only, never implementation.
+
+## Where things go
+
+- **Content** — jobs, capabilities, awards, nav entries, Projects — lives in
+  `src/lib/site-data.ts`; components stay presentational.
+- **Layers**: `lib/` is framework-free, `hooks/` adds React and the DOM,
+  `components/` adds markup. Imports point down that list, from components
+  towards lib.
+- **Posts** are `content/posts/*.mdx`; start one with `pnpm new-post` or the
+  `write-a-article` skill.
+
+## Done
+
+A change is done when these pass: `pnpm typecheck`, `pnpm test`, and
+`pnpm build` (which lints with warnings fatal). pnpm is enforced by
+`preinstall`.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
