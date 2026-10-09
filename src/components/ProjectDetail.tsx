@@ -67,6 +67,11 @@ export default function ProjectDetail({ project, onClose }: { project: Project; 
           <button
             type="button"
             autoFocus
+            // A transition group of its own, layered above the morphing image
+            // (globals.css), which would otherwise cover it until the end. Set
+            // in CSS rather than as a <ViewTransition>: React only activates
+            // the outermost one in a subtree that is entering.
+            style={{ viewTransitionName: 'ik-project-close' }}
             onClick={onClose}
             aria-label="Close"
             className="border-line bg-surface text-ink hover:border-primary absolute top-7 right-7 z-1 grid h-9 w-9 cursor-pointer place-items-center rounded-full border transition-colors sm:top-8 sm:right-8"

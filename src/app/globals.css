@@ -1148,9 +1148,16 @@ body {
 html:has(dialog.ik-modal[open]) {
   overflow: hidden;
 }
+/* Above the modal's own group. Left to paint order, the image travels under
+   the rising dialog's snapshot, vanishes behind its panel, and pops back in
+   when the transition ends. */
 ::view-transition-group(.ik-morph) {
+  z-index: 1;
   animation-duration: 420ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-group(ik-project-close) {
+  z-index: 2;
 }
 ::view-transition-new(.ik-modal-in):only-child {
   animation: ik-modal-rise 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
