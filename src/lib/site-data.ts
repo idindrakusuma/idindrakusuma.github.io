@@ -73,7 +73,59 @@ export type NavItem =
 export const NAV_ITEMS: NavItem[] = [
   ...SECTIONS.map((section): NavItem => ({ kind: 'section', id: section.id, label: section.label })),
   { kind: 'route', id: 'blog', label: 'Blog', href: '/blog' },
+  { kind: 'route', id: 'projects', label: 'Projects', href: '/projects' },
 ];
+
+/**
+ * Built outside employment, owned by Indra alone, and live today — see Project
+ * in CONTEXT.md. Work for an employer belongs in EXPERIENCES instead.
+ *
+ * The name is the product's own and stays untranslated; the description is
+ * written in the site's English whatever language the product speaks.
+ */
+export type Project = {
+  /** Its address under /projects — `/projects/{slug}`. */
+  slug: string;
+  name: string;
+  /** One line: what it is. Shown on the card and atop the detail. */
+  description: string;
+  /** Why it exists, one paragraph per entry. */
+  background: string[];
+  /** When work began, as an ISO date. */
+  created: string;
+  /** What it is built from — what ships to the visitor. */
+  stack: string[];
+  /** What it was built with — none of it ships. */
+  tools: string[];
+  href: string;
+  repo?: string;
+  /** 1200×630 — the product's own social card, so it reads as the product. */
+  image: string;
+};
+
+export const PROJECTS: Project[] = [
+  {
+    slug: 'taman-bermain',
+    name: 'Taman Bermain',
+    description:
+      'Simple web games for young kids — cheerful, touch-first, and playable right in a phone browser.',
+    background: [
+      'My three-year-old son used to protest every time it was time to wash hands or brush teeth: what for? To get rid of the germs, I said. Back came the question: “So where are the germs?”',
+      'Fair point — you can’t see them 😅 So I built a game where you can: Pemburu Kuman, where you chase cute germs away with the camera while washing hands and brushing teeth. One game led to another, and Taman Bermain is where they all live now.',
+    ],
+    created: '2026-10-08',
+    stack: ['HTML', 'CSS', 'JavaScript', 'Canvas', 'Web Audio', 'Web Speech', 'MediaPipe', 'PWA', 'Vercel'],
+    tools: ['Claude Code', 'Playwright', 'ffmpeg'],
+    href: 'https://mini-games.indrakusuma.dev',
+    repo: 'https://github.com/idindrakusuma/mini-games',
+    image: '/images/projects/taman-bermain.webp',
+  },
+];
+
+/** The Project at `/projects/{slug}`, or undefined when there is none. */
+export function findProject(slug: string): Project | undefined {
+  return PROJECTS.find((project) => project.slug === slug);
+}
 
 export type Stat = {
   value: string;

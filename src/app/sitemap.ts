@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { getPosts } from '@/lib/posts';
-import { SITE } from '@/lib/site-data';
+import { PROJECTS, SITE } from '@/lib/site-data';
 
 export const dynamic = 'force-static';
 
@@ -24,6 +24,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    {
+      url: `${SITE.url}/projects/`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    ...PROJECTS.map((project) => ({
+      url: `${SITE.url}/projects/${project.slug}/`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
     ...posts.map((post) => ({
       url: `${SITE.url}/blog/${post.slug}/`,
       lastModified: new Date(post.updated ?? post.date),

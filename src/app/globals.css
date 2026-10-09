@@ -773,23 +773,27 @@ body {
 /* ---------------------------------------------------------------------------
    Blog
 --------------------------------------------------------------------------- */
-/* Post card. The whole card is the link, so the lift, the border, the title
+/* Post and Project cards. The whole card is the link, so the lift, the border, the title
    colour and the thumbnail's slow push-in all key off one :hover. */
-.ik-post {
+.ik-post,
+.ik-project {
   transition:
     transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
     border-color 0.45s ease,
     box-shadow 0.45s ease;
 }
-.ik-post:hover {
+.ik-post:hover,
+.ik-project:hover {
   transform: translateY(-6px);
   border-color: var(--primary);
   box-shadow: 0 26px 50px -20px var(--glow);
 }
-.ik-post:hover .ik-thumb img {
+.ik-post:hover .ik-thumb img,
+.ik-project:hover .ik-project-shot img {
   transform: scale(1.06);
 }
-.ik-thumb img {
+.ik-thumb img,
+.ik-project-shot img {
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -1024,9 +1028,8 @@ body {
      body | side
    The illustration sits beside the title and the table of contents starts
    level with the body. Without a table of contents (.ik-article-wide) the
-   body takes both columns, and the footer matches the article's width. */
-.ik-article,
-.ik-article-foot {
+   body takes both columns. */
+.ik-article {
   max-width: 760px;
   margin-inline: auto;
 }
@@ -1036,8 +1039,7 @@ body {
 }
 
 @media (min-width: 1180px) {
-  .ik-article,
-  .ik-article-foot {
+  .ik-article {
     max-width: 1060px;
   }
   .ik-article {
@@ -1134,4 +1136,45 @@ body {
   margin: 0 auto;
   max-width: 100%;
   height: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   Project detail transitions
+
+   React's <ViewTransition> names these (ProjectCard, ProjectDetail). The
+   image morphs between the card and the modal; the modal itself rises in and
+   sinks out around it. Reduced motion keeps the swap and drops the movement.
+--------------------------------------------------------------------------- */
+html:has(dialog.ik-modal[open]) {
+  overflow: hidden;
+}
+/* Above the modal's own group. Left to paint order, the image travels under
+   the rising dialog's snapshot, vanishes behind its panel, and pops back in
+   when the transition ends. */
+::view-transition-group(.ik-morph) {
+  z-index: 1;
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-group(ik-project-close) {
+  z-index: 2;
+}
+::view-transition-new(.ik-modal-in):only-child {
+  animation: ik-modal-rise 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+::view-transition-old(.ik-modal-out):only-child {
+  animation: ik-modal-rise 260ms cubic-bezier(0.4, 0, 1, 1) reverse both;
+}
+@keyframes ik-modal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }

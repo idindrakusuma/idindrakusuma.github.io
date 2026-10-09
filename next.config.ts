@@ -17,7 +17,10 @@ const nextConfig: NextConfig = {
     // next/image's optimizer needs a server; the export ships the originals as-is.
     unoptimized: true,
   },
-  allowedDevOrigins: ['192.168.100.*']
+  allowedDevOrigins: ['192.168.100.*'],
+  // AGENTS.md is written by hand. Left on, `next dev` re-appends its own
+  // generic block whenever it detects a coding agent.
+  agentRules: false,
 };
 
 export default nextConfig;

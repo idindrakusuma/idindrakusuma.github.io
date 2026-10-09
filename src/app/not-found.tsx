@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import AuroraBackground from '@/components/AuroraBackground';
+import Footer from '@/components/Footer';
 import { SITE } from '@/lib/site-data';
 
 export const metadata: Metadata = {
@@ -67,9 +68,7 @@ export default function NotFound() {
           </div>
         </main>
 
-        <footer className="text-faint px-6 py-6 text-center text-[13px]">
-          © {new Date().getFullYear()} {SITE.name}
-        </footer>
+        <Footer />
       </div>
     </>
   );

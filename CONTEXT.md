@@ -17,6 +17,12 @@ The fixed furniture that floats over every route — the nav island and the them
 toggle. Identical everywhere; only its spy is homepage-only.
 _Avoid_: header, navbar
 
+**Route Chrome**:
+The small nav island on every route that is not the homepage — a way back, a
+label for where you are, and the theme toggle. No Spy, because there are no
+Sections to watch.
+_Avoid_: blog chrome, blog nav
+
 **Spy**:
 The tracking of which Section the page is looking at. Runs only where Sections
 exist, and is muted while a tap-driven scroll is in flight.
@@ -50,6 +56,12 @@ One area of ownership in Section 03 — what the work is, in a sentence, over th
 chips naming the stack behind it. Named for the doing, not the tool.
 _Avoid_: skill, competency, tech stack
 
+**Project**:
+Something built outside employment, owned solely by the author, and live for the
+public to open or try today. Work done for an employer belongs to Experience;
+a repo with no demo, or one that has been shut down, is not a Project.
+_Avoid_: side project, portfolio item, work
+
 ### Marquee
 
 **Marquee**:
@@ -74,10 +86,12 @@ _Avoid_: autoplay, scroll
 ## Relationships
 
 - The page is an ordered list of **Sections**; **Site Chrome** floats above all of them
+- Every other route carries **Route Chrome** instead of **Site Chrome**
 - A **Marquee** renders `copies` of its **Set**, derived from the **Wrap width** and the viewport
 - A **Marquee** **Drifts** unless it is hovered, dragged, or the visitor asked for reduced motion
 - Awards is the page's only **Marquee**; Skills is a static grid of **Capabilities**
 - **Posts** live outside the Section sequence — the homepage has Sections, `/blog` has Posts
+- **Projects** live outside the Section sequence too, listed on their own route at `/projects`
 - A **Post** has exactly one **Category** and any number of **Tags**; only Category is filterable
 - A **Post**'s **Excerpt** is quoted from the Post, never written for it
 - `SECTIONS` is the ordering authority: it numbers the **Sections** and tells the **Spy** what to watch
@@ -100,5 +114,6 @@ _Avoid_: autoplay, scroll
 - ~~**Site Chrome**'s nav cannot address a **Post**~~ — resolved. `SECTIONS` orders
   the page, `NAV_ITEMS` describes the nav, and the Blog entry is a route variant
   that renumbers nothing. `/blog` is reachable from the nav island.
-- The blog does not use **Site Chrome** at all: it has its own smaller island,
-  because a scroll spy over Sections has nothing to spy on there.
+- ~~The blog has its own smaller island~~ — generalised. That island is now
+  **Route Chrome**, shared by `/blog` and `/projects`; **Site Chrome** stays
+  homepage-only. The component is still named `BlogChrome`.
