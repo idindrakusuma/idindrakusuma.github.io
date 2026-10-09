@@ -41,8 +41,13 @@ holds meanings only, never implementation.
 
 - `/` is the ordered **Sections**. `SECTIONS` numbers them and feeds the Spy;
   `NAV_ITEMS` adds the route entries (Blog, Projects) without renumbering.
-- `/blog`, `/blog/[slug]` and `/projects` carry Route Chrome (`BlogChrome.tsx`)
-  on top. Every route, the 404 included, ends with the shared `Footer`.
+- `/blog`, `/blog/[slug]`, `/projects` and `/projects/[slug]` carry Route
+  Chrome (`BlogChrome.tsx`) on top. Every route, the 404 included, ends with
+  the shared `Footer`.
+- A Project's detail opens as a modal over `/projects` and changes the URL
+  with `history.pushState` (`ProjectGallery.tsx`) — the static export rules
+  out intercepting routes. `/projects/[slug]` is the same page with the modal
+  already open, for shared links and reloads.
 - A new route also goes into `src/app/sitemap.ts`, and into `NAV_ITEMS` and the
   footer when visitors should find it.
 
