@@ -50,6 +50,12 @@ One area of ownership in Section 03 — what the work is, in a sentence, over th
 chips naming the stack behind it. Named for the doing, not the tool.
 _Avoid_: skill, competency, tech stack
 
+**Project**:
+Something built outside employment, owned solely by the author, and live for the
+public to open or try today. Work done for an employer belongs to Experience;
+a repo with no demo, or one that has been shut down, is not a Project.
+_Avoid_: side project, portfolio item, work
+
 ### Marquee
 
 **Marquee**:
