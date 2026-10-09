@@ -110,8 +110,8 @@ export const PROJECTS: Project[] = [
     description:
       'Simple web games for young kids — cheerful, touch-first, and playable right in a phone browser.',
     background: [
-      'Games for small children tend to come wrapped in app installs, sign-ups and ads. Taman Bermain is the opposite: open a link on a phone and play, in simple, warm Bahasa Indonesia, with nothing to install and nothing collected.',
-      'Each game is one idea with one rule — chase germs while washing hands, meet letters and numbers, trace a letter, match shapes and colours — and stands alone, so a new one can be added without touching the rest.',
+      'My three-year-old used to protest every time it was time to wash hands or brush teeth: what for? To get rid of the germs, I said. Back came the question: “So where are the germs?”',
+      'Fair point — you can’t see them 😅 So I built a game where you can: Pemburu Kuman, where you chase cute germs away with the camera while washing hands and brushing teeth. One game led to another, and Taman Bermain is where they all live now.',
     ],
     created: '2026-10-08',
     stack: ['HTML', 'CSS', 'JavaScript', 'Canvas', 'Web Audio', 'Web Speech', 'MediaPipe', 'PWA', 'Vercel'],
