@@ -5,12 +5,13 @@ import type { ReactNode } from 'react';
 import useTheme from '@/hooks/useTheme';
 
 /**
- * The blog's own nav island.
+ * Route Chrome: the nav island on every route that is not the homepage — the
+ * blog and /projects. Named for the blog, which had it first.
  *
  * Deliberately not SiteChrome: that one is a scroll spy over the homepage's
- * Sections, and none of those exist here. The design gives the blog a smaller
- * island instead — a way back, a label for where you are, and the theme toggle,
- * which is the one thing both sets of chrome share.
+ * Sections, and none of those exist here. The design gives these routes a
+ * smaller island instead — a way back, a label for where you are, and the theme
+ * toggle, which is the one thing both sets of chrome share.
  */
 export default function BlogChrome({
   back,

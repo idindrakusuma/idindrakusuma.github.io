@@ -73,6 +73,32 @@ export type NavItem =
 export const NAV_ITEMS: NavItem[] = [
   ...SECTIONS.map((section): NavItem => ({ kind: 'section', id: section.id, label: section.label })),
   { kind: 'route', id: 'blog', label: 'Blog', href: '/blog' },
+  { kind: 'route', id: 'projects', label: 'Projects', href: '/projects' },
+];
+
+/**
+ * Built outside employment, owned by Indra alone, and live today — see Project
+ * in CONTEXT.md. Work for an employer belongs in EXPERIENCES instead.
+ *
+ * The name is the product's own and stays untranslated; the description is
+ * written in the site's English whatever language the product speaks.
+ */
+export type Project = {
+  name: string;
+  description: string;
+  href: string;
+  /** 1200×630 — the product's own social card, so it reads as the product. */
+  image: string;
+};
+
+export const PROJECTS: Project[] = [
+  {
+    name: 'Taman Bermain',
+    description:
+      'Simple web games for young kids — cheerful, touch-first, and playable right in a phone browser.',
+    href: 'https://mini-games.indrakusuma.dev',
+    image: '/images/projects/taman-bermain.webp',
+  },
 ];
 
 export type Stat = {

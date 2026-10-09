@@ -1,0 +1,60 @@
+import type { Metadata } from 'next';
+import BlogBackdrop from '@/components/BlogBackdrop';
+import BlogChrome from '@/components/BlogChrome';
+import Footer from '@/components/Footer';
+import ProjectCard from '@/components/ProjectCard';
+import Reveal from '@/components/Reveal';
+import { PROJECTS, SITE } from '@/lib/site-data';
+
+export const metadata: Metadata = {
+  title: `Projects — ${SITE.name}`,
+  description: 'Things built on the side — live, and yours to open and try.',
+  alternates: { canonical: '/projects' },
+};
+
+/**
+ * Every Project, each linking out to where it lives.
+ *
+ * A route rather than a Section, like the blog: Projects sit outside the
+ * homepage's numbered sequence, so adding one never renumbers anything.
+ */
+export default function ProjectsIndex() {
+  return (
+    <>
+      <BlogBackdrop />
+      <div className="relative z-1">
+        <BlogChrome back={{ href: '/', label: 'Back to site' }} trailing="Projects" />
+
+        <header className="mx-auto max-w-[1120px] px-6 pt-[132px] pb-[22px]">
+          <Reveal immediate as="p" className="font-mono text-primary m-0 mb-3.5 text-[13px]">
+            {`Projects · ${PROJECTS.length}`}
+          </Reveal>
+
+          <Reveal
+            immediate
+            as="h1"
+            className="font-display m-0 mb-[18px] text-[clamp(38px,6.5vw,68px)] leading-[1.03] font-bold tracking-[-.03em]"
+          >
+            Built on
+            <br />
+            <span className="ik-gradient-wide">the side.</span>
+          </Reveal>
+
+          <Reveal immediate as="p" className="text-muted m-0 max-w-[600px] text-[clamp(16px,2.2vw,18px)]">
+            Small things I make outside work — all live, all yours to open and try.
+          </Reveal>
+        </header>
+
+        <main className="mx-auto grid max-w-[1120px] grid-cols-[repeat(auto-fill,minmax(min(100%,300px),1fr))] gap-5 px-6 pt-[26px] pb-10">
+          {PROJECTS.map((project) => (
+            <Reveal key={project.href}>
+              <ProjectCard project={project} />
+            </Reveal>
+          ))}
+        </main>
+
+        <Footer />
+      </div>
+    </>
+  );
+}

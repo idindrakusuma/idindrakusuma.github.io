@@ -60,7 +60,7 @@ state in an effect as an `IntersectionObserver` fallback.
 
 ```
 src/
-  app/          Routes. layout.tsx, page.tsx, not-found.tsx, blog/,
+  app/          Routes. layout.tsx, page.tsx, not-found.tsx, blog/, projects/,
                 globals.css (tokens + keyframes), robots.ts, sitemap.ts, icons
   components/   Markup — one file per Section, plus shared pieces
   hooks/        React and DOM glue

@@ -10,6 +10,7 @@ import remarkGfm from 'remark-gfm';
 import BlogBackdrop from '@/components/BlogBackdrop';
 import BlogIllustration from '@/components/BlogIllustration';
 import BlogChrome from '@/components/BlogChrome';
+import Footer from '@/components/Footer';
 import PostActions from '@/components/PostActions';
 import Reveal from '@/components/Reveal';
 import TableOfContents, { FloatingTableOfContents } from '@/components/TableOfContents';
@@ -264,19 +265,13 @@ export default async function PostPage({ params }: PostPageProps) {
             </article>
           </main>
 
-          <footer className="ik-article-foot border-line text-faint flex flex-wrap items-center justify-between gap-3 border-t py-6 text-[13px]">
-            <span>
-              © {new Date().getFullYear()} {SITE.name}
-            </span>
-            <Link href="/" className="text-primary font-semibold no-underline">
-              Back to site →
-            </Link>
-          </footer>
         </div>
 
         {/* The same contents below the sidebar's breakpoint, folded into a
             floating button. */}
         {toc.length >= 2 && <FloatingTableOfContents items={toc} />}
+
+        <Footer />
       </div>
     </>
   );

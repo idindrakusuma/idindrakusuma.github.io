@@ -773,23 +773,27 @@ body {
 /* ---------------------------------------------------------------------------
    Blog
 --------------------------------------------------------------------------- */
-/* Post card. The whole card is the link, so the lift, the border, the title
+/* Post and Project cards. The whole card is the link, so the lift, the border, the title
    colour and the thumbnail's slow push-in all key off one :hover. */
-.ik-post {
+.ik-post,
+.ik-project {
   transition:
     transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
     border-color 0.45s ease,
     box-shadow 0.45s ease;
 }
-.ik-post:hover {
+.ik-post:hover,
+.ik-project:hover {
   transform: translateY(-6px);
   border-color: var(--primary);
   box-shadow: 0 26px 50px -20px var(--glow);
 }
-.ik-post:hover .ik-thumb img {
+.ik-post:hover .ik-thumb img,
+.ik-project:hover .ik-project-shot img {
   transform: scale(1.06);
 }
-.ik-thumb img {
+.ik-thumb img,
+.ik-project-shot img {
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -1024,9 +1028,8 @@ body {
      body | side
    The illustration sits beside the title and the table of contents starts
    level with the body. Without a table of contents (.ik-article-wide) the
-   body takes both columns, and the footer matches the article's width. */
-.ik-article,
-.ik-article-foot {
+   body takes both columns. */
+.ik-article {
   max-width: 760px;
   margin-inline: auto;
 }
@@ -1036,8 +1039,7 @@ body {
 }
 
 @media (min-width: 1180px) {
-  .ik-article,
-  .ik-article-foot {
+  .ik-article {
     max-width: 1060px;
   }
   .ik-article {

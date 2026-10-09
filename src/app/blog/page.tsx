@@ -4,6 +4,7 @@ import BlogBackdrop from '@/components/BlogBackdrop';
 import BlogIllustration from '@/components/BlogIllustration';
 import BlogChrome from '@/components/BlogChrome';
 import CategoryFilter from '@/components/CategoryFilter';
+import Footer from '@/components/Footer';
 import PostCard from '@/components/PostCard';
 import PopularPosts from '@/components/PopularPosts';
 import Reveal from '@/components/Reveal';
@@ -85,14 +86,7 @@ export default async function BlogIndex() {
           </aside>
         </main>
 
-        <footer className="border-line text-faint mx-auto flex max-w-[1120px] flex-wrap items-center justify-between gap-3 border-t px-6 py-6 text-[13px]">
-          <span>
-            © {new Date().getFullYear()} {SITE.name}
-          </span>
-          <Link href="/" className="text-primary font-semibold no-underline">
-            Back to site →
-          </Link>
-        </footer>
+        <Footer />
       </div>
     </>
   );
