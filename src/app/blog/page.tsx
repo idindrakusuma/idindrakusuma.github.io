@@ -61,10 +61,12 @@ export default async function BlogIndex() {
             </Reveal>
           </div>
 
-          {/* Hidden below 860px, where the heading needs the full width. */}
-          <Reveal immediate delay={120} className="ik-blog-art flex-none">
+          {/* Hidden below 860px, where the heading needs the full width. Not a
+              Reveal: the art flies back here from an article, and a fade on
+              its wrapper would dim it again the moment it lands. */}
+          <div className="ik-blog-art flex-none">
             <BlogIllustration />
-          </Reveal>
+          </div>
         </header>
 
         <div className="mx-auto max-w-[1120px] px-6 pt-[18px] pb-1.5">
