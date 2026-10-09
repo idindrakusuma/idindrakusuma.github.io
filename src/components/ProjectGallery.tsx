@@ -21,7 +21,8 @@ function slugIn(pathname: string): string | null {
  * static export cannot use intercepting routes, which is the usual way to
  * build this, so the URL is driven by hand.
  *
- * Back and forward land here as `popstate`, read straight from the URL.
+ * Back and forward land here as `popstate`, read straight from the URL —
+ * which is also how every way of closing a detail opened from the grid ends.
  */
 export default function ProjectGallery({
   projects,
@@ -34,7 +35,11 @@ export default function ProjectGallery({
   const project = openSlug ? findProject(openSlug) : undefined;
 
   useEffect(() => {
-    const onPop = () => startTransition(() => setOpenSlug(slugIn(window.location.pathname)));
+    // Deferred a task: React flushes updates made during `popstate`
+    // synchronously, so the browser can restore scroll, and a synchronous
+    // update gets no view transition — closing would just cut.
+    const onPop = () =>
+      setTimeout(() => startTransition(() => setOpenSlug(slugIn(window.location.pathname))));
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);

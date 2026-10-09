@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, ViewTransition } from 'react';
+import { useEffect, useLayoutEffect, useRef, ViewTransition } from 'react';
 import type { Project } from '@/lib/site-data';
 import { ProjectShot } from './ProjectCard';
 
@@ -21,7 +21,10 @@ import { ProjectShot } from './ProjectCard';
 export default function ProjectDetail({ project, onClose }: { project: Project; onClose: () => void }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  useEffect(() => {
+  // A layout effect, not a passive one: React takes the view transition's
+  // "after" snapshot once layout effects have run, and a dialog still closed
+  // then is display:none — no morph and no rise, just the card's image fading.
+  useLayoutEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
     dialog.showModal();
