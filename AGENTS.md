@@ -1,38 +1,73 @@
 # AGENTS.md
 
-indrakusuma.dev: a statically exported Next.js personal site — homepage, blog,
-projects. Setup, commands, layout and the blog workflow are in
+indrakusuma.dev: Indra Kusuma's personal site — a homepage, a blog and a
+projects page. Next.js 16 App Router, statically exported to `out/` and served
+by Netlify. The only server code is the blog's clap counter, as Netlify
+functions. Setup, commands and the long-form reasons live in
 [README.md](./README.md).
+
+## Next.js 16
+
+This Next is newer than most training data. Before using a Next API, read its
+guide in `node_modules/next/dist/docs/` and heed deprecation notices.
+
+The site is `output: 'export'`, so anything needing a Node server at request
+time is out: route handlers, middleware, ISR, the image optimizer. Dynamic
+routes list their paths with `generateStaticParams`. Images are plain `<img>`
+(see `PostCard.tsx`), sized from `public/images/posts/manifest.json`.
 
 ## Vocabulary
 
-[CONTEXT.md](./CONTEXT.md) is the glossary — Section, Site Chrome, Route Chrome,
-Post, Project and the rest. Read it before naming anything: a component, a type,
-a nav label, a commit message. When a new term settles, add it there; the
-glossary holds meanings only, never implementation.
+[CONTEXT.md](./CONTEXT.md) is the glossary: Section, Site Chrome, Route Chrome,
+Post, Project and the rest. Read it before naming anything — a component, a
+type, a nav label, a commit message. When a new term settles, add it there; it
+holds meanings only, never implementation.
 
-## Where things go
+## Code
 
+- **Layers**: `src/lib/` is framework-free, `src/hooks/` adds React and the
+  DOM, `src/components/` adds markup. Imports point down that list, from
+  components towards lib.
 - **Content** — jobs, capabilities, awards, nav entries, Projects — lives in
   `src/lib/site-data.ts`; components stay presentational.
-- **Layers**: `lib/` is framework-free, `hooks/` adds React and the DOM,
-  `components/` adds markup. Imports point down that list, from components
-  towards lib.
-- **Posts** are `content/posts/*.mdx`; start one with `pnpm new-post` or the
-  `write-a-article` skill.
+- **Colour** comes from the CSS tokens in `src/app/globals.css` (`var(--primary)`,
+  `var(--surface)`…), which carry both themes. Inline SVG art uses the same
+  tokens, so it follows the theme toggle with no second image.
+- **Tailwind class lists are whole strings.** Tailwind finds classes by
+  scanning the source; a class assembled from parts (`` `pt-[${n}px]` ``) is
+  never generated.
+
+## Routes
+
+- `/` is the ordered **Sections**. `SECTIONS` numbers them and feeds the Spy;
+  `NAV_ITEMS` adds the route entries (Blog, Projects) without renumbering.
+- `/blog`, `/blog/[slug]` and `/projects` carry Route Chrome (`BlogChrome.tsx`)
+  on top. Every route, the 404 included, ends with the shared `Footer`.
+- A new route also goes into `src/app/sitemap.ts`, and into `NAV_ITEMS` and the
+  footer when visitors should find it.
+
+## Blog
+
+Posts are `content/posts/*.mdx`, written in Bahasa Indonesia on an otherwise
+English site. Start one with the `write-a-article` skill; draw a missing
+thumbnail with the `generate-thumbnail` skill. The README's Blog section holds
+the frontmatter contract, which the build enforces.
+
+## Generated files
+
+`public/` holds generated output; `assets/` holds the masters it is built from.
+Change the master or the script in `scripts/` and regenerate with the matching
+`pnpm assets:*`, rather than editing the output. `scripts/migrate-posts.mjs`
+was a one-time migration — running it again overwrites hand edits to posts.
+
+## Claps
+
+`netlify/functions/` serves `/api/claps`; the rules live in
+`netlify/claps/core.ts`, covered by `pnpm test`. Limits and the `CLAP_SALT`
+secret are explained in the README.
 
 ## Done
 
-A change is done when these pass: `pnpm typecheck`, `pnpm test`, and
-`pnpm build` (which lints with warnings fatal). pnpm is enforced by
-`preinstall`.
-
-<!-- BEGIN:nextjs-agent-rules -->
-
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
+pnpm only — `preinstall` refuses the others. A change is done when
+`pnpm typecheck`, `pnpm test` and `pnpm build` pass; the build lints first, with
+warnings fatal.
