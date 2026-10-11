@@ -37,9 +37,16 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
   });
 
   const index = [
-    { id: 'side-projects', n: '01', label: 'Side projects', count: PROJECTS.length },
-    ...(studies.length > 0 ? [{ id: 'case-studies', n: '02', label: 'Case studies', count: studies.length }] : []),
+    { id: 'projects', n: '01', label: 'Projects', heading: 'Projects · on the side', count: PROJECTS.length },
+    ...(studies.length > 0
+      ? [{ id: 'case-studies', n: '02', label: 'Case studies', heading: 'Case studies · at work', count: studies.length }]
+      : []),
   ];
+  // Each list's heading carries the same number as its row in the index.
+  const heading = (id: string) => {
+    const row = index.find((r) => r.id === id)!;
+    return `${row.n} — ${row.heading}`;
+  };
 
   return (
     <>
@@ -48,7 +55,7 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
         <BlogChrome back={{ href: '/', label: 'Back to site' }} trailing="Projects" />
 
         <div className="mx-auto max-w-[1120px] px-6 pt-[132px] pb-16 lg:grid lg:grid-cols-[340px_1fr] lg:gap-14">
-          <aside className="mb-9 lg:sticky lg:top-[110px] lg:mb-0 lg:self-start">
+          <aside className="ik-projects-aside mb-9 lg:mb-0 lg:self-start">
             <Reveal immediate as="p" className="font-mono text-primary m-0 mb-3.5 text-[13px]">
               {studies.length > 0 ? 'Projects & case studies' : 'Projects'}
             </Reveal>
@@ -68,10 +75,7 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
             </Reveal>
 
             <Reveal immediate>
-              <ProjectsFilter
-                target="projects-lists"
-                sections={index.map(({ id, label, count }) => ({ id, label, count }))}
-              />
+              <ProjectsFilter target="projects-lists" sections={index} />
             </Reveal>
 
             <Reveal immediate as="nav" aria-label="On this page" className="border-line hidden flex-col border-t lg:flex">
@@ -88,22 +92,23 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
               ))}
             </Reveal>
 
-            {/* Only beside the lists: in one column it would sit between the
-                heading and the first card. */}
-            <Reveal immediate delay={120} className="mt-8 hidden opacity-90 lg:block">
+            {/* Only beside the lists, and only on a screen tall enough to see it
+                pinned: in one column it would sit between the heading and the
+                first card, and on a short laptop below the fold for good. */}
+            <Reveal immediate delay={120} className="ik-projects-art mt-8 opacity-90">
               <ProjectsIllustration className="w-[260px]" />
             </Reveal>
           </aside>
 
           <main id="projects-lists" className="flex min-w-0 flex-col gap-12">
-            <section id="side-projects" data-projects-section="side-projects" aria-labelledby="side-projects-label" className="flex scroll-mt-[110px] flex-col gap-5">
-              <SectionLabel id="side-projects-label">01 — Side projects</SectionLabel>
+            <section id="projects" data-projects-section="projects" aria-labelledby="projects-label" className="flex scroll-mt-[110px] flex-col gap-5">
+              <SectionLabel id="projects-label">{heading('projects')}</SectionLabel>
               <ProjectGallery projects={PROJECTS} initialSlug={openSlug} />
             </section>
 
             {studies.length > 0 && (
               <section id="case-studies" data-projects-section="case-studies" aria-labelledby="case-studies-label" className="flex scroll-mt-[110px] flex-col gap-5">
-                <SectionLabel id="case-studies-label">02 — Case studies · at work</SectionLabel>
+                <SectionLabel id="case-studies-label">{heading('case-studies')}</SectionLabel>
                 {studies.map(({ study, post }) => (
                   <Reveal key={study.post}>
                     <CaseStudyCard study={study} post={post} />

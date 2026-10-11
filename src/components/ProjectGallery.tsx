@@ -15,14 +15,14 @@ function slugIn(pathname: string): string | null {
  * The Project cards, and the detail modal over them.
  *
  * A Project's detail is a real page — `/projects/{slug}` is exported and opens
- * with the modal already up — but from the grid it opens in place: the URL
+ * with the modal already up — but from the list it opens in place: the URL
  * changes with `history.pushState`, which the App Router syncs with, and the
  * swap runs inside a transition so React's <ViewTransition> animates it. The
  * static export cannot use intercepting routes, which is the usual way to
  * build this, so the URL is driven by hand.
  *
  * Back and forward land here as `popstate`, read straight from the URL —
- * which is also how every way of closing a detail opened from the grid ends.
+ * which is also how every way of closing a detail opened from the list ends.
  */
 export default function ProjectGallery({
   projects,
@@ -55,7 +55,7 @@ export default function ProjectGallery({
   };
 
   const close = useCallback(() => {
-    // Opened from the grid: step back to the entry it came from, so Back
+    // Opened from the list: step back to the entry it came from, so Back
     // afterwards leaves /projects rather than reopening the modal.
     if ((window.history.state as { ikProject?: boolean } | null)?.ikProject) {
       window.history.back();

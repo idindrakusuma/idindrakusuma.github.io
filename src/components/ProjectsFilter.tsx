@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { replayEntrance } from '@/hooks/replayEntrance';
 import FilterPills from './FilterPills';
 
 const ALL = 'all';
@@ -39,11 +40,7 @@ export default function ProjectsFilter({
     }
     for (const section of list.querySelectorAll<HTMLElement>('[data-projects-section]')) {
       if (active !== ALL && section.dataset.projectsSection !== active) continue;
-      section.classList.remove('ik-post-enter');
-      void section.offsetWidth;
-      section.classList.add('ik-post-enter');
-      // A filled animation pins `transform`; hand it back once done.
-      section.addEventListener('animationend', () => section.classList.remove('ik-post-enter'), { once: true });
+      replayEntrance(section);
     }
   }, [active, target]);
 

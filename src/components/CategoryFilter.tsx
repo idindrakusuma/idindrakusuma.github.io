@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { Category } from '@/lib/posts';
+import { replayEntrance } from '@/hooks/replayEntrance';
 import FilterPills from './FilterPills';
 
 /**
@@ -45,23 +46,7 @@ export default function CategoryFilter({ categories }: { categories: Category[] 
       card.style.display = '';
       if (!settled.current) continue;
 
-      // Removing the class, forcing layout, then adding it back is what restarts
-      // the animation — a class that is already there does not replay.
-      card.classList.remove('ik-post-enter');
-      void card.offsetWidth;
-      card.style.animationDelay = `${Math.min(shown, STAGGERED) * STAGGER_MS}ms`;
-      card.classList.add('ik-post-enter');
-      // The animation fills forwards, and a filled animation outranks ordinary
-      // rules — left in place it would pin `transform` and kill the card's hover
-      // lift. Taking the class off once it has finished hands the card back.
-      card.addEventListener(
-        'animationend',
-        () => {
-          card.classList.remove('ik-post-enter');
-          card.style.animationDelay = '';
-        },
-        { once: true },
-      );
+      replayEntrance(card, Math.min(shown, STAGGERED) * STAGGER_MS);
       shown += 1;
     }
 
