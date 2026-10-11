@@ -3,6 +3,7 @@ import BlogChrome from '@/components/BlogChrome';
 import CaseStudyCard from '@/components/CaseStudyCard';
 import Footer from '@/components/Footer';
 import ProjectGallery from '@/components/ProjectGallery';
+import ProjectsFilter from '@/components/ProjectsFilter';
 import ProjectsIllustration from '@/components/ProjectsIllustration';
 import Reveal from '@/components/Reveal';
 import { getPosts } from '@/lib/posts';
@@ -23,7 +24,7 @@ import { CASE_STUDIES, PROJECTS } from '@/lib/site-data';
  *
  * From 1024px the page splits: the heading and an index of the two lists stay
  * pinned on the left while the lists scroll on the right. Below that it is one
- * column, the index becoming a row of jump links.
+ * column, and the index gives way to filter pills, as on the blog.
  */
 export default async function ProjectsIndex({ openSlug = null }: { openSlug?: string | null }) {
   const posts = await getPosts();
@@ -51,7 +52,7 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
         <BlogChrome back={{ href: '/', label: 'Back to site' }} trailing="Projects" />
 
         <div className="mx-auto max-w-[1120px] px-6 pt-[132px] pb-16 lg:grid lg:grid-cols-[340px_1fr] lg:gap-14">
-          <aside className="mb-10 lg:sticky lg:top-[110px] lg:mb-0 lg:self-start">
+          <aside className="mb-9 lg:sticky lg:top-[110px] lg:mb-0 lg:self-start">
             <Reveal immediate as="p" className="font-mono text-primary m-0 mb-3.5 text-[13px]">
               Index
             </Reveal>
@@ -66,13 +67,20 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
               <span className="ik-gradient-wide">the side.</span>
             </Reveal>
 
-            <Reveal immediate as="p" className="text-muted m-0 mb-8 max-w-[600px] text-[16.5px] leading-[1.6]">
+            <Reveal immediate as="p" className="text-muted m-0 mb-6 max-w-[600px] text-[16.5px] leading-[1.6] lg:mb-8">
               {studies.length > 0
                 ? `Small things I make outside work — all live, all yours to open and try. And a few write-ups from my work at ${orgs}, with the numbers.`
                 : 'Small things I make outside work — all live, all yours to open and try.'}
             </Reveal>
 
-            <Reveal immediate as="nav" aria-label="On this page" className="border-line flex flex-col border-t">
+            <Reveal immediate>
+              <ProjectsFilter
+                target="projects-lists"
+                sections={index.map(({ id, label, count }) => ({ id, label, count }))}
+              />
+            </Reveal>
+
+            <Reveal immediate as="nav" aria-label="On this page" className="border-line hidden flex-col border-t lg:flex">
               {index.map((row) => (
                 <a
                   key={row.id}
@@ -93,14 +101,14 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
             </Reveal>
           </aside>
 
-          <main className="flex min-w-0 flex-col gap-12">
-            <section id="side-projects" aria-labelledby="side-projects-label" className="flex scroll-mt-[110px] flex-col gap-5">
+          <main id="projects-lists" className="flex min-w-0 flex-col gap-12">
+            <section id="side-projects" data-projects-section="side-projects" aria-labelledby="side-projects-label" className="flex scroll-mt-[110px] flex-col gap-5">
               <SectionLabel id="side-projects-label">01 — Side projects</SectionLabel>
               <ProjectGallery projects={PROJECTS} initialSlug={openSlug} />
             </section>
 
             {studies.length > 0 && (
-              <section id="case-studies" aria-labelledby="case-studies-label" className="flex scroll-mt-[110px] flex-col gap-5">
+              <section id="case-studies" data-projects-section="case-studies" aria-labelledby="case-studies-label" className="flex scroll-mt-[110px] flex-col gap-5">
                 <SectionLabel id="case-studies-label">02 — Case studies · at work</SectionLabel>
                 {studies.map(({ study, post }) => (
                   <Reveal key={study.post}>

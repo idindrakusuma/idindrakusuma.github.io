@@ -1280,3 +1280,12 @@ html:has(dialog.ik-modal[open]) {
     animation: none !important;
   }
 }
+
+/* /projects on a narrow screen: the filter pills show one list at a time.
+   From 1024px the pinned index replaces them and both lists show. */
+@media (max-width: 1023.98px) {
+  [data-filter='side-projects'] [data-projects-section='case-studies'],
+  [data-filter='case-studies'] [data-projects-section='side-projects'] {
+    display: none;
+  }
+}
