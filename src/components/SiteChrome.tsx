@@ -6,7 +6,7 @@ import { useRef, useState, ViewTransition } from 'react';
 import useNavIndicator from '@/hooks/useNavIndicator';
 import useSectionSpy from '@/hooks/useSectionSpy';
 import useTheme from '@/hooks/useTheme';
-import { NAV_ITEMS, SECTIONS } from '@/lib/site-data';
+import { NAV_ITEMS, SECTIONS, navIdForSection } from '@/lib/site-data';
 
 const SECTION_IDS = SECTIONS.map((section) => section.id);
 
@@ -32,9 +32,12 @@ export default function SiteChrome() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const { toggle } = useTheme();
-  const { activeId, goTo } = useSectionSpy(SECTION_IDS, onHomepage);
+  // The spy watches every Section; the nav shows the entry standing for it,
+  // since not every Section has one of its own (navIdForSection).
+  const { activeId: activeSectionId, goTo } = useSectionSpy(SECTION_IDS, onHomepage);
+  const activeId = activeSectionId ? navIdForSection(activeSectionId) : null;
 
-  // The pill follows the hovered link, and snaps back to the active Section on leave.
+  // The pill follows the hovered link, and snaps back to the active entry on leave.
   const highlightId = hoveredId ?? activeId;
   const positionIndicator = useNavIndicator({
     linksRef,

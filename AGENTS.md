@@ -45,7 +45,8 @@ holds meanings only, never implementation.
 ## Routes
 
 - `/` is the ordered **Sections**. `SECTIONS` numbers them and feeds the Spy;
-  `NAV_ITEMS` adds the route entries (Blog, Projects) without renumbering.
+  `NAV_ITEMS` picks which Sections get a nav entry and adds the route entries
+  (Projects, Blog) without renumbering.
 - `/blog`, `/blog/[slug]`, `/projects` and `/projects/[slug]` carry Route
   Chrome (`BlogChrome.tsx`) on top. Every route, the 404 included, ends with
   the shared `Footer`.

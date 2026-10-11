@@ -9,7 +9,8 @@ the conversation about it use the same words.
 ### Page structure
 
 **Section**:
-One numbered stop on the page, addressable by a hash and listed in the nav.
+One numbered stop on the page, addressable by a hash and watched by the Spy.
+Not every Section has a nav entry of its own.
 _Avoid_: block, panel
 
 **Site Chrome**:
@@ -103,7 +104,7 @@ _Avoid_: autoplay, scroll
 - A **Post** has exactly one **Category** and any number of **Tags**; only Category is filterable
 - A **Post**'s **Excerpt** is quoted from the Post, never written for it
 - `SECTIONS` is the ordering authority: it numbers the **Sections** and tells the **Spy** what to watch
-- **Site Chrome** renders one nav entry per **Section**; a nav entry that is a route is not a **Section**
+- **Site Chrome** renders a nav entry for some **Sections**, not all; a **Section** without one is shown in the nav by the nearest **Section** above it that has one. A nav entry that is a route is not a **Section**
 
 ## Example dialogue
 
@@ -116,9 +117,10 @@ _Avoid_: autoplay, scroll
 
 - "Experience" names both the data type for one company in `site-data.ts` and the
   `Experience` Section component. Unresolved; they are distinct concepts.
-- Section 04's eyebrow reads "Honors" while its nav label reads "Awards". Now a
-  deliberate override rather than drift — `Section` derives the number from
-  NAV_ITEMS but takes the label as a prop, so the two can differ on purpose.
+- Section 04's eyebrow reads "Honors" while its label in `SECTIONS` reads
+  "Awards". Now a deliberate override rather than drift — `Section` derives the
+  number from `SECTIONS` but takes the label as a prop, so the two can differ on
+  purpose.
 - ~~**Site Chrome**'s nav cannot address a **Post**~~ — resolved. `SECTIONS` orders
   the page, `NAV_ITEMS` describes the nav, and the Blog entry is a route variant
   that renumbers nothing. `/blog` is reachable from the nav island.

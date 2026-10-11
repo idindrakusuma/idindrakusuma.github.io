@@ -30,9 +30,10 @@ export type Section = { id: string; label: string };
  * The homepage's Sections, in the order they appear.
  *
  * This is the ordering authority: it numbers the Sections and it tells the
- * scroll spy what to watch. The nav renders one entry per Section today, and the
- * link is derived from the id rather than stored — a Section's href is `#id` on
- * the homepage and `/#id` anywhere else, which is not a fact about the Section.
+ * scroll spy what to watch. Not every Section has a nav entry (see NAV_ITEMS),
+ * and the link is derived from the id rather than stored — a Section's href is
+ * `#id` on the homepage and `/#id` anywhere else, which is not a fact about the
+ * Section.
  *
  * A nav entry that is a route rather than a Section (a Blog link, say) does not
  * belong in this list. Adding one here would renumber the Sections after it.
@@ -70,11 +71,44 @@ export type NavItem =
   | { kind: 'section'; id: string; label: string }
   | { kind: 'route'; id: string; label: string; href: string };
 
+/** The nav entry for a Section, labelled as the Section is. An unknown id fails the build. */
+function sectionNav(id: string): NavItem {
+  const section = SECTIONS.find((candidate) => candidate.id === id);
+  if (!section) throw new Error(`NAV_ITEMS: "${id}" is not in SECTIONS`);
+  return { kind: 'section', id, label: section.label };
+}
+
+/**
+ * Five entries, not one per Section: seven made the island too long to read
+ * at a glance. Skills and Awards have none — they follow Experience on the
+ * page, and the nav shows Experience while they are in view
+ * (`navIdForSection`). Contact goes last, as the thing to do once you have
+ * read the rest.
+ */
 export const NAV_ITEMS: NavItem[] = [
-  ...SECTIONS.map((section): NavItem => ({ kind: 'section', id: section.id, label: section.label })),
-  { kind: 'route', id: 'blog', label: 'Blog', href: '/blog' },
+  sectionNav('about'),
+  sectionNav('experience'),
   { kind: 'route', id: 'projects', label: 'Projects', href: '/projects' },
+  { kind: 'route', id: 'blog', label: 'Blog', href: '/blog' },
+  sectionNav('contact'),
 ];
+
+const SECTION_IDS_IN_NAV = new Set(
+  NAV_ITEMS.filter((item) => item.kind === 'section').map((item) => item.id),
+);
+
+/**
+ * The nav entry that stands for a Section: its own, or else that of the
+ * nearest Section above it that has one — so scrolling through Skills keeps
+ * Experience lit rather than leaving the nav on nothing.
+ */
+export function navIdForSection(id: string): string | null {
+  const index = SECTIONS.findIndex((section) => section.id === id);
+  for (let i = index; i >= 0; i -= 1) {
+    if (SECTION_IDS_IN_NAV.has(SECTIONS[i].id)) return SECTIONS[i].id;
+  }
+  return null;
+}
 
 /**
  * Built outside employment, owned by Indra alone, and live today — see Project
