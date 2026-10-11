@@ -30,6 +30,10 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
     }
     return { study, post };
   });
+  // Named from the data, so a Case Study from another company joins the line.
+  const orgs = new Intl.ListFormat('en', { type: 'conjunction' }).format([
+    ...new Set(CASE_STUDIES.map((study) => study.org)),
+  ]);
 
   return (
     <>
@@ -81,7 +85,7 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
               And at <span className="ik-gradient-wide">work.</span>
             </Reveal>
             <Reveal as="p" className="text-muted m-0 mb-[30px] max-w-[600px] text-[clamp(15px,2vw,17px)]">
-              Engineering written up from Invitato, where I’m a co-founder — the problem, the fix, and the numbers.
+              {`Engineering written up from my work at ${orgs} — the problem, the fix, and the numbers.`}
             </Reveal>
 
             <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,420px),1fr))] gap-5">
