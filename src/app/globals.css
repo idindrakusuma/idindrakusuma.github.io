@@ -776,8 +776,9 @@ body {
 /* ---------------------------------------------------------------------------
    Blog
 --------------------------------------------------------------------------- */
-/* Post and Project cards. The whole card is the link, so the lift, the border, the title
-   colour and the thumbnail's slow push-in all key off one :hover. */
+/* Post, Project and Case Study cards. The lift, the border, the title colour and
+   the thumbnail's slow push-in all key off one :hover on the card — the link
+   itself, except on a Project card, which holds several. */
 .ik-post,
 .ik-project {
   transition:
@@ -1278,5 +1279,35 @@ html:has(dialog.ik-modal[open]) {
   ::view-transition-old(*),
   ::view-transition-new(*) {
     animation: none !important;
+  }
+}
+
+/* /projects on a narrow screen: the filter pills show one list at a time.
+   From 1024px the pinned index replaces them and both lists show. A list
+   holding an open detail modal stays: hidden, it would hide the modal too,
+   leaving the page scroll-locked behind nothing (Forward onto a detail while
+   Case studies is picked). */
+@media (max-width: 1023.98px) {
+  [data-filter='projects'] [data-projects-section='case-studies']:not(:has(dialog[open])),
+  [data-filter='case-studies'] [data-projects-section='projects']:not(:has(dialog[open])) {
+    display: none;
+  }
+}
+
+/* The /projects index column pins beside the lists only where all of it fits:
+   a sticky element taller than the viewport never shows its bottom. Its
+   illustration, the tallest and least needed part, needs the most height. */
+.ik-projects-art {
+  display: none;
+}
+@media (min-width: 1024px) and (min-height: 600px) {
+  .ik-projects-aside {
+    position: sticky;
+    top: 110px;
+  }
+}
+@media (min-width: 1024px) and (min-height: 820px) {
+  .ik-projects-art {
+    display: block;
   }
 }
