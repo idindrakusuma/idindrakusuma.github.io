@@ -33,7 +33,7 @@ export default function SiteChrome() {
 
   const { toggle } = useTheme();
   // The spy watches every Section; the nav shows the entry standing for it,
-  // since Skills and Awards have none of their own.
+  // since not every Section has one of its own (navIdForSection).
   const { activeId: activeSectionId, goTo } = useSectionSpy(SECTION_IDS, onHomepage);
   const activeId = activeSectionId ? navIdForSection(activeSectionId) : null;
 

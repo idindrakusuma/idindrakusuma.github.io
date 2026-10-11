@@ -93,16 +93,19 @@ export const NAV_ITEMS: NavItem[] = [
   sectionNav('contact'),
 ];
 
+const SECTION_IDS_IN_NAV = new Set(
+  NAV_ITEMS.filter((item) => item.kind === 'section').map((item) => item.id),
+);
+
 /**
  * The nav entry that stands for a Section: its own, or else that of the
  * nearest Section above it that has one — so scrolling through Skills keeps
  * Experience lit rather than leaving the nav on nothing.
  */
 export function navIdForSection(id: string): string | null {
-  const inNav = new Set(NAV_ITEMS.filter((item) => item.kind === 'section').map((item) => item.id));
   const index = SECTIONS.findIndex((section) => section.id === id);
   for (let i = index; i >= 0; i -= 1) {
-    if (inNav.has(SECTIONS[i].id)) return SECTIONS[i].id;
+    if (SECTION_IDS_IN_NAV.has(SECTIONS[i].id)) return SECTIONS[i].id;
   }
   return null;
 }
