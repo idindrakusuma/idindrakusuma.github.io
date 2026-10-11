@@ -7,8 +7,9 @@ import type { CaseStudy } from '@/lib/site-data';
  * the headline number before and after, and one line on what changed. The
  * whole card links to the Post that tells it.
  *
- * The thumbnail is the Post's card-sized copy, as on the blog index; the slot
- * here is the full card width, up to about half the 1120px column.
+ * The thumbnail is the Post's card-sized copy, as on the blog index. From
+ * 640px it sits beside the text at 260px; below that it spans the card above
+ * it.
  *
  * The hover is the post card's, shared in globals.css.
  */
@@ -18,15 +19,15 @@ export default function CaseStudyCard({ study, post }: { study: CaseStudy; post:
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="ik-project bg-surface border-line shadow-card-sm text-ink flex flex-col gap-4 overflow-hidden rounded-[18px] border p-3.5 no-underline"
+      className="ik-project bg-surface border-line shadow-card-sm text-ink flex flex-col gap-4 overflow-hidden rounded-[18px] border p-3.5 no-underline sm:grid sm:grid-cols-[260px_1fr] sm:gap-6"
     >
-      <span className="ik-project-shot bg-surface-3 block aspect-16/11 overflow-hidden rounded-[13px]">
+      <span className="ik-project-shot bg-surface-3 block aspect-16/11 overflow-hidden rounded-[13px] sm:self-center">
         {image && (
           // oxlint-disable-next-line nextjs/no-img-element -- static export, see PostCard
           <img
             src={image.src}
             srcSet={image.srcSet}
-            sizes={image.srcSet ? '(max-width: 760px) 100vw, 540px' : undefined}
+            sizes={image.srcSet ? '(max-width: 640px) 100vw, 260px' : undefined}
             alt=""
             width={560}
             height={385}
@@ -37,19 +38,19 @@ export default function CaseStudyCard({ study, post }: { study: CaseStudy; post:
         )}
       </span>
 
-      <span className="flex flex-col gap-2 px-1.5 pb-1.5">
+      <span className="flex flex-col justify-center gap-2 px-1.5 pb-1.5 sm:py-1 sm:pr-3 sm:pl-0">
         <span className="font-mono text-faint flex items-center gap-2.5 text-[11.5px]">
           <span className="text-primary tracking-[.04em] uppercase">{study.org}</span>
           <span aria-hidden="true">·</span>
           <span>{year}</span>
         </span>
 
-        <span className="font-display text-ink text-[19px] leading-[1.3] font-semibold tracking-[-.01em]">
+        <span className="font-display text-ink text-[19px] leading-[1.3] font-semibold tracking-[-.01em] sm:text-[20px]">
           {study.name}
         </span>
 
         <span className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-          <span className="font-display text-[26px] leading-[1.2] font-bold tracking-[-.02em]">
+          <span className="font-display text-[24px] leading-[1.2] font-bold tracking-[-.02em]">
             <span className="text-faint line-through decoration-2">{study.result.before}</span>
             <span aria-hidden="true" className="text-faint px-2">
               →
@@ -60,7 +61,7 @@ export default function CaseStudyCard({ study, post }: { study: CaseStudy; post:
         </span>
 
         <span className="text-muted text-[14px] leading-[1.55]">{study.description}</span>
-        <span className="font-mono text-primary mt-1 text-[12.5px]">Read the case study →</span>
+        <span className="font-mono text-primary text-[12.5px]">Read the case study →</span>
       </span>
     </Link>
   );

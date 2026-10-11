@@ -9,7 +9,7 @@ import { getPosts } from '@/lib/posts';
 import { CASE_STUDIES, PROJECTS } from '@/lib/site-data';
 
 /**
- * Every Project, each opening its detail as a modal.
+ * Every Project, each opening its detail as a modal, then every Case Study.
  *
  * A route rather than a Section, like the blog: Projects sit outside the
  * homepage's numbered sequence, so adding one never renumbers anything. Both
@@ -20,6 +20,10 @@ import { CASE_STUDIES, PROJECTS } from '@/lib/site-data';
  * so not Projects, but the same question — what did you build? — answered
  * with a number and a Post. A Case Study naming a Post that does not exist,
  * or one still a draft, fails the build rather than linking nowhere.
+ *
+ * From 1024px the page splits: the heading and an index of the two lists stay
+ * pinned on the left while the lists scroll on the right. Below that it is one
+ * column, the index becoming a row of jump links.
  */
 export default async function ProjectsIndex({ openSlug = null }: { openSlug?: string | null }) {
   const posts = await getPosts();
@@ -35,69 +39,89 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
     ...new Set(CASE_STUDIES.map((study) => study.org)),
   ]);
 
+  const index = [
+    { id: 'side-projects', n: '01', label: 'Side projects', count: PROJECTS.length },
+    ...(studies.length > 0 ? [{ id: 'case-studies', n: '02', label: 'Case studies', count: studies.length }] : []),
+  ];
+
   return (
     <>
       <BlogBackdrop />
       <div className="relative z-1">
         <BlogChrome back={{ href: '/', label: 'Back to site' }} trailing="Projects" />
 
-        <header className="mx-auto flex max-w-[1120px] items-center justify-between gap-10 px-6 pt-[132px] pb-[22px]">
-          <div className="min-w-0">
+        <div className="mx-auto max-w-[1120px] px-6 pt-[132px] pb-16 lg:grid lg:grid-cols-[340px_1fr] lg:gap-14">
+          <aside className="mb-10 lg:sticky lg:top-[110px] lg:mb-0 lg:self-start">
             <Reveal immediate as="p" className="font-mono text-primary m-0 mb-3.5 text-[13px]">
-              {`Projects · ${PROJECTS.length}`}
+              Index
             </Reveal>
 
             <Reveal
               immediate
               as="h1"
-              className="font-display m-0 mb-[18px] text-[clamp(38px,6.5vw,68px)] leading-[1.03] font-bold tracking-[-.03em]"
+              className="font-display m-0 mb-[18px] text-[clamp(38px,6.5vw,56px)] leading-[1.03] font-bold tracking-[-.03em]"
             >
               Built on
               <br />
               <span className="ik-gradient-wide">the side.</span>
             </Reveal>
 
-            <Reveal immediate as="p" className="text-muted m-0 max-w-[600px] text-[clamp(16px,2.2vw,18px)]">
-              Small things I make outside work — all live, all yours to open and try.
-            </Reveal>
-          </div>
-
-          {/* Hidden below 860px, where the heading needs the full width. */}
-          <Reveal immediate delay={120} className="ik-blog-art flex-none">
-            <ProjectsIllustration />
-          </Reveal>
-        </header>
-
-        <main className="mx-auto grid max-w-[1120px] grid-cols-[repeat(auto-fill,minmax(min(100%,300px),1fr))] gap-5 px-6 pt-[26px] pb-10">
-          <ProjectGallery projects={PROJECTS} initialSlug={openSlug} />
-        </main>
-
-        {studies.length > 0 && (
-          <section aria-labelledby="case-studies" className="mx-auto max-w-[1120px] px-6 pt-[46px] pb-10">
-            <Reveal as="p" className="font-mono text-primary m-0 mb-3.5 text-[13px]">
-              {`Case studies · ${studies.length}`}
-            </Reveal>
-            <Reveal
-              as="h2"
-              id="case-studies"
-              className="font-display m-0 mb-3 text-[clamp(28px,4.4vw,42px)] leading-[1.1] font-bold tracking-[-.03em]"
-            >
-              And at <span className="ik-gradient-wide">work.</span>
-            </Reveal>
-            <Reveal as="p" className="text-muted m-0 mb-[30px] max-w-[600px] text-[clamp(15px,2vw,17px)]">
-              {`Engineering written up from my work at ${orgs} — the problem, the fix, and the numbers.`}
+            <Reveal immediate as="p" className="text-muted m-0 mb-8 max-w-[600px] text-[16.5px] leading-[1.6]">
+              {studies.length > 0
+                ? `Small things I make outside work — all live, all yours to open and try. And a few write-ups from my work at ${orgs}, with the numbers.`
+                : 'Small things I make outside work — all live, all yours to open and try.'}
             </Reveal>
 
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,420px),1fr))] gap-5">
-              {studies.map(({ study, post }) => (
-                <CaseStudyCard key={study.post} study={study} post={post} />
+            <Reveal immediate as="nav" aria-label="On this page" className="border-line flex flex-col border-t">
+              {index.map((row) => (
+                <a
+                  key={row.id}
+                  href={`#${row.id}`}
+                  className="border-line text-ink hover:text-primary flex items-center gap-3 border-b py-3.5 no-underline transition-colors"
+                >
+                  <span className="font-mono text-faint text-[12px]">{row.n}</span>
+                  <span className="text-[15px] font-semibold">{row.label}</span>
+                  <span className="font-mono text-faint ml-auto text-[12px]">{row.count}</span>
+                </a>
               ))}
-            </div>
-          </section>
-        )}
+            </Reveal>
+
+            {/* Only beside the lists: in one column it would sit between the
+                heading and the first card. */}
+            <Reveal immediate delay={120} className="mt-8 hidden opacity-90 lg:block">
+              <ProjectsIllustration className="w-[260px]" />
+            </Reveal>
+          </aside>
+
+          <main className="flex min-w-0 flex-col gap-12">
+            <section id="side-projects" aria-labelledby="side-projects-label" className="flex scroll-mt-[110px] flex-col gap-5">
+              <SectionLabel id="side-projects-label">01 — Side projects</SectionLabel>
+              <ProjectGallery projects={PROJECTS} initialSlug={openSlug} />
+            </section>
+
+            {studies.length > 0 && (
+              <section id="case-studies" aria-labelledby="case-studies-label" className="flex scroll-mt-[110px] flex-col gap-5">
+                <SectionLabel id="case-studies-label">02 — Case studies · at work</SectionLabel>
+                {studies.map(({ study, post }) => (
+                  <Reveal key={study.post}>
+                    <CaseStudyCard study={study} post={post} />
+                  </Reveal>
+                ))}
+              </section>
+            )}
+          </main>
+        </div>
 
         <Footer />
       </div>
     </>
+  );
+}
+
+function SectionLabel({ id, children }: { id: string; children: string }) {
+  return (
+    <h2 id={id} className="font-mono text-faint m-0 text-[11.5px] font-normal tracking-[.06em] uppercase">
+      {children}
+    </h2>
   );
 }
