@@ -64,7 +64,7 @@ const args = process.argv.slice(2);
 const force = args.includes('--force');
 const variantAt = args.indexOf('--variant');
 const variant = variantAt >= 0 ? args[variantAt + 1] : null;
-const slug = args.find((arg, i) => !arg.startsWith('--') && i !== variantAt + 1);
+const slug = args.find((arg, i) => !arg.startsWith('--') && (variantAt < 0 || i !== variantAt + 1));
 if (!slug) {
   console.error('\n  Usage: pnpm assets:thumbnail <slug> [--force | --variant <name>]\n');
   process.exit(1);
