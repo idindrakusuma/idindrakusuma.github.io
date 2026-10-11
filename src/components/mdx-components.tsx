@@ -67,6 +67,17 @@ export const mdxComponents = {
   },
 
   /**
+   * A table with more columns than a phone has room for scrolls sideways
+   * inside its own box, rather than running off the column and cutting off
+   * its last column.
+   */
+  table: (props: ComponentProps<'table'>) => (
+    <div className="ik-table-scroll">
+      <table {...props} />
+    </div>
+  ),
+
+  /**
    * Posts link both off-site and, since the migration rewrote the old blog's
    * permalinks, at each other. Outbound links open in a new tab and are made
    * safe to click; the ones that stay here go through next/link, so following a
