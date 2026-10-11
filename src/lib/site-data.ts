@@ -122,6 +122,46 @@ export const PROJECTS: Project[] = [
   },
 ];
 
+/**
+ * Engineering work written up as a Post, with the number it moved — see Case
+ * Study in CONTEXT.md. Work done inside a company rather than on the side, so
+ * it is not a Project; it sits below them on /projects.
+ *
+ * The title, thumbnail and date come from the Post; this adds only what a
+ * card needs and the Post does not say in one line.
+ */
+export type CaseStudy = {
+  /** The Post that tells it — `content/posts/{post}.mdx`. */
+  post: string;
+  /** Where the work was done. */
+  org: string;
+  /** A short name for the work, shorter than the Post's title. */
+  name: string;
+  /** One line: what changed. In the site's English, like a Project's. */
+  description: string;
+  /** The headline number, before and after, and what it measures. */
+  result: { before: string; after: string; metric: string };
+};
+
+export const CASE_STUDIES: CaseStudy[] = [
+  {
+    post: 'ci-11x-lebih-cepat-oxlint-oxfmt-typescript-7',
+    org: 'Invitato',
+    name: 'A monorepo CI on native tooling',
+    description:
+      'Replaced ESLint, Prettier and TypeScript 5.9 with oxlint, oxfmt and TypeScript 7 across the whole frontend monorepo.',
+    result: { before: '254 s', after: '22.7 s', metric: 'CI lint + typecheck' },
+  },
+  {
+    post: 'invitato-backend-dari-google-sheet-ke-postgres',
+    org: 'Invitato',
+    name: 'An API off spreadsheets',
+    description:
+      'Moved the backend from Google Sheets and Apps Script to Fastify and Postgres as a drop-in replacement, a few minutes per client.',
+    result: { before: '4 s', after: '24 ms', metric: 'p95, opening an invitation' },
+  },
+];
+
 /** The Project at `/projects/{slug}`, or undefined when there is none. */
 export function findProject(slug: string): Project | undefined {
   return PROJECTS.find((project) => project.slug === slug);
