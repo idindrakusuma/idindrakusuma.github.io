@@ -62,6 +62,13 @@ public to open or try today. Work done for an employer belongs to Experience;
 a repo with no demo, or one that has been shut down, is not a Project.
 _Avoid_: side project, portfolio item, work
 
+**Case Study**:
+Engineering work done inside a company, told by a Post and summed up by the one
+number it moved, before and after. Listed on `/projects` below the Projects —
+it answers the same question, but is not a Project, being neither on the side
+nor solely the author's.
+_Avoid_: project, portfolio item, write-up
+
 ### Marquee
 
 **Marquee**:
@@ -92,6 +99,7 @@ _Avoid_: autoplay, scroll
 - Awards is the page's only **Marquee**; Skills is a static grid of **Capabilities**
 - **Posts** live outside the Section sequence — the homepage has Sections, `/blog` has Posts
 - **Projects** live outside the Section sequence too, listed on their own route at `/projects`
+- A **Case Study** is told by exactly one published **Post**, and sits on `/projects` after every **Project**
 - A **Post** has exactly one **Category** and any number of **Tags**; only Category is filterable
 - A **Post**'s **Excerpt** is quoted from the Post, never written for it
 - `SECTIONS` is the ordering authority: it numbers the **Sections** and tells the **Spy** what to watch

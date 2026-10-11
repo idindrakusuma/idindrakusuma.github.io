@@ -967,10 +967,13 @@ body {
   border-top: 1px solid var(--border);
   margin: 40px 0;
 }
+.ik-table-scroll {
+  overflow-x: auto;
+  margin: 0 0 24px;
+}
 .ik-prose table {
   width: 100%;
   border-collapse: collapse;
-  margin: 0 0 24px;
   font-size: 15px;
 }
 .ik-prose th,
@@ -984,6 +987,26 @@ body {
   color: var(--text);
   font-weight: 600;
   background: var(--surface-2);
+}
+/* Right-aligned columns hold figures ("10,7–13,0 s"), which read wrong split
+   across lines; the table scrolls instead. */
+.ik-prose td[style*='right'],
+.ik-prose th[style*='right'] {
+  white-space: nowrap;
+}
+/* ...and the text columns keep a readable width rather than being squeezed
+   to a word per line beside them. */
+.ik-prose td:not([style*='right']) {
+  min-width: 8.5em;
+}
+@media (max-width: 640px) {
+  .ik-prose table {
+    font-size: 14px;
+  }
+  .ik-prose th,
+  .ik-prose td {
+    padding: 8px 10px;
+  }
 }
 
 /* Card excerpts are the post's own opening paragraph, which runs to a few
