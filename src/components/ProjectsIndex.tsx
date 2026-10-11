@@ -50,7 +50,7 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
         <div className="mx-auto max-w-[1120px] px-6 pt-[132px] pb-16 lg:grid lg:grid-cols-[340px_1fr] lg:gap-14">
           <aside className="mb-9 lg:sticky lg:top-[110px] lg:mb-0 lg:self-start">
             <Reveal immediate as="p" className="font-mono text-primary m-0 mb-3.5 text-[13px]">
-              Index
+              {studies.length > 0 ? 'Projects & case studies' : 'Projects'}
             </Reveal>
 
             <Reveal
@@ -58,9 +58,7 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
               as="h1"
               className="font-display m-0 mb-[18px] text-[clamp(38px,6.5vw,56px)] leading-[1.03] font-bold tracking-[-.03em]"
             >
-              Built on
-              <br />
-              <span className="ik-gradient-wide">the side.</span>
+              Built on <span className="ik-gradient-wide whitespace-nowrap">the side.</span>
             </Reveal>
 
             <Reveal immediate as="p" className="text-muted m-0 mb-6 max-w-[600px] text-[16.5px] leading-[1.6] lg:mb-8">
