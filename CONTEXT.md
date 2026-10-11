@@ -103,7 +103,7 @@ _Avoid_: autoplay, scroll
 - A **Post** has exactly one **Category** and any number of **Tags**; only Category is filterable
 - A **Post**'s **Excerpt** is quoted from the Post, never written for it
 - `SECTIONS` is the ordering authority: it numbers the **Sections** and tells the **Spy** what to watch
-- **Site Chrome** renders one nav entry per **Section**; a nav entry that is a route is not a **Section**
+- **Site Chrome** renders a nav entry for some **Sections**, not all; a **Section** without one is shown in the nav by the nearest **Section** above it that has one. A nav entry that is a route is not a **Section**
 
 ## Example dialogue
 
