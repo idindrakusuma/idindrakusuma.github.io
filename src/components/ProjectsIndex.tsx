@@ -35,10 +35,6 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
     }
     return { study, post };
   });
-  // Named from the data, so a Case Study from another company joins the line.
-  const orgs = new Intl.ListFormat('en', { type: 'conjunction' }).format([
-    ...new Set(CASE_STUDIES.map((study) => study.org)),
-  ]);
 
   const index = [
     { id: 'side-projects', n: '01', label: 'Side projects', count: PROJECTS.length },
@@ -69,7 +65,7 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
 
             <Reveal immediate as="p" className="text-muted m-0 mb-6 max-w-[600px] text-[16.5px] leading-[1.6] lg:mb-8">
               {studies.length > 0
-                ? `Small things I make outside work — all live, all yours to open and try. And a few write-ups from my work at ${orgs}, with the numbers.`
+                ? 'Small things I make outside work — all live, all yours to open and try. And a few write-ups from my professional work, with the numbers.'
                 : 'Small things I make outside work — all live, all yours to open and try.'}
             </Reveal>
 
