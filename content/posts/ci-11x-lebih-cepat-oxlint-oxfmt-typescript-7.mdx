@@ -126,6 +126,16 @@ Lint dan typecheck sudah beres, tapi CI belum sepenuhnya cepat. Masih ada bebera
 - **Runner kedua.** Dengan cuma satu runner self-hosted, job dari PR yang berbeda masih saling antre.
 - **Type-aware linting.** Sekarang sudah di TypeScript 7, jadi kami bisa mulai coba tsgolint.
 
+## Dikerjakan full dengan AI agent
+
+Sama seperti [migrasi backend Invitato](/blog/invitato-backend-dari-google-sheet-ke-postgres/), seluruh pekerjaan ini dikerjakan **full oleh AI agent**, pakai [Claude Code](https://claude.com/claude-code). Mulai dari menulis ADR-nya, memigrasi config ESLint ke oxlint rule per rule, naik ke TypeScript 6 lalu 7, sampai mengukur semua benchmark di atas dan menulis deskripsi PR-nya.
+
+Yang menurut saya paling menarik justru di bagian yang nggak mulus. Waktu CI crash karena JS plugin oxlint, agent-nya sendiri yang menelusuri penyebabnya, mereproduksinya di lokal dengan `ulimit -v`, lalu mengganti pendekatannya ke rule native. Begitu juga waktu 46 test gagal karena sort import: dia cari tahu kenapa, lalu mempersempit scope-nya, bukan memaksa test-nya lolos.
+
+Peran saya lebih banyak di menentukan arah, menjawab pertanyaan, dan review hasil akhirnya. Total ada 14 commit yang menyentuh 3.000-an file, dan semuanya tetap bisa dibaca commit per commit.
+
+Dan ini semua bisa kami lakukan tanpa mikirin biaya, karena Invitato sekarang didukung Anthropic lewat Claude Startup Program. Ceritanya ada di [Thank you, Claude for supporting Invitato via Startup Program!](/blog/thank-you-claude-startup-program/). Thank you, Anthropic!
+
 ## Penutup
 
 Pelajaran terbesar buat saya: kalau optimasi di level workflow (cache, affected, skip job) sudah mentok, coba lihat tool-nya sendiri. Kadang yang lambat bukan cara kita menjalankannya, tapi apa yang kita jalankan.
