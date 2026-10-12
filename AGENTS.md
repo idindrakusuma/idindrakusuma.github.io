@@ -54,8 +54,8 @@ holds meanings only, never implementation.
   with `history.pushState` (`ProjectGallery.tsx`) — the static export rules
   out intercepting routes. `/projects/[slug]` is the same page with the modal
   already open, for shared links and reloads.
-- A new route also goes into `src/app/sitemap.ts`, and into `NAV_ITEMS` and the
-  footer when visitors should find it.
+- A new route also goes into `src/app/sitemap.ts`, and into `NAV_ITEMS` when
+  visitors should find it.
 
 ## Blog
 
