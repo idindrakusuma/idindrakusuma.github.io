@@ -76,7 +76,7 @@ export default async function BlogIndex() {
         </div>
 
         <main className="ik-blog-main mx-auto grid max-w-[1120px] grid-cols-[1fr_290px] items-start gap-10 px-6 pt-[26px] pb-10">
-          <div className="flex min-w-0 flex-col gap-4">
+          <div data-post-list className="flex min-w-0 flex-col gap-4">
             {posts.map((post, index) => (
               // The first thumbnail is what the page's LCP is measured on.
               <PostCard key={post.slug} post={post} lcp={index === 0} />
