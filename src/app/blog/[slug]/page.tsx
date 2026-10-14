@@ -19,6 +19,7 @@ import { mdxComponents } from '@/components/mdx-components';
 import { formatDate, getNextPost, getPost, getPostBody, getPosts, getTranslations, summarise } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
 import { remarkMermaid } from '@/lib/mermaid';
+import { rehypeTableLabels } from '@/lib/table-labels';
 import { rehypeToc, type TocItem } from '@/lib/toc';
 import manifest from '../../../../public/images/posts/manifest.json';
 
@@ -153,7 +154,7 @@ export default async function PostPage({ params }: PostPageProps) {
         // unclickable text — the same migration gap as the dead permalinks
         // above, just quieter.
         remarkPlugins: [remarkGfm, remarkMermaid],
-        rehypePlugins: [rehypeToc(toc), [rehypePrettyCode, prettyCode]],
+        rehypePlugins: [rehypeToc(toc), rehypeTableLabels, [rehypePrettyCode, prettyCode]],
       },
     },
   });
