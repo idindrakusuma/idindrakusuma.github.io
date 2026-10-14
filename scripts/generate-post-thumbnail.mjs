@@ -25,6 +25,14 @@
  * are set here so they share the site's typefaces. The file stays in the repo so
  * the thumbnail can be redrawn when the title changes.
  *
+ * A post that wants a different look altogether exports `card` instead:
+ *
+ *   { card: ({ title, category }) => element }
+ *
+ * returning the whole card as a satori element tree ({ type, props }), drawn at
+ * the same size, in the same two faces, with the same social-crop padding left
+ * to it to honour.
+ *
  * --variant draws assets/thumbnails/<slug>.<name>.mjs instead, to
  * .thumbnails/<slug>.<name>.webp (gitignored), and leaves the post alone — for
  * putting a few options side by side before one is chosen.
@@ -118,7 +126,7 @@ const svgImage = (svg) => {
   };
 };
 
-const illustration = art && {
+const illustration = art?.panels && {
   type: 'div',
   props: {
     style: { display: 'flex', alignItems: 'center', justifyContent: 'space-around', marginTop: -10 },
@@ -148,7 +156,7 @@ const illustration = art && {
   },
 };
 
-const element = {
+const element = art?.card ? art.card({ title, category: String(data.category ?? '') }) : {
   type: 'div',
   props: {
     style: {
