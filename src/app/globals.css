@@ -1033,12 +1033,63 @@ body {
   .ik-hide-sm {
     display: none !important;
   }
+
+  /* On a phone the cards are a list to scan: the text on the left, a small
+     thumbnail on the right at its own 16/11 — never stretched to the card's
+     height, which cropped it to an unreadable square once a large system
+     font made the card tall — and a title held to two lines. */
   .ik-post {
-    padding: 10px !important;
-    gap: 12px !important;
+    flex-direction: row-reverse;
+    align-items: flex-start;
+    padding: 14px !important;
+    gap: 14px !important;
   }
   .ik-thumb {
-    width: 120px !important;
+    width: 104px !important;
+    align-self: flex-start;
+    border-radius: 10px !important;
+  }
+  .ik-post-text {
+    justify-content: flex-start !important;
+    gap: 6px !important;
+  }
+  .ik-post-meta {
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .ik-post h2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 15.5px !important;
+  }
+
+  /* ...except the newest post, which leads the list as a full card: the whole
+     thumbnail on top, then the meta with its reading time, a title of up to
+     three lines and the excerpt. Only on the unfiltered list — CategoryFilter
+     marks the list data-filtered, and then every card is the compact one. */
+  [data-post-list]:not([data-filtered]) > .ik-post:first-child {
+    flex-direction: column;
+    padding: 12px !important;
+  }
+  [data-post-list]:not([data-filtered]) > .ik-post:first-child .ik-thumb {
+    width: 100% !important;
+    border-radius: 13px !important;
+  }
+  [data-post-list]:not([data-filtered]) > .ik-post:first-child .ik-post-text {
+    padding: 0 6px 8px;
+    gap: 8px !important;
+  }
+  [data-post-list]:not([data-filtered]) > .ik-post:first-child .ik-hide-sm {
+    display: inline !important;
+  }
+  [data-post-list]:not([data-filtered]) > .ik-post:first-child .ik-post-excerpt {
+    display: -webkit-box !important;
+  }
+  [data-post-list]:not([data-filtered]) > .ik-post:first-child h2 {
+    -webkit-line-clamp: 3;
+    font-size: 19px !important;
   }
 }
 

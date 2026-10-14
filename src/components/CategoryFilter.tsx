@@ -35,6 +35,9 @@ export default function CategoryFilter({ categories }: { categories: Category[] 
 
   useEffect(() => {
     let shown = 0;
+    // The newest post leads the unfiltered list as a full card on a phone; a
+    // filtered list is all compact cards, whichever post happens to come first.
+    document.querySelector('[data-post-list]')?.toggleAttribute('data-filtered', active !== ALL);
 
     for (const card of document.querySelectorAll<HTMLElement>('[data-post-cat]')) {
       if (active !== ALL && card.dataset.postCat !== active) {

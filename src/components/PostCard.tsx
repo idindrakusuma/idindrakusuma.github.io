@@ -16,7 +16,8 @@ import { cardImage, formatDate, type Post } from '@/lib/posts';
  * A plain <img> rather than next/image: the static export turns the image
  * optimizer off, and with it next/image's srcset. The card-sized copies come
  * from scripts/prepare-post-images.mjs instead, and `sizes` mirrors the slot's
- * width in globals.css — 120px below 760px, 280px above.
+ * width in globals.css — 104px below 760px, 280px above. The first card is the
+ * exception: on a phone it leads the list at the column's full width.
  */
 export default function PostCard({ post, lcp = false }: { post: Post; lcp?: boolean }) {
   const image = cardImage(post);
@@ -34,7 +35,7 @@ export default function PostCard({ post, lcp = false }: { post: Post; lcp?: bool
           <img
             src={image.src}
             srcSet={image.srcSet}
-            sizes={image.srcSet ? '(max-width: 760px) 120px, 280px' : undefined}
+            sizes={image.srcSet ? (lcp ? '(max-width: 760px) calc(100vw - 72px), 280px' : '(max-width: 760px) 104px, 280px') : undefined}
             alt=""
             width={560}
             height={385}
@@ -46,8 +47,8 @@ export default function PostCard({ post, lcp = false }: { post: Post; lcp?: bool
         )}
       </span>
 
-      <span className="flex min-w-0 flex-1 flex-col justify-center gap-2">
-        <span className="font-mono text-faint flex items-center gap-2.5 text-[11.5px]">
+      <span className="ik-post-text flex min-w-0 flex-1 flex-col justify-center gap-2">
+        <span className="ik-post-meta font-mono text-faint flex items-center gap-2.5 text-[11.5px]">
           <span className="text-primary tracking-[.04em] uppercase">{post.category}</span>
           <span aria-hidden="true">·</span>
           <span>{formatDate(post.date)}</span>
