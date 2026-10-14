@@ -199,19 +199,6 @@ export default async function PostPage({ params }: PostPageProps) {
                   <time dateTime={new Date(post.date).toISOString()}>{formatDate(post.date)}</time>
                   <span aria-hidden="true">·</span>
                   <span>{post.readingMinutes} min read</span>
-                  {/* The same post in another language, at its own URL. Labelled
-                      in that language, and marked so, for the reader who needs it. */}
-                  {others.map((t) => (
-                    <Link
-                      key={t.slug}
-                      href={`/blog/${t.slug}`}
-                      hrefLang={t.lang}
-                      lang={t.lang}
-                      className="border-line text-primary hover:border-primary ml-auto rounded-full border px-3 py-1 no-underline transition-colors"
-                    >
-                      {READ_IN[t.lang] ?? t.lang} →
-                    </Link>
-                  ))}
                 </Reveal>
 
                 {/* The blog card's title grows into this one (PostCard). A plain
@@ -223,6 +210,30 @@ export default async function PostPage({ params }: PostPageProps) {
                     {post.title}
                   </h1>
                 </ViewTransition>
+
+                {/* The same post in another language, at its own URL: under the
+                    title, where a reader deciding whether to read it is looking,
+                    rather than squeezed into the meta line, where it wrapped onto
+                    a line of its own on a phone. Labelled in that language. */}
+                {others.length > 0 && (
+                  <p className="m-0 -mt-2 mb-[22px] flex flex-wrap gap-x-4 gap-y-1 text-[14.5px]">
+                    {others.map((t) => (
+                      <Link
+                        key={t.slug}
+                        href={`/blog/${t.slug}`}
+                        hrefLang={t.lang}
+                        lang={t.lang}
+                        className="text-primary inline-flex items-center gap-1.5 font-semibold no-underline hover:underline"
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <circle cx="12" cy="12" r="9" />
+                          <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+                        </svg>
+                        {READ_IN[t.lang] ?? t.lang} →
+                      </Link>
+                    ))}
+                  </p>
+                )}
 
                 <Reveal immediate as="p" className="text-muted m-0 mb-[26px] text-[19px] leading-[1.65]">
                   {post.excerpt}
