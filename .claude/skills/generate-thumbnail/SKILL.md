@@ -74,7 +74,7 @@ export default {
 
 Same two faces (`Space Grotesk`, `JetBrains Mono`), same ~100px top and bottom
 padding so the social crop keeps the category and title. Every `div` needs
-`display: 'flex'`. `assets/thumbnails/improve-lcp-tiktok-seller-center-part-1.mjs`
+`display: 'flex'`. `assets/thumbnails/menurunkan-lcp-tiktok-seller-center-part-1.mjs`
 is a worked example. Among the three options, offer at least one that is not
 the panel card.
 

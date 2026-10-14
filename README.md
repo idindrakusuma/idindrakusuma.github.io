@@ -153,6 +153,20 @@ thumbnail: '/images/posts/x.webp'  # or a remote URL, then `pnpm assets:posts`
 ---
 ```
 
+**A post in two languages** is two files, one URL each. The original keeps the
+normal frontmatter; the translation adds `lang` and names the original:
+
+```yaml
+lang: en
+translationOf: menurunkan-lcp-tiktok-seller-center-part-1
+```
+
+Each page is canonical to itself, both carry `hreflang` alternates (in the
+`<head>` and the sitemap, with the original as `x-default`), and each links to
+the other in its own language. The index lists only the original. A
+translation naming a missing post, another translation, or a post in the same
+language fails the build.
+
 `excerpt` and `readingMinutes` are optional — without them the first paragraph
 becomes the excerpt and the reading time is counted from the body. Write them
 only to override.

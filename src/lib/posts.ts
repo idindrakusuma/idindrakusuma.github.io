@@ -53,6 +53,12 @@ export type Post = {
    * inheriting a wrong answer from either.
    */
   lang: string;
+  /**
+   * Set on a translation: the slug of the post it translates. Each language
+   * lives at its own URL, and the two point at each other with hreflang. Only
+   * the original is listed on the index; the translation is reached from it.
+   */
+  translationOf?: string;
   /** Served by `next dev`, skipped by `next build`. */
   draft: boolean;
 };
@@ -174,6 +180,9 @@ function toPost(slug: string, data: Record<string, unknown>, body: string): Post
       typeof data.readingMinutes === 'number' ? data.readingMinutes : readingMinutes(`${excerpt} ${body}`),
     // The archive is Indonesian; a post in another language says so.
     lang: typeof data.lang === 'string' ? data.lang : 'id',
+    ...(typeof data.translationOf === 'string' && data.translationOf.trim()
+      ? { translationOf: data.translationOf.trim() }
+      : {}),
     draft,
   };
 }
@@ -209,7 +218,39 @@ export async function getPosts(): Promise<Post[]> {
   cache = posts
     .filter((post) => includeDrafts || !post.draft)
     .sort((a, b) => b.date.localeCompare(a.date));
+
+  // A translation must name a shipped original in another language, and an
+  // original rather than another translation — so every family is one level.
+  for (const post of cache) {
+    if (!post.translationOf) continue;
+    const original = cache.find((p) => p.slug === post.translationOf);
+    const where = `content/posts/${post.slug}.mdx: translationOf "${post.translationOf}"`;
+    if (!original) throw new Error(`${where} is not a published post`);
+    if (original.translationOf) throw new Error(`${where} is itself a translation`);
+    if (original.lang === post.lang) throw new Error(`${where} is in the same language (${post.lang})`);
+  }
   return cache;
+}
+
+/**
+ * The posts the index lists, newest first: every original, and no
+ * translation — a story appears once, in the language it was written in.
+ */
+export async function getListedPosts(): Promise<Post[]> {
+  return (await getPosts()).filter((post) => !post.translationOf);
+}
+
+/**
+ * Every language a post exists in, the original first, as hreflang wants
+ * them: the post itself included. A post with no translation gets just itself.
+ */
+export async function getTranslations(post: Post): Promise<{ lang: string; slug: string }[]> {
+  const posts = await getPosts();
+  const root = post.translationOf ?? post.slug;
+  return posts
+    .filter((p) => p.slug === root || p.translationOf === root)
+    .sort((a, b) => Number(Boolean(a.translationOf)) - Number(Boolean(b.translationOf)))
+    .map(({ lang, slug }) => ({ lang, slug }));
 }
 
 export async function getPost(slug: string): Promise<Post | null> {
@@ -231,8 +272,10 @@ export async function getPostBody(slug: string): Promise<string> {
  * that keeps going.
  */
 export async function getNextPost(slug: string): Promise<Post | null> {
-  const posts = await getPosts();
-  const index = posts.findIndex((post) => post.slug === slug);
+  const posts = await getListedPosts();
+  // A translation follows the index from its original's place in it.
+  const at = (await getPost(slug))?.translationOf ?? slug;
+  const index = posts.findIndex((post) => post.slug === at);
   return index === -1 ? null : (posts[index + 1] ?? null);
 }
 

@@ -16,7 +16,7 @@ import PostActions from '@/components/PostActions';
 import Reveal from '@/components/Reveal';
 import TableOfContents, { FloatingTableOfContents } from '@/components/TableOfContents';
 import { mdxComponents } from '@/components/mdx-components';
-import { formatDate, getNextPost, getPost, getPostBody, getPosts, summarise } from '@/lib/posts';
+import { formatDate, getNextPost, getPost, getPostBody, getPosts, getTranslations, summarise } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
 import { remarkMermaid } from '@/lib/mermaid';
 import { rehypeToc, type TocItem } from '@/lib/toc';
@@ -62,14 +62,30 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 
   const description = post.description ?? summarise(post.excerpt);
   const images = shareImage(slug, post.thumbnail, post.title, post.draft);
+  // Each language is its own URL and canonical to itself; hreflang tells search
+  // engines the others exist, with the original as x-default.
+  const translations = await getTranslations(post);
+  const others = translations.filter((t) => t.slug !== slug);
   return {
     title: `${post.title} — ${SITE.name}`,
     description,
-    alternates: { canonical: `/blog/${slug}` },
+    alternates: {
+      canonical: `/blog/${slug}`,
+      ...(others.length > 0
+        ? {
+            languages: {
+              ...Object.fromEntries(translations.map((t) => [t.lang, `/blog/${t.slug}`])),
+              'x-default': `/blog/${translations[0].slug}`,
+            },
+          }
+        : {}),
+    },
     openGraph: {
       type: 'article',
       siteName: SITE.name,
       url: `${SITE.url}/blog/${slug}/`,
+      locale: ogLocale(post.lang),
+      ...(others.length > 0 ? { alternateLocale: others.map((t) => ogLocale(t.lang)) } : {}),
       title: post.title,
       description,
       publishedTime: new Date(post.date).toISOString(),
@@ -88,6 +104,17 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     },
   };
 }
+
+/** Open Graph wants a territory too: "en_US", not "en". */
+function ogLocale(lang: string): string {
+  return { id: 'id_ID', en: 'en_US' }[lang] ?? lang;
+}
+
+/** How each language names itself, for the link that switches to it. */
+const READ_IN: Record<string, string> = {
+  id: 'Baca dalam Bahasa Indonesia',
+  en: 'Read in English',
+};
 
 /**
  * The JPEG copy of a post's thumbnail that scripts/prepare-post-images.mjs
@@ -111,7 +138,8 @@ export default async function PostPage({ params }: PostPageProps) {
   const post = await getPost(slug);
   if (!post) notFound();
 
-  const [body, next] = await Promise.all([getPostBody(slug), getNextPost(slug)]);
+  const [body, next, translations] = await Promise.all([getPostBody(slug), getNextPost(slug), getTranslations(post)]);
+  const others = translations.filter((t) => t.slug !== slug);
   // Filled in by rehypeToc while the body compiles — see src/lib/toc.ts.
   const toc: TocItem[] = [];
   const { content } = await compileMDX({
@@ -170,6 +198,19 @@ export default async function PostPage({ params }: PostPageProps) {
                   <time dateTime={new Date(post.date).toISOString()}>{formatDate(post.date)}</time>
                   <span aria-hidden="true">·</span>
                   <span>{post.readingMinutes} min read</span>
+                  {/* The same post in another language, at its own URL. Labelled
+                      in that language, and marked so, for the reader who needs it. */}
+                  {others.map((t) => (
+                    <Link
+                      key={t.slug}
+                      href={`/blog/${t.slug}`}
+                      hrefLang={t.lang}
+                      lang={t.lang}
+                      className="border-line text-primary hover:border-primary ml-auto rounded-full border px-3 py-1 no-underline transition-colors"
+                    >
+                      {READ_IN[t.lang] ?? t.lang} →
+                    </Link>
+                  ))}
                 </Reveal>
 
                 {/* The blog card's title grows into this one (PostCard). A plain

@@ -8,7 +8,7 @@ import Footer from '@/components/Footer';
 import PostCard from '@/components/PostCard';
 import PopularPosts from '@/components/PopularPosts';
 import Reveal from '@/components/Reveal';
-import { CATEGORIES, getPosts } from '@/lib/posts';
+import { CATEGORIES, getListedPosts } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
  * so nothing here depends on JavaScript to be readable.
  */
 export default async function BlogIndex() {
-  const posts = await getPosts();
+  const posts = await getListedPosts();
   const used = CATEGORIES.filter((category) => posts.some((post) => post.category === category));
 
   return (

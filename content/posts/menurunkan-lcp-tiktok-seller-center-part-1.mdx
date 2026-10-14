@@ -1,0 +1,99 @@
+---
+title: 'Menurunkan LCP TikTok Seller Center dari 9 Detik ke Bawah 3 Detik (Part 1)'
+date: '2026-10-14 10:57:02'
+category: Development
+tags: ['performance', 'lcp', 'tiktok', 'tokopedia', 'architecture']
+thumbnail: '/images/posts/menurunkan-lcp-tiktok-seller-center-part-1-thumb.webp'
+description: 'LCP p75 TikTok Seller Center sempat 9 detik. Part 1: cari akar masalahnya, quick win yang nggak cukup, sampai keputusan pindah ke MPA.'
+---
+
+
+Setelah Tokopedia diakuisisi ByteDance, Seller Center Tokopedia dan TikTok disatukan. Fungsinya sama, tapi performanya jauh beda: di Tokopedia desktop, LCP 2 detik itu gampang, sedangkan di TikTok Seller Center paling cepat 5 detik dan p75-nya tembus 9 detik. Ini part 1 dari cerita gimana kita menurunkannya ke bawah 3 detik, mulai dari kumpulin data, quick win yang ternyata nggak cukup, sampai keputusan ganti arsitektur ke MPA.
+
+## Latar Belakang
+
+Setelah Tokopedia diakuisisi ByteDance, salah satu langkah pertama yang dilakukan adalah menyatukan platform, baik dari sisi infra maupun platform yang dipakai user. Wajar, karena fungsinya kebanyakan sama.
+
+Waktu di Tokopedia saya pegang Seller Center, jadi di project unify ini saya juga pegang Seller Platform untuk wilayah SEA.
+
+Masalahnya, walaupun fungsi seller platform di Tokopedia dan TikTok itu sama, arsitekturnya beda. Dan pilihan arsitektur inilah yang bikin performanya beda jauh. Di Tokopedia desktop, kita gampang banget dapet LCP 2 detik. Di TikTok, itu hampir nggak mungkin: paling cepat 5 detik, dan p75-nya bisa sampai 9 detik.
+
+Karena proses unify ini menyentuh banyak stakeholder, termasuk seller sendiri, komplain mulai berdatangan. Isinya kurang lebih sama: halamannya loading-nya lama.
+
+Akhirnya kita ambil issue ini dengan serius: gimana caranya improve performa TikTok Seller Center?
+
+## Kumpulin Data Dulu
+
+Langkah pertama, kita deep dive ke semua data yang bisa kita dapat. Profiling dari Chrome DevTools, kualitas network, bundle size, perbandingan arsitektur, framework, dan lain-lain.
+
+Kita juga benar-benar membandingkan performanya dengan region lain di SEA, karena komplainnya cuma datang dari seller Indonesia.
+
+## Iterasi Pertama: Ambil yang Paling Low Effort
+
+Dari data yang kita temukan, banyak banget bundle yang ukurannya besar. Ada yang sampai 2MB, cuma buat download teks locale.
+
+Jadi kita mulai dari yang paling murah:
+
+- Mengurangi bundle size.
+- Lazy load apa yang belum dibutuhkan di awal.
+- Memperbaiki loader.
+
+Hasilnya? Tetap nggak signifikan. p75 cuma turun dari 9 detik ke 7 detik.
+
+## Iterasi Kedua: Masalahnya di Arsitektur
+
+Setelah iterasi demi iterasi di sisi low effort, kelihatan jelas bahwa masalahnya memang di level arsitektur. Fungsi kedua Seller Center sama, tapi cara halamannya sampai ke layar seller beda total.
+
+| | TikTok Seller Center | Tokopedia Seller Center |
+| --- | --- | --- |
+| Rendering | CSR, single-page app | SSR, lalu CSR setelah hydrate |
+| HTML pertama dari server | Shell kosong | Sudah berisi konten |
+| Struktur kode | Main app sebagai gateway, sub app per halaman, module dari banyak tim lewat Module Federation | Satu app, satu bundle |
+| Yang harus selesai sebelum konten tampil | Main app → sub app → module → fetch data → render | HTML dari server |
+| Kapan LCP terjadi | Setelah seluruh rantai di atas selesai | Begitu HTML diterima dan di-paint |
+
+Tim di TikTok itu besar banget. Masing-masing tim punya page dan module sendiri yang mereka maintain, dan hampir semuanya ditaruh di Module Federation. Itu bagus buat kemandirian tim, tapi browser jadi harus melewati rantai panjang dulu sebelum ada konten yang bisa ditampilkan. Setiap langkahnya adalah download, parse, dan eksekusi JavaScript, dan semuanya berurutan.
+
+Tokopedia jauh lebih ringkas. Server sudah ambil data dan render HTML duluan, jadi konten langsung tampil. JavaScript yang satu bundle itu baru dipakai setelahnya, untuk bikin halamannya interaktif.
+
+```mermaid
+flowchart TB
+  subgraph TP["Tokopedia: SSR + CSR"]
+    direction TB
+    P1["Server fetch data & render HTML"] --> P2(["HTML berisi konten → LCP"])
+    P2 --> P3["Hydrate satu bundle → interaktif"]
+  end
+  subgraph TT["TikTok: CSR SPA + Module Federation"]
+    direction TB
+    T1["HTML shell kosong"] --> T2["Download & jalankan main app"]
+    T2 --> T3["Routing → load sub app"]
+    T3 --> T4["Load module via Module Federation"]
+    T4 --> T5["Fetch data dari API"]
+    T5 --> T6(["Render → LCP"])
+  end
+```
+
+## Iterasi Ketiga: Arsitektur Baru, MPA!
+
+Akhirnya kita bikin PoC untuk mengubah arsitektur. Di bagian ini yang paling banyak bekerja adalah tim infra, dan mereka memutuskan untuk pakai **MPA** (multi-page application).
+
+Tapi sebelum keputusan itu diambil, kita meeting lama banget. Bolak-balik, PoC ke halaman kecil dulu, diskusi lagi. Meetingnya alot sekali, sampai saya harus ke Shenzhen untuk menyelesaikannya.
+
+![Foto bareng tim di Shenzhen, setelah meeting soal arsitektur baru](/images/posts/improve-lcp-tiktok-seller-center-part-1-shenzhen.webp)
+
+Akhirnya keputusan diambil: kita benar-benar go dengan MPA. Saya bantu di halaman **Manage Product**, salah satu halaman yang paling banyak dikunjungi di TikTok Seller Center.
+
+## Masalah Ketika Migrasi
+
+Scope TikTok itu sudah luar biasa besar, dan mengganti arsitektur bukan hal yang gampang. Banyak sekali yang ikut kesenggol:
+
+- Package yang sudah nggak support.
+- Internal package yang nggak support.
+- Infra yang beda.
+- Dan jelas, framework yang berubah total.
+
+Migrasinya benar-benar berubah total, literally. Bahkan kodenya pun di-copy ke tempat baru.
+
+Ditambah lagi, repo yang saya pegang itu ada deployment setiap hari. Kebayang kan, gimana caranya tetap sync setiap hari?
+
+Itu cerita di part 2. Sampai jumpa di sana!
