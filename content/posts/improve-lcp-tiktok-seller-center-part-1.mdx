@@ -43,23 +43,35 @@ Hasilnya? Tetap nggak signifikan. p75 cuma turun dari 9 detik ke 7 detik.
 
 ## Iterasi Kedua: Masalahnya di Arsitektur
 
-Setelah iterasi demi iterasi di sisi low effort, kelihatan jelas bahwa masalahnya memang di level arsitektur.
+Setelah iterasi demi iterasi di sisi low effort, kelihatan jelas bahwa masalahnya memang di level arsitektur. Fungsi kedua Seller Center sama, tapi cara halamannya sampai ke layar seller beda total.
 
-- **TikTok:** full CSR SPA + Module Federation.
-- **Tokopedia:** SSR + CSR.
+| | TikTok Seller Center | Tokopedia Seller Center |
+| --- | --- | --- |
+| Rendering | CSR, single-page app | SSR, lalu CSR setelah hydrate |
+| HTML pertama dari server | Shell kosong | Sudah berisi konten |
+| Struktur kode | Main app sebagai gateway, sub app per halaman, module dari banyak tim lewat Module Federation | Satu app, satu bundle |
+| Yang harus selesai sebelum konten tampil | Main app → sub app → module → fetch data → render | HTML dari server |
+| Kapan LCP terjadi | Setelah seluruh rantai di atas selesai | Begitu HTML diterima dan di-paint |
 
-Tim di TikTok itu besar banget. Masing-masing tim punya page dan module sendiri yang mereka maintain, dan hampir semuanya ditaruh di Module Federation. Hasilnya, ada main app yang berperan sebagai gateway, dan setiap halaman harus melewati rantai panjang sebelum kontennya muncul:
+Tim di TikTok itu besar banget. Masing-masing tim punya page dan module sendiri yang mereka maintain, dan hampir semuanya ditaruh di Module Federation. Itu bagus buat kemandirian tim, tapi browser jadi harus melewati rantai panjang dulu sebelum ada konten yang bisa ditampilkan. Setiap langkahnya adalah download, parse, dan eksekusi JavaScript, dan semuanya berurutan.
+
+Tokopedia jauh lebih ringkas. Server sudah ambil data dan render HTML duluan, jadi konten langsung tampil. JavaScript yang satu bundle itu baru dipakai setelahnya, untuk bikin halamannya interaktif.
 
 ```mermaid
-flowchart LR
-  User --> Main[Main app] --> Sub[Sub page] --> MF[Module via<br/>Module Federation] --> Konten
-```
-
-Tokopedia jauh lebih ringkas. Halamannya sudah di-render di server duluan, dan sisanya sudah jadi satu bundle. Rantainya lebih pendek, jadi lebih cepat:
-
-```mermaid
-flowchart LR
-  User --> SSR[HTML dari server<br/>+ satu bundle] --> Konten
+flowchart TB
+  subgraph TP["Tokopedia: SSR + CSR"]
+    direction TB
+    P1["Server fetch data & render HTML"] --> P2(["HTML berisi konten → LCP"])
+    P2 --> P3["Hydrate satu bundle → interaktif"]
+  end
+  subgraph TT["TikTok: CSR SPA + Module Federation"]
+    direction TB
+    T1["HTML shell kosong"] --> T2["Download & jalankan main app"]
+    T2 --> T3["Routing → load sub app"]
+    T3 --> T4["Load module via Module Federation"]
+    T4 --> T5["Fetch data dari API"]
+    T5 --> T6(["Render → LCP"])
+  end
 ```
 
 ## Iterasi Ketiga: Arsitektur Baru, MPA!
@@ -125,23 +137,35 @@ The result? Still nothing significant. p75 only went from 9 seconds to 7.
 
 ## Iteration Two: The Problem Is the Architecture
 
-After round after round of low-effort fixes, it became clear the problem lived at the architecture level.
+After round after round of low-effort fixes, it became clear the problem lived at the architecture level. The two Seller Centers do the same job, but the way a page reaches a seller's screen is entirely different.
 
-- **TikTok:** a fully client-rendered SPA plus Module Federation.
-- **Tokopedia:** SSR plus CSR.
+| | TikTok Seller Center | Tokopedia Seller Center |
+| --- | --- | --- |
+| Rendering | CSR, single-page app | SSR, then CSR after hydration |
+| First HTML from the server | An empty shell | Already holds the content |
+| Code structure | A main app as the gateway, a sub app per page, modules from many teams via Module Federation | One app, one bundle |
+| What must finish before content shows | Main app → sub app → modules → data fetch → render | The server's HTML |
+| When LCP happens | After that whole chain finishes | As soon as the HTML arrives and paints |
 
-TikTok's teams are huge. Each team owns and maintains its own pages and modules, and almost all of them live in Module Federation. The result is a main app acting as a gateway, and every page walks a long chain before its content appears:
+TikTok's teams are huge. Each team owns and maintains its own pages and modules, and almost all of them live in Module Federation. That is great for team independence, but the browser has to walk a long chain before it has any content to show. Every step is JavaScript to download, parse and run, one after another.
+
+Tokopedia's is much leaner. The server fetches the data and renders the HTML first, so the content shows straight away. The single bundle of JavaScript only comes into play after that, to make the page interactive.
 
 ```mermaid
-flowchart LR
-  User --> Main[Main app] --> Sub[Sub page] --> MF[Module via<br/>Module Federation] --> Content
-```
-
-Tokopedia's is much leaner. Pages are rendered on the server first, and the rest ships as a single bundle. A shorter chain, so a faster page:
-
-```mermaid
-flowchart LR
-  User --> SSR[HTML from the server<br/>+ one bundle] --> Content
+flowchart TB
+  subgraph TP["Tokopedia: SSR + CSR"]
+    direction TB
+    P1["Server fetches data & renders HTML"] --> P2(["HTML with content → LCP"])
+    P2 --> P3["Hydrate one bundle → interactive"]
+  end
+  subgraph TT["TikTok: CSR SPA + Module Federation"]
+    direction TB
+    T1["Empty HTML shell"] --> T2["Download & run the main app"]
+    T2 --> T3["Routing → load the sub app"]
+    T3 --> T4["Load modules via Module Federation"]
+    T4 --> T5["Fetch data from the API"]
+    T5 --> T6(["Render → LCP"])
+  end
 ```
 
 ## Iteration Three: A New Architecture, MPA!
