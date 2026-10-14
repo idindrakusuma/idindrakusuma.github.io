@@ -4,11 +4,11 @@ date: '2026-10-14 10:57:02'
 category: Development
 tags: ['performance', 'lcp', 'tiktok', 'tokopedia', 'architecture']
 thumbnail: '/images/posts/menurunkan-lcp-tiktok-seller-center-part-1-thumb.webp'
-description: 'LCP p75 TikTok Seller Center sempat 9 detik. Part 1: cari akar masalahnya, quick win yang nggak cukup, sampai keputusan pindah ke MPA.'
+description: 'LCP p75 TikTok Seller Center sempat 9 detik. Part 1: akar masalahnya, quick win yang nggak cukup, pindah ke MPA, sampai mulai migrasi.'
 ---
 
 
-Setelah Tokopedia diakuisisi ByteDance, Seller Center Tokopedia dan TikTok disatukan. Fungsinya sama, tapi performanya jauh beda: di Tokopedia desktop, LCP 2 detik itu gampang, sedangkan di TikTok Seller Center paling cepat 5 detik dan p75-nya tembus 9 detik. Ini part 1 dari cerita gimana kita menurunkannya ke bawah 3 detik, mulai dari kumpulin data, quick win yang ternyata nggak cukup, sampai keputusan ganti arsitektur ke MPA.
+Setelah Tokopedia diakuisisi ByteDance, Seller Center Tokopedia dan TikTok disatukan. Fungsinya sama, tapi performanya jauh beda: di Tokopedia desktop, LCP 2 detik itu gampang, sedangkan di TikTok Seller Center paling cepat 5 detik dan p75-nya tembus 9 detik. Ini part 1 dari cerita gimana kita menurunkannya ke bawah 3 detik: kumpulin data, quick win yang ternyata nggak cukup, keputusan ganti arsitektur ke MPA, sampai mulai migrasinya.
 
 ## Latar Belakang
 
@@ -16,15 +16,15 @@ Setelah Tokopedia diakuisisi ByteDance, salah satu langkah pertama yang dilakuka
 
 Waktu di Tokopedia saya pegang Seller Center, jadi di project unify ini saya juga pegang Seller Platform untuk wilayah SEA.
 
-Masalahnya, walaupun fungsi seller platform di Tokopedia dan TikTok itu sama, arsitekturnya beda. Dan pilihan arsitektur inilah yang bikin performanya beda jauh. Di Tokopedia desktop, kita gampang banget dapet LCP 2 detik. Di TikTok, itu hampir nggak mungkin: paling cepat 5 detik, dan p75-nya bisa sampai 9 detik.
+Masalahnya, walaupun fungsi seller platform di Tokopedia dan TikTok itu sama, arsitekturnya beda. Dan pilihan arsitektur inilah yang bikin performanya beda sejauh itu.
 
-Karena proses unify ini menyentuh banyak stakeholder, termasuk seller sendiri, komplain mulai berdatangan. Isinya kurang lebih sama: halamannya loading-nya lama.
+Karena proses unify ini menyentuh banyak stakeholder, termasuk seller sendiri, komplain mulai berdatangan. Isinya kurang lebih sama: loading halamannya lama.
 
 Akhirnya kita ambil issue ini dengan serius: gimana caranya improve performa TikTok Seller Center?
 
 ## Kumpulin Data Dulu
 
-Langkah pertama, kita deep dive ke semua data yang bisa kita dapat. Profiling dari Chrome DevTools, kualitas network, bundle size, perbandingan arsitektur, framework, dan lain-lain.
+Langkah pertama, kita deep dive ke semua data yang bisa kita dapet. Profiling dari Chrome DevTools, kualitas network, bundle size, perbandingan arsitektur, framework, dan lain-lain.
 
 Kita juga benar-benar membandingkan performanya dengan region lain di SEA, karena komplainnya cuma datang dari seller Indonesia.
 
@@ -38,9 +38,9 @@ Jadi kita mulai dari yang paling murah:
 - Lazy load apa yang belum dibutuhkan di awal.
 - Memperbaiki loader.
 
-Hasilnya? Tetap nggak signifikan. p75 cuma turun dari 9 detik ke 7 detik.
+Hasilnya? p75 cuma turun dari 9 detik ke 7 detik. Masih jauh dari target di bawah 3 detik.
 
-## Iterasi Kedua: Masalahnya di Arsitektur
+## Akar Masalahnya: Arsitektur
 
 Setelah iterasi demi iterasi di sisi low effort, kelihatan jelas bahwa masalahnya memang di level arsitektur. Fungsi kedua Seller Center sama, tapi cara halamannya sampai ke layar seller beda total.
 
@@ -73,7 +73,7 @@ flowchart TB
   end
 ```
 
-## Iterasi Ketiga: Arsitektur Baru, MPA!
+## Iterasi Kedua: Arsitektur Baru, MPA!
 
 Akhirnya kita bikin PoC untuk mengubah arsitektur. Di bagian ini yang paling banyak bekerja adalah tim infra, dan mereka memutuskan untuk pakai **MPA** (multi-page application).
 
@@ -82,6 +82,21 @@ Tapi sebelum keputusan itu diambil, kita meeting lama banget. Bolak-balik, PoC k
 ![Foto bareng tim di Shenzhen, setelah meeting soal arsitektur baru](/images/posts/improve-lcp-tiktok-seller-center-part-1-shenzhen.webp)
 
 Akhirnya keputusan diambil: kita benar-benar go dengan MPA. Saya bantu di halaman **Manage Product**, salah satu halaman yang paling banyak dikunjungi di TikTok Seller Center.
+
+Kenapa MPA? Scope TikTok Seller Center sudah terlalu besar. Kembali ke satu app jelas nggak mungkin, dan mengakali rantainya dengan Module Federation juga sudah mentok.
+
+Dengan MPA, setiap halaman punya entry sendiri. Begitu seller buka Manage Product, yang di-load langsung halaman Manage Product itu sendiri, bukan main app yang baru kemudian mencari sub app-nya.
+
+Konsep Module Federation tetap kita pakai, tapi cuma untuk side module: bagian yang nggak menentukan LCP, dan di-lazy load supaya nggak blocking. Semua core page di-load di awal, jadi LCP nggak lagi ikut berubah setiap kali module tim lain berubah.
+
+```mermaid
+flowchart TB
+  M1["Entry halaman Manage Product"] --> M2["Core page di-load di awal"]
+  M2 --> M3(["Render → LCP"])
+  M3 -.-> M4["Side module via Module Federation<br/>(lazy load, nggak blocking LCP)"]
+```
+
+Bonusnya, setiap halaman bisa mengatur deployment-nya sendiri. Buat organisasi selevel TikTok, ini jauh lebih fleksibel dan scalable untuk masing-masing tim.
 
 ## Proses Migrasi: Connect ke Semua Stakeholder
 
@@ -104,7 +119,7 @@ Scope TikTok itu sudah luar biasa besar, dan mengganti arsitektur bukan hal yang
 - Infra yang beda.
 - Dan jelas, framework yang berubah total.
 
-Migrasinya benar-benar berubah total, literally. Bahkan kodenya pun di-copy ke tempat baru.
+Literally mulai dari nol, sampai kodenya pun kita copy ke project baru.
 
 Ditambah lagi, repo yang saya pegang itu ada deployment setiap hari. Kebayang kan, gimana caranya tetap sync setiap hari?
 

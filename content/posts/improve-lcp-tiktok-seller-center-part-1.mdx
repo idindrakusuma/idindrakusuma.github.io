@@ -6,10 +6,10 @@ lang: en
 translationOf: menurunkan-lcp-tiktok-seller-center-part-1
 tags: ['performance', 'lcp', 'tiktok', 'tokopedia', 'architecture']
 thumbnail: '/images/posts/improve-lcp-tiktok-seller-center-part-1-thumb.webp'
-description: 'TikTok Seller Center sat at a 9s p75 LCP. Part 1: finding the cause, the quick wins that fell short, and the decision to move to an MPA.'
+description: 'TikTok Seller Center sat at a 9s p75 LCP. Part 1: the root cause, quick wins that fell short, the move to an MPA, and starting the migration.'
 ---
 
-After ByteDance acquired Tokopedia, the two companies' Seller Centers were brought together. They do the same job, but they perform very differently: on Tokopedia desktop a 2-second LCP came easily, while TikTok Seller Center managed 5 seconds at best and 9 seconds at p75. This is part 1 of how we brought it under 3 seconds: gathering data, the quick wins that weren't enough, and the decision to change the architecture to an MPA.
+After ByteDance acquired Tokopedia, the two companies' Seller Centers were brought together. They do the same job, but they perform very differently: on Tokopedia desktop a 2-second LCP came easily, while TikTok Seller Center managed 5 seconds at best and 9 seconds at p75. This is part 1 of how we brought it under 3 seconds: gathering data, the quick wins that weren't enough, the decision to change the architecture to an MPA, and the start of the migration.
 
 ## Background
 
@@ -17,7 +17,7 @@ One of ByteDance's first steps after the acquisition was to unify the platforms,
 
 I owned Seller Center at Tokopedia, so in the unification project I also took on the Seller Platform for Southeast Asia.
 
-The catch: even though the two seller platforms serve the same purpose, they are built on different architectures, and that choice is what made their performance so different. On Tokopedia desktop we hit a 2-second LCP without trying. On TikTok it was close to impossible: 5 seconds at best, and up to 9 seconds at p75.
+The catch: even though the two seller platforms serve the same purpose, they are built on different architectures, and that choice is what put their performance so far apart.
 
 Because the unification touched so many stakeholders, sellers included, complaints started coming in, and they all said the same thing: pages take too long to load.
 
@@ -39,9 +39,9 @@ So we started with the cheapest fixes:
 - Lazy-load whatever isn't needed up front.
 - Improve the loader.
 
-The result? Still nothing significant. p75 only went from 9 seconds to 7.
+The result? p75 only went from 9 seconds to 7. Still a long way from the target of under 3.
 
-## Iteration Two: The Problem Is the Architecture
+## The Root Cause: Architecture
 
 After round after round of low-effort fixes, it became clear the problem lived at the architecture level. The two Seller Centers do the same job, but the way a page reaches a seller's screen is entirely different.
 
@@ -55,7 +55,7 @@ After round after round of low-effort fixes, it became clear the problem lived a
 
 TikTok's teams are huge. Each team owns and maintains its own pages and modules, and almost all of them live in Module Federation. That is great for team independence, but the browser has to walk a long chain before it has any content to show. Every step is JavaScript to download, parse and run, one after another.
 
-Tokopedia's is much leaner. The server fetches the data and renders the HTML first, so the content shows straight away. The single bundle of JavaScript only comes into play after that, to make the page interactive.
+Tokopedia's setup is much leaner. The server fetches the data and renders the HTML first, so the content shows straight away. The single bundle of JavaScript only comes into play after that, to make the page interactive.
 
 ```mermaid
 flowchart TB
@@ -74,7 +74,7 @@ flowchart TB
   end
 ```
 
-## Iteration Three: A New Architecture, MPA!
+## Iteration Two: A New Architecture, MPA!
 
 In the end we built a proof of concept for a new architecture. The infra team did most of the work here, and they chose an **MPA** (multi-page application).
 
@@ -83,6 +83,21 @@ Before that decision was made, though, there were long meetings. Back and forth,
 ![With the team in Shenzhen, after the meetings on the new architecture](/images/posts/improve-lcp-tiktok-seller-center-part-1-shenzhen.webp)
 
 Finally the decision was made: we would really go with the MPA. I helped on the **Manage Product** page, one of the most visited pages in TikTok Seller Center.
+
+Why an MPA? TikTok Seller Center's scope was already too big. Going back to a single app was out of the question, and working around the chain with Module Federation had hit its limits too.
+
+With an MPA, every page has its own entry. When a seller opens Manage Product, what loads is the Manage Product page itself, not a main app that then goes looking for the right sub app.
+
+We still use the idea of Module Federation, but only for side modules: the parts that don't decide LCP, lazy-loaded so they never block it. Every core page is loaded up front, so LCP no longer shifts whenever another team's module changes.
+
+```mermaid
+flowchart TB
+  M1["Manage Product page entry"] --> M2["Core page loaded up front"]
+  M2 --> M3(["Render → LCP"])
+  M3 -.-> M4["Side modules via Module Federation<br/>(lazy-loaded, never blocking LCP)"]
+```
+
+A bonus: every page can control its own deployments. For an organisation at TikTok's scale, that is far more flexible and scalable for each team.
 
 ## The Migration: Connecting Every Stakeholder
 
@@ -98,14 +113,14 @@ Only once everyone was aligned did we move on to the migration itself.
 
 ## Problems During the Migration
 
-TikTok's scope is enormous, and changing the architecture is never easy. So much got caught along the way:
+TikTok's scope is enormous, and changing the architecture is never easy. A lot broke along the way:
 
 - Packages that were no longer supported.
 - Internal packages that didn't support the new setup.
 - Different infrastructure.
 - And, of course, an entirely different framework.
 
-The migration really changed everything, literally. Even the code itself was copied over to a new home.
+We were literally starting over: even the code was copied into a new project.
 
 On top of that, the repo I owned deployed every single day. Can you imagine keeping the two in sync, every day?
 
