@@ -8,7 +8,7 @@ description: 'LCP p75 TikTok Seller Center sempat 9 detik. Part 1: akar masalahn
 ---
 
 
-Setelah Tokopedia diakuisisi ByteDance, Seller Center Tokopedia dan TikTok disatukan. Fungsinya sama, tapi performanya jauh beda: di Tokopedia desktop, LCP 2 detik itu gampang, sedangkan di TikTok Seller Center paling cepat 5 detik dan p75-nya tembus 9 detik. Ini part 1 dari cerita gimana kita menurunkannya ke bawah 3 detik: kumpulin data, quick win yang ternyata nggak cukup, keputusan ganti arsitektur ke MPA, sampai mulai migrasinya.
+Setelah Tokopedia diakuisisi ByteDance, Seller Center Tokopedia dan TikTok disatukan. Fungsinya sama, tapi performanya jauh beda: di Tokopedia desktop, LCP 2 detik itu gampang, sedangkan di TikTok Seller Center paling cepat 5 detik (testing lokal pakai koneksi kantor) dan p75-nya tembus 9 detik. Ini part 1 dari cerita gimana kita menurunkannya ke bawah 3 detik: kumpulin data, quick win yang ternyata nggak cukup, keputusan ganti arsitektur ke MPA, sampai mulai migrasinya.
 
 ## Latar Belakang
 
@@ -27,6 +27,8 @@ Akhirnya kita ambil issue ini dengan serius: gimana caranya improve performa Tik
 Langkah pertama, kita deep dive ke semua data yang bisa kita dapet. Profiling dari Chrome DevTools, kualitas network, bundle size, perbandingan arsitektur, framework, dan lain-lain.
 
 Kita juga benar-benar membandingkan performanya dengan region lain di SEA, karena komplainnya cuma datang dari seller Indonesia.
+
+Ternyata jawabannya sederhana: seller Indonesia sebelumnya pakai Seller Center Tokopedia. Mereka sudah terbiasa dengan halaman yang tampil dalam 2 detik, jadi begitu pindah ke TikTok Seller Center, lambatnya langsung terasa.
 
 ## Iterasi Pertama: Ambil yang Paling Low Effort
 
@@ -77,7 +79,7 @@ flowchart TB
 
 Akhirnya kita bikin PoC untuk mengubah arsitektur. Di bagian ini yang paling banyak bekerja adalah tim infra, dan mereka memutuskan untuk pakai **MPA** (multi-page application).
 
-Tapi sebelum keputusan itu diambil, kita meeting lama banget. Bolak-balik, PoC ke halaman kecil dulu, diskusi lagi. Meetingnya alot sekali, sampai saya harus ke Shenzhen untuk menyelesaikannya.
+Tapi sebelum keputusan itu diambil, kita meeting lama banget. Bolak-balik, PoC ke halaman kecil dulu, diskusi lagi. Meetingnya alot sekali, sampai saya harus ke Shenzhen untuk menyelesaikannya. Yang alot justru bukan soal MPA-nya, tapi pengerjaannya: gimana pembagian kerjanya, gimana proses sharing package antar tim, dan pendekatan teknis apa yang dipakai selama migrasi.
 
 ![Foto bareng tim di Shenzhen, setelah meeting soal arsitektur baru](/images/posts/improve-lcp-tiktok-seller-center-part-1-shenzhen.webp)
 
@@ -105,7 +107,7 @@ Di titik ini, engineer sudah setuju. Tapi stakeholder lain belum.
 Jadi kita set kick-off meeting untuk align dengan Product dan QA. Dari situ kita siapkan:
 
 - **PRD dan tech plan**, supaya semua orang paham apa yang berubah dan kenapa.
-- **Metrik yang ingin kita capai**, supaya targetnya jelas dan bisa diukur.
+- **Metrik yang ingin kita capai:** LCP di bawah atau sama dengan 3 detik, supaya targetnya jelas dan bisa diukur.
 - **Timeline.** Ini penting banget, karena kita melibatkan QA untuk regression test semua fitur!
 
 Baru setelah semuanya align, kita masuk ke proses migrasinya.
@@ -119,8 +121,8 @@ Scope TikTok itu sudah luar biasa besar, dan mengganti arsitektur bukan hal yang
 - Infra yang beda.
 - Dan jelas, framework yang berubah total.
 
-Literally mulai dari nol, sampai kodenya pun kita copy ke project baru.
+Literally mulai dari nol, sampai kodenya pun kita copy ke branch baru di repo yang sama.
 
-Ditambah lagi, repo yang saya pegang itu ada deployment setiap hari. Kebayang kan, gimana caranya tetap sync setiap hari?
+Ditambah lagi, repo yang saya pegang itu ada deployment setiap hari. Jadi selama migrasi berjalan, branch utamanya terus berubah. Kebayang kan, gimana caranya branch migrasi tetap sync setiap hari?
 
 Itu cerita di part 2. Sampai jumpa di sana!

@@ -9,7 +9,7 @@ thumbnail: '/images/posts/improve-lcp-tiktok-seller-center-part-1-thumb.webp'
 description: 'TikTok Seller Center sat at a 9s p75 LCP. Part 1: the root cause, quick wins that fell short, the move to an MPA, and starting the migration.'
 ---
 
-After ByteDance acquired Tokopedia, the two companies' Seller Centers were brought together. They do the same job, but they perform very differently: on Tokopedia desktop a 2-second LCP came easily, while TikTok Seller Center managed 5 seconds at best and 9 seconds at p75. This is part 1 of how we brought it under 3 seconds: gathering data, the quick wins that weren't enough, the decision to change the architecture to an MPA, and the start of the migration.
+After ByteDance acquired Tokopedia, the two companies' Seller Centers were brought together. They do the same job, but they perform very differently: on Tokopedia desktop a 2-second LCP came easily, while TikTok Seller Center managed 5 seconds at best (testing locally on the office connection) and 9 seconds at p75. This is part 1 of how we brought it under 3 seconds: gathering data, the quick wins that weren't enough, the decision to change the architecture to an MPA, and the start of the migration.
 
 ## Background
 
@@ -28,6 +28,8 @@ So we took it seriously: how do we make TikTok Seller Center fast?
 The first step was a deep dive into every piece of data we could get: Chrome DevTools profiles, network quality, bundle sizes, and comparisons of architecture, frameworks and more.
 
 We also compared performance across the other Southeast Asian regions closely, because the complaints were coming only from sellers in Indonesia.
+
+The answer turned out to be simple: Indonesian sellers had been using Tokopedia's Seller Center. They were used to pages that showed up in 2 seconds, so the moment they moved to TikTok Seller Center, the slowness was obvious.
 
 ## Iteration One: The Lowest Effort First
 
@@ -78,7 +80,7 @@ flowchart TB
 
 In the end we built a proof of concept for a new architecture. The infra team did most of the work here, and they chose an **MPA** (multi-page application).
 
-Before that decision was made, though, there were long meetings. Back and forth, a PoC on a small page first, then more discussion. It was so tough that I had to fly to Shenzhen to see it through.
+Before that decision was made, though, there were long meetings. Back and forth, a PoC on a small page first, then more discussion. It was so tough that I had to fly to Shenzhen to see it through. The hard part wasn't the MPA itself but how to get it done: how to split the work, how teams would share packages, and which technical approach to use during the migration.
 
 ![With the team in Shenzhen, after the meetings on the new architecture](/images/posts/improve-lcp-tiktok-seller-center-part-1-shenzhen.webp)
 
@@ -106,7 +108,7 @@ At this point the engineers had agreed. The other stakeholders hadn't yet.
 So we set up a kick-off meeting to align with Product and QA. From there we prepared:
 
 - **A PRD and a tech plan**, so everyone understood what was changing and why.
-- **The metrics we wanted to hit**, so the target was clear and measurable.
+- **The metric we wanted to hit:** LCP at or under 3 seconds, so the target was clear and measurable.
 - **A timeline.** This one really mattered, because we were bringing QA in to regression-test every feature!
 
 Only once everyone was aligned did we move on to the migration itself.
@@ -120,8 +122,8 @@ TikTok's scope is enormous, and changing the architecture is never easy. A lot b
 - Different infrastructure.
 - And, of course, an entirely different framework.
 
-We were literally starting over: even the code was copied into a new project.
+We were literally starting over: even the code was copied into a new branch of the same repo.
 
-On top of that, the repo I owned deployed every single day. Can you imagine keeping the two in sync, every day?
+On top of that, the repo I owned deployed every single day, so the main branch kept moving for as long as the migration ran. Can you imagine keeping the migration branch in sync, every day?
 
 That's the story for part 2. See you there!
