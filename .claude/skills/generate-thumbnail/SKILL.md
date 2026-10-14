@@ -60,6 +60,24 @@ The three example files above are working code to copy from. The rules that keep
   white chevron, ~240×48.
 - No logos or brand marks of other companies — draw a generic stand-in.
 
+### Or a card of its own
+
+The red-gradient panel card is one look, not the only one, and it wears thin
+when every post gets it. A module can export `card` instead of `panels` and
+draw the whole 1200×825 card itself as a satori element tree:
+
+```js
+export default {
+  card: ({ title, category }) => ({ type: 'div', props: { style: { display: 'flex', … }, children: [ … ] } }),
+};
+```
+
+Same two faces (`Space Grotesk`, `JetBrains Mono`), same ~100px top and bottom
+padding so the social crop keeps the category and title. Every `div` needs
+`display: 'flex'`. `assets/thumbnails/menurunkan-lcp-tiktok-seller-center-part-1.mjs`
+is a worked example. Among the three options, offer at least one that is not
+the panel card.
+
 ## 3. Render the options and check them
 
 ```bash

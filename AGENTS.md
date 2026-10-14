@@ -62,7 +62,9 @@ holds meanings only, never implementation.
 Posts are `content/posts/*.mdx`, written in Bahasa Indonesia on an otherwise
 English site. Start one with the `write-a-article` skill; draw a missing
 thumbnail with the `generate-thumbnail` skill. The README's Blog section holds
-the frontmatter contract, which the build enforces.
+the frontmatter contract, which the build enforces. A post in two languages is
+two files at two URLs, the translation naming the original with
+`translationOf` — never both languages in one file.
 
 ## Generated files
 

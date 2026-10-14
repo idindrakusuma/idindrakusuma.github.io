@@ -268,7 +268,7 @@ export const EXPERIENCES: Experience[] = [
         location: 'Jakarta',
         current: true,
         points: [
-          'Improved page performance by reducing LCP by 70% (10s → 3s at p75) on the ‘Manage Product’ page, one of the top-3 highest-traffic modules in TikTok Seller Center.',
+          'Improved page performance by cutting LCP at p75 from 9s to under 3s on the ‘Manage Product’ page, one of the top-3 highest-traffic modules in TikTok Seller Center.',
           'Building scalable end-user interfaces using Lynx, focusing on native-like performance and cross-platform compatibility.',
           'Delivered end-user surfaces on TikTok Shop, including the Homepage and Flash Sale modules.',
           'Reduced engineering complexity by ~30% by developing internal tools that automated and simplified the migration of the Tokopedia Web Platform to the ByteDance ecosystem.',

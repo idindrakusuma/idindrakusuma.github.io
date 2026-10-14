@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { getPosts } from '@/lib/posts';
+import { getPosts, getTranslations } from '@/lib/posts';
 import { PROJECTS, SITE } from '@/lib/site-data';
 
 export const dynamic = 'force-static';
@@ -36,11 +36,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly' as const,
       priority: 0.6,
     })),
-    ...posts.map((post) => ({
-      url: `${SITE.url}/blog/${post.slug}/`,
-      lastModified: new Date(post.updated ?? post.date),
-      changeFrequency: 'yearly' as const,
-      priority: 0.6,
-    })),
+    ...(await Promise.all(
+      posts.map(async (post) => {
+        // A post in more than one language lists every version, itself included,
+        // as the sitemap form of hreflang.
+        const translations = await getTranslations(post);
+        return {
+          url: `${SITE.url}/blog/${post.slug}/`,
+          lastModified: new Date(post.updated ?? post.date),
+          changeFrequency: 'yearly' as const,
+          priority: 0.6,
+          ...(translations.length > 1
+            ? {
+                alternates: {
+                  languages: Object.fromEntries(translations.map((t) => [t.lang, `${SITE.url}/blog/${t.slug}/`])),
+                },
+              }
+            : {}),
+        };
+      }),
+    )),
   ];
 }

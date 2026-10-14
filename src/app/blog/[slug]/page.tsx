@@ -16,9 +16,10 @@ import PostActions from '@/components/PostActions';
 import Reveal from '@/components/Reveal';
 import TableOfContents, { FloatingTableOfContents } from '@/components/TableOfContents';
 import { mdxComponents } from '@/components/mdx-components';
-import { formatDate, getNextPost, getPost, getPostBody, getPosts, summarise } from '@/lib/posts';
+import { formatDate, getNextPost, getPost, getPostBody, getPosts, getTranslations, summarise } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
 import { remarkMermaid } from '@/lib/mermaid';
+import { rehypeTableLabels } from '@/lib/table-labels';
 import { rehypeToc, type TocItem } from '@/lib/toc';
 import manifest from '../../../../public/images/posts/manifest.json';
 
@@ -62,14 +63,30 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 
   const description = post.description ?? summarise(post.excerpt);
   const images = shareImage(slug, post.thumbnail, post.title, post.draft);
+  // Each language is its own URL and canonical to itself; hreflang tells search
+  // engines the others exist, with the original as x-default.
+  const translations = await getTranslations(post);
+  const others = translations.filter((t) => t.slug !== slug);
   return {
     title: `${post.title} — ${SITE.name}`,
     description,
-    alternates: { canonical: `/blog/${slug}` },
+    alternates: {
+      canonical: `/blog/${slug}`,
+      ...(others.length > 0
+        ? {
+            languages: {
+              ...Object.fromEntries(translations.map((t) => [t.lang, `/blog/${t.slug}`])),
+              'x-default': `/blog/${translations[0].slug}`,
+            },
+          }
+        : {}),
+    },
     openGraph: {
       type: 'article',
       siteName: SITE.name,
       url: `${SITE.url}/blog/${slug}/`,
+      locale: ogLocale(post.lang),
+      ...(others.length > 0 ? { alternateLocale: others.map((t) => ogLocale(t.lang)) } : {}),
       title: post.title,
       description,
       publishedTime: new Date(post.date).toISOString(),
@@ -88,6 +105,17 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     },
   };
 }
+
+/** Open Graph wants a territory too: "en_US", not "en". */
+function ogLocale(lang: string): string {
+  return { id: 'id_ID', en: 'en_US' }[lang] ?? lang;
+}
+
+/** How each language names itself, for the link that switches to it. */
+const READ_IN: Record<string, string> = {
+  id: 'Baca dalam Bahasa Indonesia',
+  en: 'Read in English',
+};
 
 /**
  * The JPEG copy of a post's thumbnail that scripts/prepare-post-images.mjs
@@ -111,7 +139,8 @@ export default async function PostPage({ params }: PostPageProps) {
   const post = await getPost(slug);
   if (!post) notFound();
 
-  const [body, next] = await Promise.all([getPostBody(slug), getNextPost(slug)]);
+  const [body, next, translations] = await Promise.all([getPostBody(slug), getNextPost(slug), getTranslations(post)]);
+  const others = translations.filter((t) => t.slug !== slug);
   // Filled in by rehypeToc while the body compiles — see src/lib/toc.ts.
   const toc: TocItem[] = [];
   const { content } = await compileMDX({
@@ -125,7 +154,7 @@ export default async function PostPage({ params }: PostPageProps) {
         // unclickable text — the same migration gap as the dead permalinks
         // above, just quieter.
         remarkPlugins: [remarkGfm, remarkMermaid],
-        rehypePlugins: [rehypeToc(toc), [rehypePrettyCode, prettyCode]],
+        rehypePlugins: [rehypeToc(toc), rehypeTableLabels, [rehypePrettyCode, prettyCode]],
       },
     },
   });
@@ -181,6 +210,30 @@ export default async function PostPage({ params }: PostPageProps) {
                     {post.title}
                   </h1>
                 </ViewTransition>
+
+                {/* The same post in another language, at its own URL: under the
+                    title, where a reader deciding whether to read it is looking,
+                    rather than squeezed into the meta line, where it wrapped onto
+                    a line of its own on a phone. Labelled in that language. */}
+                {others.length > 0 && (
+                  <p className="m-0 -mt-2 mb-[22px] flex flex-wrap gap-x-4 gap-y-1 text-[14.5px]">
+                    {others.map((t) => (
+                      <Link
+                        key={t.slug}
+                        href={`/blog/${t.slug}`}
+                        hrefLang={t.lang}
+                        lang={t.lang}
+                        className="text-primary inline-flex items-center gap-1.5 font-semibold no-underline hover:underline"
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <circle cx="12" cy="12" r="9" />
+                          <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+                        </svg>
+                        {READ_IN[t.lang] ?? t.lang} →
+                      </Link>
+                    ))}
+                  </p>
+                )}
 
                 <Reveal immediate as="p" className="text-muted m-0 mb-[26px] text-[19px] leading-[1.65]">
                   {post.excerpt}
