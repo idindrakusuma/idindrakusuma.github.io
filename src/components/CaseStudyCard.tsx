@@ -15,7 +15,8 @@ import type { CaseStudy } from '@/lib/site-data';
  */
 export default function CaseStudyCard({ study, post }: { study: CaseStudy; post: Post }) {
   const image = cardImage(post);
-  const year = new Date(post.date).getFullYear();
+  // The work's year where it says one; a write-up can come long after the work.
+  const year = study.year ?? new Date(post.date).getFullYear();
   return (
     <Link
       href={`/blog/${post.slug}`}

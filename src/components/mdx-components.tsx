@@ -35,7 +35,12 @@ export const mdxComponents = {
     if (!size) {
       throw new Error(`No measurement for "${href}" — run \`pnpm assets:posts\``);
     }
-    return <Image src={href} alt={alt ?? ''} width={size.width} height={size.height} />;
+    // A button so it opens full size (ImageLightbox) from the keyboard too.
+    return (
+      <button type="button" className="ik-zoom" aria-label={alt ? `Open image: ${alt}` : 'Open image'}>
+        <Image src={href} alt={alt ?? ''} width={size.width} height={size.height} />
+      </button>
+    );
   },
 
   /**
