@@ -12,6 +12,7 @@ import BlogBackdrop from '@/components/BlogBackdrop';
 import BlogIllustration from '@/components/BlogIllustration';
 import BlogChrome from '@/components/BlogChrome';
 import Footer from '@/components/Footer';
+import ImageLightbox from '@/components/ImageLightbox';
 import PostActions from '@/components/PostActions';
 import Reveal from '@/components/Reveal';
 import TableOfContents, { FloatingTableOfContents } from '@/components/TableOfContents';
@@ -19,6 +20,7 @@ import { mdxComponents } from '@/components/mdx-components';
 import { formatDate, getNextPost, getPost, getPostBody, getPosts, getTranslations, summarise } from '@/lib/posts';
 import { SITE } from '@/lib/site-data';
 import { remarkMermaid } from '@/lib/mermaid';
+import { rehypeGallery } from '@/lib/gallery';
 import { rehypeTableLabels } from '@/lib/table-labels';
 import { rehypeToc, type TocItem } from '@/lib/toc';
 import manifest from '../../../../public/images/posts/manifest.json';
@@ -154,7 +156,7 @@ export default async function PostPage({ params }: PostPageProps) {
         // unclickable text — the same migration gap as the dead permalinks
         // above, just quieter.
         remarkPlugins: [remarkGfm, remarkMermaid],
-        rehypePlugins: [rehypeToc(toc), rehypeTableLabels, [rehypePrettyCode, prettyCode]],
+        rehypePlugins: [rehypeToc(toc), rehypeTableLabels, rehypeGallery, [rehypePrettyCode, prettyCode]],
       },
     },
   });
@@ -329,6 +331,9 @@ export default async function PostPage({ params }: PostPageProps) {
         {/* The same contents below the sidebar's breakpoint, folded into a
             floating button. */}
         {toc.length >= 2 && <FloatingTableOfContents items={toc} />}
+
+        {/* Only where there is an image to open: a text-only post ships none of it. */}
+        {/!\[[^\]]*\]\(/.test(body) && <ImageLightbox />}
 
         <Footer />
       </div>

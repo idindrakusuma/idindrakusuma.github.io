@@ -1,0 +1,137 @@
+---
+title: 'How We Cut LCP from 9s to Under 3s in TikTok Seller Center (Part 2)'
+date: '2026-10-15 18:59:18'
+category: Development
+lang: en
+translationOf: menurunkan-lcp-tiktok-seller-center-part-2
+tags: ['performance', 'lcp', 'tiktok', 'mpa', 'architecture']
+thumbnail: '/images/posts/improve-lcp-tiktok-seller-center-part-2-thumb.webp'
+description: 'Part 2: migrating to an MPA with no code freeze via a jscodeshift code-sync, a staged rollout, data prefetch, and a p75 LCP steadily under 3s.'
+---
+
+In [part 1](/blog/improve-lcp-tiktok-seller-center-part-1) we got as far as the decision to move to an MPA and the start of the migration. Part 2 is the rest: how the migration ran with no code freeze at all, why moving to an MPA wasn't enough on its own, and how a staged rollout finally brought TikTok Seller Center's p75 LCP steadily under 3 seconds.
+
+## Migrating Without a Code Freeze
+
+The first problem, and one of the hardest: we weren't allowed to stop product development at all. Every team kept working as usual, with no code freeze of any kind.
+
+And, as part 1 ended, the repo I owned deployed every day. The code on the old architecture kept changing while we were moving it to the new one on another branch.
+
+So together with the TikTok infra team in China, I built a tool to do **code-sync**.
+
+## Code-Sync: One Codebase, Two Architectures
+
+Put simply, code-sync turns the existing code into code that works with the MPA. It sounds simple, but the challenge was big. The UI library stayed React, but the framework we built on top of it went from SPA to MPA, and almost everything underneath changed with it:
+
+- **The design system** changed, because we upgraded it from v1 to v3 along the way. Every one a major version!
+- **Every package** had to move to an ESM-friendly version.
+- **Internal packages**, like locale and Module Federation, all had to line up too.
+
+The infra team built the MPA infra and framework themselves. Code-sync's job was to make sure our product code moved over with it, every single day.
+
+How it works: code-sync copies the code from the main branch, then maps it onto the new versions according to targets we define. Its main engine is [jscodeshift](https://github.com/facebook/jscodeshift), which rewrites code through its AST rather than by find-and-replace on text.
+
+```mermaid
+flowchart TB
+  Deploy(["Daily deployment on the main branch is done"]) --> Copy["Copy the latest code"]
+  Copy --> Engine["Transform with jscodeshift"]
+  subgraph Rules["Transform rules, per target"]
+    direction TB
+    R1["Design system v1 → v3"]
+    R2["Packages → ESM-friendly versions"]
+    R3["Internal packages: locale, Module Federation"]
+  end
+  Rules -.-> Engine
+  Engine --> Out(["MPA code on the migration branch"])
+```
+
+Code-sync made all the difference, because a run takes only 2–3 minutes. We ran it every time a deployment finished, so the migration branch always followed the latest code and nobody had to stop working.
+
+## An MPA Alone Wasn't Enough
+
+The second problem: moving to an MPA didn't by itself bring the Manage Product page's LCP to 3 seconds.
+
+We also had to change how some critical components were written, so the other Core Web Vitals would be good too.
+
+After fixing them one by one, local testing reached **1 second**. Great!
+
+## A Staged Rollout, Starting with Indonesia
+
+Because the scope was so big, we didn't deploy to every Southeast Asian region at once. We rolled out in stages, starting with Indonesia. Why? Because that's where most of the complaints came from.
+
+Once it was live, p75 was much better, but still at 4–5 seconds. That was to be expected: local testing ran on the office connection, while p75 in production comes from sellers' many networks and devices. Still, it wasn't on target yet.
+
+## The APIs Were Called One After Another
+
+Once again we profiled, and the problem turned out to be **sequential** API calls. The page had to wait for its JavaScript to run before the first request went out, and each request after that waited for the previous one. Only once all the data arrived could the content render.
+
+```mermaid
+sequenceDiagram
+  participant B as Browser
+  participant S as Server
+  participant API
+  B->>S: Open the page
+  S-->>B: HTML + JavaScript
+  Note over B: JavaScript runs first
+  B->>API: Request 1
+  API-->>B: Response 1
+  B->>API: Request 2 (waits for request 1)
+  API-->>B: Response 2
+  Note over B: Only now render → LCP
+```
+
+We fixed the flow by implementing **native prefetch** in our MPA infra. The goal: the moment a page opens, its data requests are already running alongside the page itself. By the time the JavaScript is ready, the data is there too, and the page can be genuinely fast.
+
+```mermaid
+sequenceDiagram
+  participant B as Browser
+  participant S as Server
+  participant API
+  B->>S: Open the page
+  par At the same time
+    S-->>B: HTML + JavaScript
+  and Native prefetch
+    B->>API: Request data
+    API-->>B: Response
+  end
+  Note over B: JavaScript ready, data already there → render → LCP
+```
+
+After this, we got to **around 3 seconds**! So we carried the rollout on to the other regions, watching performance as we went.
+
+## Rendering the LCP Component First
+
+We also improved how components render, so the component targeted as the LCP element could show earlier and more consistently, without waiting on parts of the page that don't matter up front.
+
+```mermaid
+flowchart TB
+  subgraph After["After"]
+    direction TB
+    A1["The LCP component renders first"] --> A2(["LCP"])
+    A2 -.-> A3["The rest follows"]
+  end
+  subgraph Before["Before"]
+    direction TB
+    B1["The whole page renders"] --> B2["The LCP component waits along"] --> B3(["LCP"])
+  end
+```
+
+With this in place, p75 LCP held steady under 3 seconds, in the **2–3 second** range. Target achieved!
+
+## Wrapping Up
+
+Long story short, this MPA project went on to become the platform foundation of TikTok Seller Center. I'm quite proud to have been one of its founding engineers, hahaha!
+
+We did this project in early 2025, back when AI agents were nowhere near as capable as they are now. With that many blockers in the way, it feels great that we saw it through.
+
+Even though I was still new there, making an impact this big at the scale of a company like TikTok was an amazing experience.
+
+## Bonus: Photos from Shenzhen
+
+![By the river in Shenzhen, with the skyline behind](/images/posts/menurunkan-lcp-tiktok-seller-center-part-2-shenzhen-1.webp)
+
+![A meal with the team in Shenzhen](/images/posts/menurunkan-lcp-tiktok-seller-center-part-2-shenzhen-2.webp)
+
+![At night in front of the office tower, lit up in blue](/images/posts/menurunkan-lcp-tiktok-seller-center-part-2-shenzhen-3.webp)
+
+![Another meal with the team, at a table outside a restaurant](/images/posts/menurunkan-lcp-tiktok-seller-center-part-2-shenzhen-4.webp)

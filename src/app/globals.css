@@ -963,6 +963,70 @@ body {
   margin: 0 0 26px;
   border: 1px solid var(--border);
 }
+/* Every post image is a button that opens it full size (ImageLightbox). */
+.ik-prose .ik-zoom {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+/* Two or more images in a row: one strip that scrolls sideways and snaps to
+   each image, at a shared height so their tops and bottoms line up whatever
+   their shapes. The next image peeks in at the edge, which is what tells a
+   reader on a phone there is more. */
+.ik-prose .ik-gallery {
+  display: flex;
+  gap: 12px;
+  margin: 0 0 26px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  padding-bottom: 6px;
+}
+.ik-prose .ik-gallery {
+  align-items: flex-start;
+}
+.ik-prose .ik-gallery .ik-zoom {
+  flex: none;
+  scroll-snap-align: start;
+}
+/* Whole, never cropped — a screenshot loses its edges otherwise. Each image
+   keeps its own shape inside two caps: a shared height, and 80% of the screen
+   width, so even a wide photo on a phone leaves the next one in view. */
+.ik-prose .ik-gallery img {
+  width: auto;
+  height: auto;
+  max-height: clamp(220px, 46vw, 360px);
+  max-width: min(80vw, 640px);
+  margin: 0;
+}
+
+/* The lightbox: the image on a dark backdrop, whichever theme is on. */
+.ik-lightbox {
+  background: rgb(5 8 15 / 0.92);
+}
+.ik-lightbox::backdrop {
+  background: transparent;
+}
+.ik-lightbox-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  border: 1px solid rgb(255 255 255 / 0.25);
+  background: rgb(255 255 255 / 0.08);
+  color: #fff;
+  cursor: pointer;
+}
+.ik-lightbox-btn:hover {
+  background: rgb(255 255 255 / 0.18);
+}
+html:has(dialog.ik-lightbox[open]) {
+  overflow: hidden;
+}
 .ik-prose hr {
   border: 0;
   border-top: 1px solid var(--border);

@@ -153,6 +153,12 @@ thumbnail: '/images/posts/x.webp'  # or a remote URL, then `pnpm assets:posts`
 ---
 ```
 
+**Images.** Every image opens full size on a click. Two or more images on
+consecutive lines (blank lines between, nothing else) become one gallery that
+scrolls sideways, and the full-size view steps through it; a single image stays
+full width. Nothing to write but the images — `lib/gallery.ts` groups them at
+build time.
+
 **A post in two languages** is two files, one URL each. The original keeps the
 normal frontmatter; the translation adds `lang` and names the original:
 

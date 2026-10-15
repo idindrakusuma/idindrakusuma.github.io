@@ -175,9 +175,29 @@ export type CaseStudy = {
   description: string;
   /** The headline number, before and after, and what it measures. */
   result: { before: string; after: string; metric: string };
+  /** When the work was done, if not the year the Post was published. */
+  year?: number;
 };
 
 export const CASE_STUDIES: CaseStudy[] = [
+  {
+    post: 'menurunkan-lcp-tiktok-seller-center-part-2',
+    org: 'TikTok',
+    name: 'An MPA migration with no code freeze',
+    description:
+      'Moved Manage Product onto the new MPA through a daily jscodeshift code-sync, then fixed sequential API calls with prefetch and rendered the LCP element first.',
+    result: { before: '9 s', after: '< 3 s', metric: 'p75 LCP, Manage Product' },
+    year: 2025,
+  },
+  {
+    post: 'menurunkan-lcp-tiktok-seller-center-part-1',
+    org: 'TikTok',
+    name: 'Why Seller Center was slow',
+    description:
+      'Traced a 9s p75 LCP to a client-rendered SPA chained through Module Federation, past quick wins that stopped at 7s, to the decision to move to an MPA.',
+    result: { before: '9 s', after: '7 s', metric: 'p75 LCP, quick wins alone' },
+    year: 2025,
+  },
   {
     post: 'ci-11x-lebih-cepat-oxlint-oxfmt-typescript-7',
     org: 'Invitato',

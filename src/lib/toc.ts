@@ -1,15 +1,8 @@
 import GithubSlugger from 'github-slugger';
+import type { HastNode } from './hast';
 
 /** One entry in a post's table of contents. */
 export type TocItem = { id: string; text: string; depth: 2 | 3 };
-
-type HastNode = {
-  type: string;
-  tagName?: string;
-  value?: string;
-  properties?: Record<string, unknown>;
-  children?: HastNode[];
-};
 
 const textOf = (node: HastNode): string =>
   node.type === 'text' ? (node.value ?? '') : (node.children ?? []).map(textOf).join('');
