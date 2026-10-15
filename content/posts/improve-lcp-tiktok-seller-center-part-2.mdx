@@ -6,30 +6,28 @@ lang: en
 translationOf: menurunkan-lcp-tiktok-seller-center-part-2
 tags: ['performance', 'lcp', 'tiktok', 'mpa', 'architecture']
 thumbnail: '/images/posts/improve-lcp-tiktok-seller-center-part-2-thumb.webp'
-description: 'Part 2: migrating to an MPA with no code freeze via a jscodeshift code-sync, a staged rollout, data prefetch, and a p75 LCP of a steady 2–3s.'
+description: 'Part 2: migrating to an MPA with no code freeze via a jscodeshift code-sync, a staged rollout, data prefetch, and a p75 LCP steadily under 3s.'
 ---
 
-In [part 1](/blog/improve-lcp-tiktok-seller-center-part-1) we got as far as the decision to move to an MPA and the start of the migration. Part 2 is the rest: how the migration ran with no code freeze at all, why moving to an MPA wasn't enough on its own, and how a staged rollout finally brought TikTok Seller Center's p75 LCP to a steady 2–3 seconds.
+In [part 1](/blog/improve-lcp-tiktok-seller-center-part-1) we got as far as the decision to move to an MPA and the start of the migration. Part 2 is the rest: how the migration ran with no code freeze at all, why moving to an MPA wasn't enough on its own, and how a staged rollout finally brought TikTok Seller Center's p75 LCP steadily under 3 seconds.
 
 ## Migrating Without a Code Freeze
 
-One of the hardest parts of the migration: we weren't allowed to stop product development at all. Every team kept working as usual, with no code freeze of any kind.
+The first problem, and one of the hardest: we weren't allowed to stop product development at all. Every team kept working as usual, with no code freeze of any kind.
 
 And, as part 1 ended, the repo I owned deployed every day. The code on the old architecture kept changing while we were moving it to the new one on another branch.
 
-So the TikTok infra team in China and I built a tool to do **code-sync**.
+So together with the TikTok infra team in China, I built a tool to do **code-sync**.
 
 ## Code-Sync: One Codebase, Two Architectures
 
-Put simply, code-sync turns the existing code into code that works with the MPA.
+Put simply, code-sync turns the existing code into code that works with the MPA. It sounds simple, but the challenge was big. The UI library stayed React, but the framework we built on top of it went from SPA to MPA, and almost everything underneath changed with it:
 
-It sounds simple, but the challenge was big. Both sides were React, yet underneath almost everything changed:
-
-- **The design system** changed, because we upgraded it from v1 to v3 along the way. Major versions all round!
+- **The design system** changed, because we upgraded it from v1 to v3 along the way. Every one a major version!
 - **Every package** had to move to an ESM-friendly version.
 - **Internal packages**, like locale and Module Federation, all had to line up too.
 
-And all of it had to happen every single day.
+The infra team built the MPA infra and framework themselves. Code-sync's job was to make sure our product code moved over with it, every single day.
 
 How it works: code-sync copies the code from the main branch, then maps it onto the new versions according to targets we define. Its main engine is [jscodeshift](https://github.com/facebook/jscodeshift), which rewrites code through its AST rather than by find-and-replace on text.
 
@@ -47,7 +45,7 @@ flowchart TB
   Engine --> Out(["MPA code on the migration branch"])
 ```
 
-Code-sync really carried us, because a run takes only 2–3 minutes. We ran it every time a deployment finished, so the migration branch always followed the latest code and nobody had to stop working.
+Code-sync made all the difference, because a run takes only 2–3 minutes. We ran it every time a deployment finished, so the migration branch always followed the latest code and nobody had to stop working.
 
 ## An MPA Alone Wasn't Enough
 
@@ -55,13 +53,13 @@ The second problem: moving to an MPA didn't by itself bring the Manage Product p
 
 We also had to change how some critical components were written, so the other Core Web Vitals would be good too.
 
-After fixing them one by one, our local tests reached **1 second**. Great!
+After fixing them one by one, local testing reached **1 second**. Great!
 
 ## A Staged Rollout, Starting with Indonesia
 
 Because the scope was so big, we didn't deploy to every Southeast Asian region at once. We rolled out in stages, starting with Indonesia. Why? Because that's where most of the complaints came from.
 
-Once it was live, p75 was much better, but still at 4–5 seconds. Not on target yet.
+Once it was live, p75 was much better, but still at 4–5 seconds. That was to be expected: local testing ran on the office connection, while p75 in production comes from sellers' many networks and devices. Still, it wasn't on target yet.
 
 ## The APIs Were Called One After Another
 
@@ -118,7 +116,7 @@ flowchart TB
   end
 ```
 
-With this in place, p75 LCP held steady at **2–3 seconds**. Target achieved!
+With this in place, p75 LCP held steady under 3 seconds, in the **2–3 second** range. Target achieved!
 
 ## Wrapping Up
 

@@ -4,30 +4,28 @@ date: '2026-10-15 18:59:18'
 category: Development
 tags: ['performance', 'lcp', 'tiktok', 'mpa', 'architecture']
 thumbnail: '/images/posts/menurunkan-lcp-tiktok-seller-center-part-2-thumb.webp'
-description: 'Part 2: migrasi ke MPA tanpa code freeze dengan code-sync berbasis jscodeshift, rollout bertahap, prefetch data, sampai LCP p75 konsisten 2–3 detik.'
+description: 'Part 2: migrasi ke MPA tanpa code freeze dengan code-sync berbasis jscodeshift, rollout bertahap, prefetch data, sampai LCP p75 konsisten di bawah 3 detik.'
 ---
 
-Di [part 1](/blog/menurunkan-lcp-tiktok-seller-center-part-1), kita sampai di keputusan pindah ke MPA dan mulai migrasi. Part 2 ini soal sisanya: gimana migrasinya jalan tanpa code freeze sama sekali, kenapa pindah ke MPA aja ternyata belum cukup, dan gimana rollout bertahap akhirnya bikin LCP p75 TikTok Seller Center konsisten di 2–3 detik.
+Di [part 1](/blog/menurunkan-lcp-tiktok-seller-center-part-1), kita sampai di keputusan pindah ke MPA dan mulai migrasi. Part 2 ini soal sisanya: gimana migrasinya jalan tanpa code freeze sama sekali, kenapa pindah ke MPA aja ternyata belum cukup, dan gimana rollout bertahap akhirnya bikin LCP p75 TikTok Seller Center konsisten di bawah 3 detik.
 
 ## Migrasi Tanpa Code Freeze
 
-Salah satu bagian terberat dari migrasi ini: kita nggak boleh menghentikan product development sama sekali. Semua tim jalan seperti biasa, tanpa code freeze apa pun.
+Masalah pertama, dan salah satu yang paling berat: kita nggak boleh menghentikan product development sama sekali. Semua tim jalan seperti biasa, tanpa code freeze apa pun.
 
 Padahal, seperti di akhir part 1, repo yang saya pegang ada deployment setiap hari. Jadi kode di arsitektur lama terus berubah, sementara kita sedang memindahkannya ke arsitektur baru di branch lain.
 
-Akhirnya saya dan tim infra TikTok di China bikin tools untuk melakukan **code-sync**.
+Akhirnya saya bareng tim infra TikTok di China bikin tools untuk melakukan **code-sync**.
 
 ## Code-Sync: Satu Kode, Dua Arsitektur
 
-Simpelnya, code-sync mengubah kode yang sudah ada menjadi kode yang compatible dengan MPA.
-
-Kedengarannya sederhana, tapi tantangannya besar. Walaupun sama-sama React, isinya benar-benar berubah total:
+Simpelnya, code-sync mengubah kode yang sudah ada menjadi kode yang compatible dengan MPA. Kedengarannya sederhana, tapi tantangannya besar. Library UI-nya memang tetap React, tapi framework yang kita bangun di atasnya berganti dari SPA ke MPA, dan isi di dalamnya ikut berubah total:
 
 - **Design system** berubah, karena kita sekalian update dari v1 ke v3. Major version semua!
 - **Semua package** harus diganti ke versi yang ESM-friendly.
 - **Internal package**, seperti locale dan Module Federation, semuanya harus ikut align.
 
-Dan semua itu harus dilakukan setiap hari.
+Infra dan framework MPA-nya sendiri dikerjakan tim infra. Tugas code-sync memastikan kode produk kita ikut pindah ke sana, setiap hari.
 
 Cara kerjanya: code-sync meng-copy kode dari branch utama, lalu memetakan isinya ke versi baru sesuai target yang kita tentukan. Mesin utamanya [jscodeshift](https://github.com/facebook/jscodeshift), yang mengubah kode lewat AST, bukan cari-dan-ganti teks biasa.
 
@@ -53,13 +51,13 @@ Masalah kedua: pindah ke MPA nggak serta-merta bikin LCP halaman Manage Product 
 
 Kita juga perlu mengubah cara beberapa komponen kritis ditulis, supaya Core Web Vitals lainnya ikut bagus.
 
-Setelah kita perbaiki satu per satu, di local test kita bisa mencapai **1 detik**. Great!
+Setelah kita perbaiki satu per satu, di testing lokal kita bisa mencapai **1 detik**. Great!
 
 ## Rollout Bertahap, Mulai dari Indonesia
 
 Karena scope-nya besar sekali, kita nggak langsung deploy ke seluruh region SEA. Kita rollout bertahap, mulai dari Indonesia. Kenapa? Karena komplainnya paling banyak datang dari sana.
 
-Setelah naik, p75-nya jauh lebih bagus, tapi masih di angka 4–5 detik. Belum sesuai target.
+Setelah naik, p75-nya jauh lebih bagus, tapi masih di angka 4–5 detik. Wajar sih, testing lokal pakai koneksi kantor, sedangkan p75 di production datang dari jaringan dan device seller yang beragam. Tapi tetap aja, belum sesuai target.
 
 ## Ternyata API-nya Dipanggil Berurutan
 
@@ -116,7 +114,7 @@ flowchart TB
   end
 ```
 
-Dengan implementasi ini, LCP p75 konsisten di **2–3 detik**. Target achieved!
+Dengan implementasi ini, LCP p75 konsisten di bawah 3 detik, di kisaran **2–3 detik**. Target achieved!
 
 ## Penutup
 
