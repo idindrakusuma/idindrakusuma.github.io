@@ -15,6 +15,7 @@ type Shot = { src: string; alt: string };
  */
 export default function ImageLightbox() {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
   const [shots, setShots] = useState<Shot[]>([]);
   const [index, setIndex] = useState(0);
   const open = shots.length > 0;
@@ -40,7 +41,12 @@ export default function ImageLightbox() {
   useLayoutEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
+    if (open && !dialog.open) {
+      dialog.showModal();
+      // The dialog stays mounted, so autoFocus would have fired at hydration,
+      // long before this; showModal would then focus the first control (←).
+      closeRef.current?.focus();
+    }
     if (!open && dialog.open) dialog.close();
   }, [open]);
 
@@ -101,7 +107,7 @@ export default function ImageLightbox() {
           </div>
         </div>
       )}
-      <button type="button" onClick={close} aria-label="Close" autoFocus className="ik-lightbox-btn absolute top-4 right-4">
+      <button ref={closeRef} type="button" onClick={close} aria-label="Close" className="ik-lightbox-btn absolute top-4 right-4">
         ✕
       </button>
     </dialog>

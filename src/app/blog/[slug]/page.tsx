@@ -332,7 +332,8 @@ export default async function PostPage({ params }: PostPageProps) {
             floating button. */}
         {toc.length >= 2 && <FloatingTableOfContents items={toc} />}
 
-        <ImageLightbox />
+        {/* Only where there is an image to open: a text-only post ships none of it. */}
+        {/!\[[^\]]*\]\(/.test(body) && <ImageLightbox />}
 
         <Footer />
       </div>

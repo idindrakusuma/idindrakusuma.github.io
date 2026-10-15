@@ -29,16 +29,19 @@ export const mdxComponents = {
    * is known here — and an image missing from it fails the build rather than
    * shipping an unsized one.
    */
-  img: ({ src, alt }: ComponentProps<'img'>) => {
+  img: ({ src, alt, ...rest }: ComponentProps<'img'> & { 'data-in-link'?: unknown }) => {
     const href = typeof src === 'string' ? src : '';
     const size = dimensions[href];
     if (!size) {
       throw new Error(`No measurement for "${href}" — run \`pnpm assets:posts\``);
     }
+    const image = <Image src={href} alt={alt ?? ''} width={size.width} height={size.height} />;
+    // Inside a link the click is the link's (marked by lib/gallery.ts).
+    if (rest['data-in-link']) return image;
     // A button so it opens full size (ImageLightbox) from the keyboard too.
     return (
       <button type="button" className="ik-zoom" aria-label={alt ? `Open image: ${alt}` : 'Open image'}>
-        <Image src={href} alt={alt ?? ''} width={size.width} height={size.height} />
+        {image}
       </button>
     );
   },

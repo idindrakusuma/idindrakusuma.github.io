@@ -985,19 +985,22 @@ body {
   scrollbar-width: thin;
   padding-bottom: 6px;
 }
+.ik-prose .ik-gallery {
+  align-items: flex-start;
+}
 .ik-prose .ik-gallery .ik-zoom {
   flex: none;
-  max-width: 85%;
   scroll-snap-align: start;
 }
-/* Capped at 85% of the strip, so even a wide photo on a phone leaves the next
-   one in view; a capped photo is cropped at its sides rather than squashed. */
+/* Whole, never cropped — a screenshot loses its edges otherwise. Each image
+   keeps its own shape inside two caps: a shared height, and 80% of the screen
+   width, so even a wide photo on a phone leaves the next one in view. */
 .ik-prose .ik-gallery img {
-  height: clamp(220px, 46vw, 360px);
-  width: 100%;
-  max-width: none;
+  width: auto;
+  height: auto;
+  max-height: clamp(220px, 46vw, 360px);
+  max-width: min(80vw, 640px);
   margin: 0;
-  object-fit: cover;
 }
 
 /* The lightbox: the image on a dark backdrop, whichever theme is on. */
