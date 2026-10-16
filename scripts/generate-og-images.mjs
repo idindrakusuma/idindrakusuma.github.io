@@ -4,9 +4,10 @@
  *
  * A post brings its own thumbnail; these three pages used to fall back to the
  * profile photo, an 800×800 square that previews cropped to a face. Each is now
- * a 1200×630 card in the site's light palette: the page's own headline, a line
- * under it, the mark and the URL, and for /blog and /projects the page's own
- * illustration (assets/og/*-art.png, captured from the inline SVG).
+ * a 1200×630 card in the site's light palette: the page's own headline and
+ * something beside it — the hero's code card on the homepage, the page's own
+ * illustration on /blog and /projects (assets/og/*-art.png, captured from the
+ * inline SVG).
  *
  * Rendered with next/og like the post thumbnails, in the vendored faces. JPEG,
  * because WhatsApp will not show a WebP preview.
@@ -107,6 +108,36 @@ const pageCard = ({ eyebrow, first, second, lede, url, art, artWidth }) =>
     ]),
   ]);
 
+/**
+ * The homepage card's right half: the hero's own code card — the role, where,
+ * and since when — over two of the homepage's stats, so the card says what the
+ * page does rather than leaving the space to the glow.
+ */
+const codeCard = () =>
+  h('div', { flexDirection: 'column', width: 440, borderRadius: 24, background: '#ffffff', border: '2px solid #dde3ef', padding: '22px 26px 26px', boxShadow: '0 30px 60px -28px rgba(10,18,36,0.35)' }, [
+    h('div', { alignItems: 'center', gap: 9, marginBottom: 22 }, [
+      ...[A1, A2, '#c9cfdc'].map((c) => h('div', { width: 12, height: 12, borderRadius: 99, background: c }, [])),
+      h('div', { ...monoFace, fontSize: 16, color: FAINT, marginLeft: 10 }, 'indra.ts'),
+    ]),
+    ...[
+      ['role', "'Fullstack Engineer'"],
+      ['at', "'ByteDance'"],
+      ['previously', "'Tokopedia'"],
+      ['since', '2016'],
+    ].map(([key, value]) =>
+      h('div', { ...monoFace, fontSize: 20, marginBottom: 10 }, [h('span', { color: A1 }, `${key}:\u00a0`), h('span', { color: INK }, value)]),
+    ),
+    h('div', { gap: 12, marginTop: 12 }, [
+      ['100M+', 'monthly users'],
+      ['3×', 'faster loads'],
+    ].map(([value, label]) =>
+      h('div', { flex: 1, flexDirection: 'column', gap: 4, padding: '14px 16px', borderRadius: 16, background: '#f3f6fc', border: '1px solid #e2e8f5' }, [
+        h('div', { fontSize: 32, fontWeight: 700, letterSpacing: '-0.03em', backgroundImage: `linear-gradient(100deg, ${A1}, ${A3})`, backgroundClip: 'text', color: 'transparent' }, value),
+        h('div', { ...monoFace, fontSize: 14, color: FAINT }, label),
+      ]),
+    )),
+  ]);
+
 const artSize = async (file) => sharp(join(root, file)).metadata();
 const [blogMeta, projectsMeta] = await Promise.all([artSize('assets/og/blog-art.png'), artSize('assets/og/projects-art.png')]);
 
@@ -114,24 +145,25 @@ const { PROJECTS, CASE_STUDIES } = await loadSiteCounts();
 
 const cards = {
   home: frame([
-    h('div', { width: '100%', flexDirection: 'column', justifyContent: 'space-between' }, [
-      h('div', { justifyContent: 'space-between', alignItems: 'center' }, [
+    h('div', { width: '100%', alignItems: 'center', justifyContent: 'space-between' }, [
+      h('div', { flexDirection: 'column', justifyContent: 'space-between', height: '100%', width: 600 }, [
         img(mark, { width: 52, height: 51 }),
-        h('div', { ...monoFace, fontSize: 22, color: FAINT }, 'indrakusuma.dev'),
-      ]),
-      h('div', { flexDirection: 'column', fontSize: 78, fontWeight: 700, lineHeight: 1.04, letterSpacing: '-0.035em' }, [
-        h('div', {}, 'I build fast, scalable'),
-        h('div', {}, [gradient('web experiences.')]),
-      ]),
-      h('div', { alignItems: 'center', gap: 22 }, [
-        h('div', { width: 84, height: 84, borderRadius: 999, padding: 4, backgroundImage: `linear-gradient(135deg, ${A1}, ${A3})` }, [
-          img(avatar, { width: 76, height: 76, borderRadius: 999, objectFit: 'cover' }),
+        h('div', { flexDirection: 'column', fontSize: 64, fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.035em' }, [
+          h('div', {}, 'I build fast,'),
+          h('div', {}, 'scalable'),
+          h('div', {}, [gradient('web experiences.')]),
         ]),
-        h('div', { flexDirection: 'column', gap: 6 }, [
-          h('div', { fontSize: 30, fontWeight: 700 }, 'Indra Kusuma'),
-          h('div', { ...monoFace, fontSize: 20, color: MUTED }, 'Fullstack Engineer · ByteDance · Jakarta'),
+        h('div', { alignItems: 'center', gap: 20 }, [
+          h('div', { width: 80, height: 80, borderRadius: 999, padding: 4, backgroundImage: `linear-gradient(135deg, ${A1}, ${A3})` }, [
+            img(avatar, { width: 72, height: 72, borderRadius: 999, objectFit: 'cover' }),
+          ]),
+          h('div', { flexDirection: 'column', gap: 6 }, [
+            h('div', { fontSize: 29, fontWeight: 700 }, 'Indra Kusuma'),
+            h('div', { ...monoFace, fontSize: 19, color: MUTED }, 'indrakusuma.dev'),
+          ]),
         ]),
       ]),
+      codeCard(),
     ]),
   ]),
   blog: pageCard({
