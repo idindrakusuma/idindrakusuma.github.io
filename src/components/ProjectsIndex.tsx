@@ -2,12 +2,13 @@ import BlogBackdrop from '@/components/BlogBackdrop';
 import BlogChrome from '@/components/BlogChrome';
 import CaseStudyCard from '@/components/CaseStudyCard';
 import Footer from '@/components/Footer';
+import JsonLd from '@/components/JsonLd';
 import ProjectGallery from '@/components/ProjectGallery';
 import ProjectsFilter from '@/components/ProjectsFilter';
 import ProjectsIllustration from '@/components/ProjectsIllustration';
 import Reveal from '@/components/Reveal';
 import { getPosts } from '@/lib/posts';
-import { CASE_STUDIES, PROJECTS } from '@/lib/site-data';
+import { CASE_STUDIES, PROJECTS, SCHEMA_IDS, SITE } from '@/lib/site-data';
 
 /**
  * Every Project, each opening its detail as a modal, then every Case Study.
@@ -48,8 +49,31 @@ export default async function ProjectsIndex({ openSlug = null }: { openSlug?: st
     return `${row.n} — ${row.heading}`;
   };
 
+  // Only on /projects itself: /projects/{slug} renders this same page with a
+  // detail open, and is about that one Project rather than the collection.
+  const structuredData = openSlug
+    ? null
+    : {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        '@id': `${SITE.url}/projects/#page`,
+        name: `Projects — ${SITE.name}`,
+        description: 'Things built on the side — live, and yours to open and try.',
+        url: `${SITE.url}/projects/`,
+        author: { '@id': SCHEMA_IDS.person },
+        isPartOf: { '@id': SCHEMA_IDS.website },
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListElement: [
+            ...PROJECTS.map((project) => ({ name: project.name, description: project.description, url: `${SITE.url}/projects/${project.slug}/` })),
+            ...studies.map(({ study, post }) => ({ name: study.name, description: study.description, url: `${SITE.url}/blog/${post.slug}/` })),
+          ].map((item, i) => ({ '@type': 'ListItem', position: i + 1, ...item })),
+        },
+      };
+
   return (
     <>
+      {structuredData && <JsonLd data={structuredData} />}
       <BlogBackdrop />
       <div className="relative z-1">
         <BlogChrome back={{ href: '/', label: 'Back to site' }} trailing="Projects" />

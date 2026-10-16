@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
       creator: '@idindrakusuma',
       title: project.name,
       description: project.description,
-      images: [image],
+      images: [{ url: image, alt: project.name }],
     },
   };
 }

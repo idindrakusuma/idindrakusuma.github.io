@@ -5,9 +5,10 @@ import Contact from '@/components/Contact';
 import Experience from '@/components/Experience';
 import Footer from '@/components/Footer';
 import Hero from '@/components/Hero';
+import JsonLd from '@/components/JsonLd';
 import SiteChrome from '@/components/SiteChrome';
 import Skills from '@/components/Skills';
-import { SITE, SOCIALS } from '@/lib/site-data';
+import { SCHEMA_IDS, SITE, SOCIALS } from '@/lib/site-data';
 
 /**
  * Structured data for search engines: who the site is about, and that this is
@@ -19,7 +20,7 @@ const STRUCTURED_DATA = {
   '@graph': [
     {
       '@type': 'Person',
-      '@id': `${SITE.url}/#person`,
+      '@id': SCHEMA_IDS.person,
       name: SITE.name,
       url: `${SITE.url}/`,
       image: `${SITE.url}/profile.jpg`,
@@ -32,10 +33,10 @@ const STRUCTURED_DATA = {
     },
     {
       '@type': 'WebSite',
-      '@id': `${SITE.url}/#website`,
+      '@id': SCHEMA_IDS.website,
       name: SITE.name,
       url: `${SITE.url}/`,
-      author: { '@id': `${SITE.url}/#person` },
+      author: { '@id': SCHEMA_IDS.person },
       inLanguage: 'en',
     },
   ],
@@ -44,11 +45,7 @@ const STRUCTURED_DATA = {
 export default function Home() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        // `<` is escaped so no string in the data can close the script tag.
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA).replace(/</g, '\\u003c') }}
-      />
+      <JsonLd data={STRUCTURED_DATA} />
       <AuroraBackground />
       <div className="relative z-1">
         <SiteChrome />

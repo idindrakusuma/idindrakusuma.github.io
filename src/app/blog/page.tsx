@@ -5,11 +5,12 @@ import BlogIllustration from '@/components/BlogIllustration';
 import BlogChrome from '@/components/BlogChrome';
 import CategoryFilter from '@/components/CategoryFilter';
 import Footer from '@/components/Footer';
+import JsonLd from '@/components/JsonLd';
 import PostCard from '@/components/PostCard';
 import PopularPosts from '@/components/PopularPosts';
 import Reveal from '@/components/Reveal';
 import { CATEGORIES, getListedPosts } from '@/lib/posts';
-import { SITE } from '@/lib/site-data';
+import { SCHEMA_IDS, SITE } from '@/lib/site-data';
 
 export const metadata: Metadata = {
   title: `Blog — ${SITE.name}`,
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
     creator: '@idindrakusuma',
     title: `Blog — ${SITE.name}`,
     description: 'Tutorials, engineering notes and a few career stories — written mostly in Bahasa Indonesia.',
-    images: ['/og/blog.jpg'],
+    images: [{ url: '/og/blog.jpg', alt: `Blog — ${SITE.name}` }],
   },
 };
 
@@ -46,8 +47,29 @@ export default async function BlogIndex() {
   const posts = await getListedPosts();
   const used = CATEGORIES.filter((category) => posts.some((post) => post.category === category));
 
+  // The blog and the posts it lists, each pointing at its own article data.
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    '@id': `${SITE.url}/blog/#blog`,
+    name: `Blog — ${SITE.name}`,
+    description: 'Tutorials, engineering notes and a few career stories — written mostly in Bahasa Indonesia.',
+    url: `${SITE.url}/blog/`,
+    inLanguage: 'id',
+    author: { '@id': SCHEMA_IDS.person },
+    isPartOf: { '@id': SCHEMA_IDS.website },
+    blogPost: posts.map((post) => ({
+      '@type': 'BlogPosting',
+      '@id': `${SITE.url}/blog/${post.slug}/#article`,
+      headline: post.title,
+      url: `${SITE.url}/blog/${post.slug}/`,
+      datePublished: new Date(post.date).toISOString(),
+    })),
+  };
+
   return (
     <>
+      <JsonLd data={structuredData} />
       <BlogBackdrop />
       <div className="relative z-1">
         <BlogChrome back={{ href: '/', label: 'Back to site' }} trailing="Blog" />

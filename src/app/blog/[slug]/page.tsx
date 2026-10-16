@@ -13,12 +13,13 @@ import BlogIllustration from '@/components/BlogIllustration';
 import BlogChrome from '@/components/BlogChrome';
 import Footer from '@/components/Footer';
 import ImageLightbox from '@/components/ImageLightbox';
+import JsonLd from '@/components/JsonLd';
 import PostActions from '@/components/PostActions';
 import Reveal from '@/components/Reveal';
 import TableOfContents, { FloatingTableOfContents } from '@/components/TableOfContents';
 import { mdxComponents } from '@/components/mdx-components';
 import { formatDate, getNextPost, getPost, getPostBody, getPosts, getTranslations, summarise } from '@/lib/posts';
-import { SITE } from '@/lib/site-data';
+import { SCHEMA_IDS, SITE } from '@/lib/site-data';
 import { remarkMermaid } from '@/lib/mermaid';
 import { rehypeGallery } from '@/lib/gallery';
 import { rehypeTableLabels } from '@/lib/table-labels';
@@ -161,8 +162,38 @@ export default async function PostPage({ params }: PostPageProps) {
     },
   });
 
+  // An article, by the Person the homepage declares, on its WebSite. A post in
+  // two languages names the other as its translation, either way round.
+  const url = `${SITE.url}/blog/${slug}/`;
+  const image = shareImage(slug, post.thumbnail, post.title, post.draft)[0];
+  const original = translations[0];
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': `${url}#article`,
+    headline: post.title,
+    description: post.description ?? summarise(post.excerpt),
+    url,
+    mainEntityOfPage: url,
+    datePublished: new Date(post.date).toISOString(),
+    dateModified: new Date(post.updated ?? post.date).toISOString(),
+    inLanguage: post.lang,
+    articleSection: post.category,
+    ...(post.tags.length > 0 ? { keywords: post.tags.join(', ') } : {}),
+    ...(image ? { image: `${SITE.url}${image.url}` } : {}),
+    author: { '@id': SCHEMA_IDS.person, '@type': 'Person', name: SITE.name, url: `${SITE.url}/` },
+    publisher: { '@id': SCHEMA_IDS.person },
+    isPartOf: { '@id': SCHEMA_IDS.website },
+    ...(post.translationOf
+      ? { translationOfWork: { '@id': `${SITE.url}/blog/${original.slug}/#article` } }
+      : others.length > 0
+        ? { workTranslation: others.map((t) => ({ '@id': `${SITE.url}/blog/${t.slug}/#article` })) }
+        : {}),
+  };
+
   return (
     <>
+      <JsonLd data={structuredData} />
       <BlogBackdrop single />
       <div className="relative z-1">
         <BlogChrome back={{ href: '/blog', label: 'All writing' }} trailing="Blog" />

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     creator: '@idindrakusuma',
     title: `Projects — ${SITE.name}`,
     description: 'Things built on the side — live, and yours to open and try.',
-    images: ['/og/projects.jpg'],
+    images: [{ url: '/og/projects.jpg', alt: `Projects — ${SITE.name}` }],
   },
 };
 
