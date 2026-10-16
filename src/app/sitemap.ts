@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { getPosts, getTranslations } from '@/lib/posts';
+import { getPosts, getTranslations, postInstant } from '@/lib/posts';
 import { PROJECTS, SITE } from '@/lib/site-data';
 
 export const dynamic = 'force-static';
@@ -43,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const translations = await getTranslations(post);
         return {
           url: `${SITE.url}/blog/${post.slug}/`,
-          lastModified: new Date(post.updated ?? post.date),
+          lastModified: postInstant(post.updated ?? post.date),
           changeFrequency: 'yearly' as const,
           priority: 0.6,
           ...(translations.length > 1

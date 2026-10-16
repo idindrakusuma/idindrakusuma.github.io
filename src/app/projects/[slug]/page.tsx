@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import JsonLd from '@/components/JsonLd';
 import ProjectsIndex from '@/components/ProjectsIndex';
-import { findProject, PROJECTS, SITE } from '@/lib/site-data';
+import { findProject, PROJECTS, SCHEMA_IDS, SITE } from '@/lib/site-data';
 
 type ProjectPageProps = { params: Promise<{ slug: string }> };
 
@@ -45,6 +46,33 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
  */
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
-  if (!findProject(slug)) notFound();
-  return <ProjectsIndex openSlug={slug} />;
+  const project = findProject(slug);
+  if (!project) notFound();
+
+  // The one Project this address is about: what it is, when it began, what it
+  // is built with, and where it lives, made by the homepage's Person.
+  const url = `${SITE.url}/projects/${project.slug}/`;
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    '@id': `${url}#project`,
+    name: project.name,
+    description: project.description,
+    abstract: project.background.join(' '),
+    url,
+    mainEntityOfPage: url,
+    image: `${SITE.url}${project.image.replace(/\.webp$/, '.jpg')}`,
+    dateCreated: project.created,
+    keywords: [...project.stack, ...project.tools].join(', '),
+    sameAs: [project.href, ...(project.repo ? [project.repo] : [])],
+    creator: { '@id': SCHEMA_IDS.person, '@type': 'Person', name: SITE.name },
+    isPartOf: { '@id': SCHEMA_IDS.website },
+  };
+
+  return (
+    <>
+      <JsonLd data={structuredData} />
+      <ProjectsIndex openSlug={slug} />
+    </>
+  );
 }

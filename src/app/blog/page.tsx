@@ -9,13 +9,12 @@ import JsonLd from '@/components/JsonLd';
 import PostCard from '@/components/PostCard';
 import PopularPosts from '@/components/PopularPosts';
 import Reveal from '@/components/Reveal';
-import { CATEGORIES, getListedPosts } from '@/lib/posts';
-import { SCHEMA_IDS, SITE } from '@/lib/site-data';
+import { CATEGORIES, getListedPosts, postInstant } from '@/lib/posts';
+import { PAGES, SCHEMA_IDS, SITE } from '@/lib/site-data';
 
 export const metadata: Metadata = {
-  title: `Blog — ${SITE.name}`,
-  description:
-    'Tutorials, engineering notes and a few career stories — written mostly in Bahasa Indonesia.',
+  title: PAGES.blog.title,
+  description: PAGES.blog.description,
   alternates: { canonical: '/blog' },
   // Set in full, not left to the layout: Next merges metadata one top-level
   // key at a time, so a page without its own would show the homepage's card.
@@ -23,16 +22,16 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: SITE.name,
     url: `${SITE.url}/blog/`,
-    title: `Blog — ${SITE.name}`,
-    description: 'Tutorials, engineering notes and a few career stories — written mostly in Bahasa Indonesia.',
-    images: [{ url: '/og/blog.jpg', width: 1200, height: 630, alt: `Blog — ${SITE.name}` }],
+    title: PAGES.blog.title,
+    description: PAGES.blog.description,
+    images: [{ url: '/og/blog.jpg', width: 1200, height: 630, alt: PAGES.blog.title }],
   },
   twitter: {
     card: 'summary_large_image',
     creator: '@idindrakusuma',
-    title: `Blog — ${SITE.name}`,
-    description: 'Tutorials, engineering notes and a few career stories — written mostly in Bahasa Indonesia.',
-    images: [{ url: '/og/blog.jpg', alt: `Blog — ${SITE.name}` }],
+    title: PAGES.blog.title,
+    description: PAGES.blog.description,
+    images: [{ url: '/og/blog.jpg', alt: PAGES.blog.title }],
   },
 };
 
@@ -52,10 +51,9 @@ export default async function BlogIndex() {
     '@context': 'https://schema.org',
     '@type': 'Blog',
     '@id': `${SITE.url}/blog/#blog`,
-    name: `Blog — ${SITE.name}`,
-    description: 'Tutorials, engineering notes and a few career stories — written mostly in Bahasa Indonesia.',
+    name: PAGES.blog.title,
+    description: PAGES.blog.description,
     url: `${SITE.url}/blog/`,
-    inLanguage: 'id',
     author: { '@id': SCHEMA_IDS.person },
     isPartOf: { '@id': SCHEMA_IDS.website },
     blogPost: posts.map((post) => ({
@@ -63,7 +61,9 @@ export default async function BlogIndex() {
       '@id': `${SITE.url}/blog/${post.slug}/#article`,
       headline: post.title,
       url: `${SITE.url}/blog/${post.slug}/`,
-      datePublished: new Date(post.date).toISOString(),
+      datePublished: postInstant(post.date).toISOString(),
+      // Per post: the archive is mostly Indonesian, but not all of it.
+      inLanguage: post.lang,
     })),
   };
 

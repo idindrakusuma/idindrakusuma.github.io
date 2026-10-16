@@ -33,6 +33,21 @@ export const SCHEMA_IDS = {
   website: `${SITE.url}/#website`,
 } as const;
 
+/**
+ * The title and description of each index route, set once: the page metadata,
+ * its link-preview card and its structured data all read these.
+ */
+export const PAGES = {
+  blog: {
+    title: `Blog — ${SITE.name}`,
+    description: 'Tutorials, engineering notes and a few career stories — written mostly in Bahasa Indonesia.',
+  },
+  projects: {
+    title: `Projects — ${SITE.name}`,
+    description: 'Things built on the side — live, and yours to open and try.',
+  },
+} as const;
+
 export type Section = { id: string; label: string };
 
 /**
