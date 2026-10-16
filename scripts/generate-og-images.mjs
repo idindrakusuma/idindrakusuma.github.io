@@ -126,7 +126,7 @@ const codeCard = () =>
   h('div', { flexDirection: 'column', width: 440, borderRadius: 24, background: '#ffffff', border: '2px solid #dde3ef', padding: '22px 26px 26px', boxShadow: '0 30px 60px -28px rgba(10,18,36,0.35)' }, [
     h('div', { alignItems: 'center', gap: 9, marginBottom: 22 }, [
       ...[A1, A2, '#c9cfdc'].map((c) => h('div', { width: 12, height: 12, borderRadius: 99, background: c }, [])),
-      h('div', { ...monoFace, fontSize: 16, color: FAINT, marginLeft: 10 }, 'indra.ts'),
+      h('div', { ...monoFace, fontSize: 16, color: FAINT, marginLeft: 10 }, 'indrakusuma.md'),
     ]),
     ...[
       ['role', "'Senior Software Engineer'"],
