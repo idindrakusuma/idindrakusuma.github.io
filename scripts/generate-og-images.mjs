@@ -174,10 +174,14 @@ const cards = {
     h('div', { width: '100%', alignItems: 'center', justifyContent: 'space-between' }, [
       h('div', { flexDirection: 'column', justifyContent: 'space-between', height: '100%', width: 600 }, [
         img(mark, { width: 52, height: 51 }),
-        h('div', { flexDirection: 'column', fontSize: 64, fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.035em' }, [
-          h('div', {}, 'I build fast,'),
-          h('div', {}, 'scalable'),
-          h('div', {}, [gradient('web experiences.')]),
+        // Two lines and a line under them, the same shape as the blog and
+        // projects cards.
+        h('div', { flexDirection: 'column', gap: 22 }, [
+          h('div', { flexDirection: 'column', fontSize: 60, fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.035em' }, [
+            h('div', {}, 'I build fast, scalable'),
+            h('div', {}, [gradient('web experiences.')]),
+          ]),
+          h('div', { fontSize: 25, color: MUTED, lineHeight: 1.35 }, `${new Date().getFullYear() - 2016}+ years building end-to-end, from top-traffic commerce frontends to AI-native tooling.`),
         ]),
         h('div', { alignItems: 'center', gap: 20 }, [
           h('div', { width: 80, height: 80, borderRadius: 999, padding: 4, backgroundImage: `linear-gradient(135deg, ${A1}, ${A3})` }, [
