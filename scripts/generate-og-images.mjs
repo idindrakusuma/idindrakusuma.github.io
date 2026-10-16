@@ -5,7 +5,7 @@
  * A post brings its own thumbnail; these three pages used to fall back to the
  * profile photo, an 800×800 square that previews cropped to a face. Each is now
  * a 1200×630 card in the site's light palette: the page's own headline and
- * something beside it — the hero's code card on the homepage, the page's own
+ * something beside it — the hero's code card and the company logos on the homepage, the page's own
  * illustration on /blog and /projects (assets/og/*-art.png, captured from the
  * inline SVG).
  *
@@ -108,9 +108,18 @@ const pageCard = ({ eyebrow, first, second, lede, url, art, artWidth }) =>
     ]),
   ]);
 
+/** Every company on the Experience timeline, newest first, as on the homepage. */
+const COMPANIES = ['bytedance', 'tokopedia', 'invitato', 'ruangguru', 'suara-merdeka', 'udinus'];
+const companyLogos = await Promise.all(
+  COMPANIES.map(async (name) => {
+    const file = join(root, 'public', 'logos', 'companies', `${name}.webp`);
+    return `data:image/png;base64,${(await sharp(file).resize(96, 96, { fit: 'contain', background: '#ffffff' }).png().toBuffer()).toString('base64')}`;
+  }),
+);
+
 /**
- * The homepage card's right half: the hero's own code card — the role, where,
- * and since when — over two of the homepage's stats, so the card says what the
+ * The homepage card's right half: the hero's code card — the role and where —
+ * over the logos of every company on the timeline, so the card says what the
  * page does rather than leaving the space to the glow.
  */
 const codeCard = () =>
@@ -120,20 +129,15 @@ const codeCard = () =>
       h('div', { ...monoFace, fontSize: 16, color: FAINT, marginLeft: 10 }, 'indra.ts'),
     ]),
     ...[
-      ['role', "'Fullstack Engineer'"],
+      ['role', "'Senior Software Engineer'"],
       ['at', "'ByteDance'"],
-      ['previously', "'Tokopedia'"],
-      ['since', '2016'],
     ].map(([key, value]) =>
       h('div', { ...monoFace, fontSize: 20, marginBottom: 10 }, [h('span', { color: A1 }, `${key}:\u00a0`), h('span', { color: INK }, value)]),
     ),
-    h('div', { gap: 12, marginTop: 12 }, [
-      ['100M+', 'monthly users'],
-      ['3×', 'faster loads'],
-    ].map(([value, label]) =>
-      h('div', { flex: 1, flexDirection: 'column', gap: 4, padding: '14px 16px', borderRadius: 16, background: '#f3f6fc', border: '1px solid #e2e8f5' }, [
-        h('div', { fontSize: 32, fontWeight: 700, letterSpacing: '-0.03em', backgroundImage: `linear-gradient(100deg, ${A1}, ${A3})`, backgroundClip: 'text', color: 'transparent' }, value),
-        h('div', { ...monoFace, fontSize: 14, color: FAINT }, label),
+    h('div', { ...monoFace, fontSize: 15, color: FAINT, marginTop: 14, marginBottom: 12 }, '// worked with'),
+    h('div', { flexWrap: 'wrap', gap: 12 }, companyLogos.map((logo) =>
+      h('div', { width: 52, height: 52, borderRadius: 14, background: '#ffffff', border: '1px solid #e2e8f5', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }, [
+        img(logo, { width: 40, height: 40, borderRadius: 8 }),
       ]),
     )),
   ]);
