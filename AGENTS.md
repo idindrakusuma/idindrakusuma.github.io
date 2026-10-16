@@ -4,7 +4,7 @@ indrakusuma.dev: Indra Kusuma's personal site — a homepage, a blog and a
 projects page. Next.js 16 App Router, statically exported to `out/` and served
 by Netlify. The only server code is the blog's clap counter, as Netlify
 functions. Setup, commands and the long-form reasons live in
-[README.md](./README.md).
+[docs/](./docs/development.md); the README says what the site is.
 
 ## Next.js 16
 
@@ -61,8 +61,8 @@ holds meanings only, never implementation.
 
 Posts are `content/posts/*.mdx`, written in Bahasa Indonesia on an otherwise
 English site. Start one with the `write-a-article` skill; draw a missing
-thumbnail with the `generate-thumbnail` skill. The README's Blog section holds
-the frontmatter contract, which the build enforces. A post in two languages is
+thumbnail with the `generate-thumbnail` skill. [docs/blog.md](./docs/blog.md)
+holds the frontmatter contract, which the build enforces. A post in two languages is
 two files at two URLs, the translation naming the original with
 `translationOf` — never both languages in one file.
 
@@ -77,7 +77,7 @@ was a one-time migration — running it again overwrites hand edits to posts.
 
 `netlify/functions/` serves `/api/claps`; the rules live in
 `netlify/claps/core.ts`, covered by `pnpm test`. Limits and the `CLAP_SALT`
-secret are explained in the README.
+secret are explained in [docs/blog.md](./docs/blog.md).
 
 ## Done
 

@@ -1,282 +1,50 @@
 # indrakusuma.dev
 
-Personal site of Indra Kusuma. Next.js 15 App Router with `output: 'export'`, so
-the whole site builds to static HTML for GitHub Pages. Tailwind v4 over CSS custom
-properties, TypeScript strict. Fonts, icons and images are self-hosted; the only
-third-party runtime code is the analytics tag.
+The personal website of **Indra Kusuma**, a fullstack engineer in Jakarta:
+who he is, what he has worked on, and what he writes. Live at
+[indrakusuma.dev](https://indrakusuma.dev).
 
-[CONTEXT.md](./CONTEXT.md) defines the domain terms — Section, Marquee, Post — and
-is the place to look before naming anything new.
+## What's on it
 
-## Setup
+**Homepage.** One page in a few sections: an introduction with the headline
+numbers, the experience timeline company by company, the capabilities behind
+the work, awards, and how to get in touch.
+
+**Blog.** Tutorials, engineering notes and career stories, mostly in Bahasa
+Indonesia, at [/blog](https://indrakusuma.dev/blog).
+
+- Filter by category, with the most-clapped posts beside the list.
+- Each article has a table of contents, highlighted code, diagrams, and photo
+  galleries that open full size.
+- Readers can clap for a post and share it.
+- A post can come in two languages, each at its own URL and linked to the
+  other.
+
+**Projects.** Things built on the side, like the kids' game collection
+[Taman Bermain](https://mini-games.indrakusuma.dev), each with a detail view.
+Below them are case studies: work done inside a company, told by a blog post
+with the number it moved. At [/projects](https://indrakusuma.dev/projects).
+
+**Throughout.** Light and dark themes that follow the system until you choose,
+smooth transitions between pages, and a designed link preview for every page
+and post.
+
+## Running it
 
 ```bash
-corepack enable   # pins pnpm to the version in `packageManager`
+corepack enable
 pnpm install
+pnpm dev      # http://localhost:3000
+pnpm build    # static site into out/
 ```
 
-pnpm is not a preference here — `preinstall` refuses any other package manager,
-and `.nvmrc` pins Node. Both are there because `packageManager` alone declared
-pnpm for months while the committed lockfile was npm's.
+## Documentation
 
-## Commands
-
-| | |
-| --- | --- |
-| `pnpm dev` | Dev server on :3000 |
-| `pnpm build` | Static export into `out/` |
-| `pnpm lint` | oxlint |
-| `pnpm typecheck` | `tsc --noEmit` |
-| `pnpm test` | Clap counter rules |
-| `pnpm assets` | Rebuild every generated asset |
-| `pnpm new-post` | Scaffold a new blog post |
-| `pnpm assets:posts` | Vendor blog images and measure them |
-| `pnpm assets:thumbnail` | Draw a thumbnail for a post that has no image |
-| `pnpm assets:og` | Draw the link-preview cards for `/`, `/blog` and `/projects` (also run by `pnpm build`) |
-
-## Linting
-
-[oxlint](https://oxc.rs) replaces ESLint here, configured in `.oxlintrc.json`
-with the `nextjs`, `react`, `jsx-a11y`, `import` and `typescript` plugins.
-Coverage was checked rule by rule against the `next/core-web-vitals` config it
-replaced: 68 of its 71 active rules have an oxlint equivalent — including all 21
-`@next/next` rules, one for one — and the three that do not are inert here
-(`jsx-uses-react` and `jsx-uses-vars` belong to the old JSX transform,
-`require-render-return` to class components).
-
-`rules-of-hooks` is listed explicitly in `rules` because it is not in oxlint's
-default `correctness` category. Without that line only `exhaustive-deps` fires,
-which is the more forgiving half of the pair — verified both ways.
-
-Linting is a build step (`oxlint --deny-warnings && next build`) rather than
-something Next runs for us, so it still gates the Netlify deploy now that
-`next build` no longer lints. Warnings are fatal: a gate that only reports is a
-gate nobody reads.
-
-One suppression, in `.oxlintrc.json` with the reason next to it: `Reveal.tsx`
-passes a ref object into `createElement` (it never reads `.current`) and sets
-state in an effect as an `IntersectionObserver` fallback.
-
-## Layout
-
-```
-src/
-  app/          Routes. layout.tsx, page.tsx, not-found.tsx, blog/, projects/,
-                globals.css (tokens + keyframes), robots.ts, sitemap.ts, icons
-  components/   Markup — one file per Section, plus shared pieces
-  hooks/        React and DOM glue
-  lib/          Framework-free logic and content
-                site-data.ts · marquee.ts · posts.ts
-content/posts/  Blog posts as MDX — the source of truth
-scripts/        Asset generators
-public/         Generated assets, _redirects, CNAME, .nojekyll
-assets/         Masters — never served, only built from
-```
-
-The three `src/` layers are ordered by what each is allowed to touch: `lib/` uses
-neither React nor the DOM, `hooks/` adds both, `components/` adds markup.
-Dependencies only ever point that way. The marquee spans all three and is the
-worked example — geometry in `lib/marquee.ts`, DOM work in `hooks/useMarquee.ts`,
-and a caller in `components/` that supplies nothing but rendering.
-
-To change a job, an award or a capability, edit `src/lib/site-data.ts` only.
-
-## Blog
-
-31 posts, migrated out of the Hexo blog that used to live on this repo's
-`source-code` branch. `content/posts/*.mdx` is the source of truth; `lib/posts.ts`
-reads it at build time, and `sitemap.ts` and the redirects read the same function,
-so nothing can be reachable but unlisted.
-
-The migration is recorded rather than remembered:
-
-```bash
-node scripts/migrate-posts.mjs   # one-time: source-code branch → content/posts
-pnpm assets:posts                # remote images → public/images/posts, rewrites the MDX
-pnpm assets:redirects            # old Hexo permalinks → public/_redirects
-```
-
-`migrate-posts.mjs` is deliberately **not** in `pnpm assets`: content/posts is
-hand-editable now, and re-running would discard those edits. It repairs what Hexo
-never validated — single-digit months, an impossible `13:05:97` — and maps Hexo's
-six categories onto the five the design filters on, throwing on anything it does
-not recognise.
-
-`assets:posts` is safe to re-run: it fetches only URLs that are still remote, and
-measures every image into `public/images/posts/manifest.json`. Markdown carries no
-image dimensions, so the article reads them from there — an image missing from the
-manifest fails the build rather than shipping a layout shift.
-
-### Writing a new post
-
-```bash
-pnpm new-post "Judul Tulisan" --category Development
-```
-
-That writes `content/posts/<slug>.mdx` with the frontmatter filled in and
-`draft: true`, and prints what is left to do. `--slug` overrides the URL when the
-title makes a poor one. Inside Claude Code, `/write-a-article` does the same and
-then helps write.
-
-**Drafts** are served by `pnpm dev` at their real URL and skipped by
-`pnpm build`, so a post can exist and be previewed before it has a thumbnail —
-which is what would otherwise block the build the moment the file appeared. (A
-draft missing from `dev` usually means a `.next` left by a production build:
-`rm -rf .next`.)
-
-**To publish:** set `thumbnail`, add `tags` if you want them, delete
-`draft: true`.
-
-A post with no image of its own can have one drawn for it:
-
-```bash
-pnpm assets:thumbnail <slug>
-```
-
-It renders the title and category over the brand gradient in the site's own
-faces, writes `public/images/posts/<slug>-thumb.webp`, and points the post at it.
-Drawn at the index card's 16/11 with padding that keeps everything inside a
-social card's 1.91:1 crop too, so the same file serves both. It refuses to
-overwrite a thumbnail that is already set.
-
-`next/og` does the rendering — satori underneath, which emits text as vector
-paths, so the result does not depend on the fonts of whatever machine runs it.
-The two faces it needs are vendored under `assets/fonts/` (OFL); see the README
-there for how they were obtained and why they are static instances. Four fields are required of a published post, and getting one
-wrong stops the build and names the file:
-
-```yaml
----
-title: 'Judul Tulisan'
-date: '2026-08-29'                 # anything Date can parse
-category: Development              # Development · Story · Tutorial · Kuliah · Tips
-thumbnail: '/images/posts/x.webp'  # or a remote URL, then `pnpm assets:posts`
----
-```
-
-**Images.** Every image opens full size on a click. Two or more images on
-consecutive lines (blank lines between, nothing else) become one gallery that
-scrolls sideways, and the full-size view steps through it; a single image stays
-full width. Nothing to write but the images — `lib/gallery.ts` groups them at
-build time.
-
-**A post in two languages** is two files, one URL each. The original keeps the
-normal frontmatter; the translation adds `lang` and names the original:
-
-```yaml
-lang: en
-translationOf: menurunkan-lcp-tiktok-seller-center-part-1
-```
-
-Each page is canonical to itself, both carry `hreflang` alternates (in the
-`<head>` and the sitemap, with the original as `x-default`), and each links to
-the other in its own language. The index lists only the original. A
-translation naming a missing post, another translation, or a post in the same
-language fails the build.
-
-`excerpt` and `readingMinutes` are optional — without them the first paragraph
-becomes the excerpt and the reading time is counted from the body. Write them
-only to override.
-
-Nothing else to run. `legacyPath` belongs to the migrated posts alone, so a new
-post gets no redirect; the index, the sitemap and the article's "next" link all
-read the same `getPosts`, so they pick it up on the next build.
-
-Code fences are highlighted by Shiki through `rehype-pretty-code`, at build time
-— the pages are static, so no highlighter reaches the browser. Both themes are
-written onto every token as CSS variables and `globals.css` picks one from
-`data-theme`, which is how a code block re-colours on the theme toggle without a
-second render. The block keeps the design's `--code` surface rather than the
-theme's own, and a fence with no language is left as plain monospace.
-
-Posts are in Bahasa Indonesia on an otherwise English site; each article carries
-`lang="id"`.
-
-### Claps and sharing
-
-The end of every post has a Clap button and a Share button (`PostActions.tsx`).
-Share needs no server: the device's share sheet where there is one, otherwise
-copy the link. Claps are the one part of the site that runs on a server — two
-Netlify functions storing counts in Netlify Blobs:
-
-| | |
-| --- | --- |
-| `/api/claps` (`netlify/functions/claps.ts`) | `GET ?slug=` reads a post's claps, `POST` adds to them |
-| `/api/claps/top` (`netlify/functions/claps-top.ts`) | The most-clapped posts, cached at the edge for five minutes |
-
-Their rules live in `netlify/claps/core.ts` and are tested by `pnpm test`.
-
-The repository is public, so the limits hold without being secret: 10 claps per
-visitor per post (an IPv6 visitor counts per /64), 100 claps per post per hour
-from everyone, and a Netlify rate limit of 30 requests a minute per IP. A
-visitor is a salted hash of their address, never the address itself.
-
-Every deploy — production and deploy previews alike — reads and writes the one
-production store, so a preview shows the real counts and a clap given there is
-real. That is why **`CLAP_SALT`** must be set, to the same value, for both the
-production and deploy-preview contexts (a secret, functions scope, under the
-site's environment variables in Netlify): a preview salted differently would
-treat every visitor as new. A context without it can read counts but refuses
-to add any.
-
-### Beside the posts
-
-On wide screens the blog index's sidebar is **Popular posts**
-(`PopularPosts.tsx`): the most-clapped posts from `/api/claps/top`, topped up
-with the newest while fewer than five have claps. Claps decide the order only;
-the list shows no counts. The static HTML carries the
-newest five, so the list reads — at the same height — before the ranking
-arrives or if it never does.
-
-An article's sidebar is its **table of contents** (`TableOfContents.tsx`): its
-`##` and `###` headings, the one being read highlighted. The ids and the list
-come from the same pass while the post compiles (`src/lib/toc.ts`), so a link
-cannot point at a heading that is not there. A post with fewer than two
-headings leaves the sidebar empty.
-
-## Theming
-
-`data-theme` on `<html>` selects the palette. Tokens live in `globals.css` and
-reach Tailwind through `@theme inline`, so `bg-surface` / `text-muted` /
-`border-line` re-theme themselves. An inline script in `layout.tsx` applies the
-stored choice — or the OS preference when there is none — before first paint, so
-there is no flash. The nav toggle writes `localStorage.ik-theme`; until someone
-toggles it, the site keeps following the OS.
-
-## Assets
-
-Everything under `public/logos/`, `public/profile.*`, `public/logo-*.webp` and
-`src/app/{icon,icon1,apple-icon}.png` is generated from a committed master in
-`assets/`. Both sides are in git, so `pnpm build` never needs these — re-run
-after replacing a master:
-
-```bash
-pnpm assets            # all of them, in order
-
-pnpm assets:logos      # assets/logos/* → public/logos/companies
-pnpm assets:profile    # assets/profile-source.png → public/profile.{webp,jpg}
-pnpm assets:favicon    # assets/favicon-source.png → src/app/{icon,icon1,apple-icon}.png
-pnpm assets:mark       # assets/logo-{light,dark}-source.png → public/logo-{light,dark}.webp
-```
-
-They are deterministic: `pnpm assets` on an unchanged tree leaves `git status`
-clean, so an unexpected diff means a master actually moved.
-
-**Company logos.** Drop the image in `assets/logos/` named after the company and
-run `pnpm assets:logos`. Badges are 40 CSS px, which is unforgiving, so each
-source is classified and treated accordingly:
-
-| Source | Detected by | Treatment |
-| --- | --- | --- |
-| Mark on a white card | Light corner pixel | White trimmed off, consistent margin added back |
-| Full-bleed brand tile | Dark or coloured corner pixel | Left alone to fill the badge edge to edge |
-| Horizontal wordmark | Trimmed aspect ratio > 2 | Side margin dropped to use the full width |
-
-**Logo mark.** Ships as two artworks rather than one file recoloured by CSS, each
-with its own art-directed gradients. The masters differ in canvas size and
-padding, so `assets:mark` trims each to its artwork and letterboxes both into one
-shared box — otherwise the mark would shift and resize on every theme change.
-`.ik-mark` paints the result as a background, so only the variant matching
-`data-theme` is ever fetched.
-
-Each script's header documents the rest of its reasoning.
+- [docs/development.md](./docs/development.md): the stack, setup, commands,
+  code layout, linting and theming.
+- [docs/blog.md](./docs/blog.md): writing and publishing posts, images,
+  translations, claps and the blog's sidebars.
+- [docs/assets.md](./docs/assets.md): generated assets, such as logos, the
+  mark, post thumbnails and link-preview cards.
+- [CONTEXT.md](./CONTEXT.md): the words the code and its docs use.
+- [AGENTS.md](./AGENTS.md): working notes for coding agents.
