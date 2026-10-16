@@ -14,6 +14,8 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const project = findProject((await params).slug);
   if (!project) return {};
+  // The JPEG copy beside the WebP: WhatsApp will not show a WebP preview.
+  const image = project.image.replace(/\.webp$/, '.jpg');
   return {
     title: `${project.name} — Projects — ${SITE.name}`,
     description: project.description,
@@ -23,7 +25,15 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
       description: project.description,
       url: `${SITE.url}/projects/${project.slug}/`,
       siteName: SITE.name,
-      images: [{ url: project.image, width: 1200, height: 630 }],
+      images: [{ url: image, width: 1200, height: 630, alt: project.name }],
+    },
+    // In full, as on /projects: otherwise it inherits the homepage's card.
+    twitter: {
+      card: 'summary_large_image',
+      creator: '@idindrakusuma',
+      title: project.name,
+      description: project.description,
+      images: [image],
     },
   };
 }

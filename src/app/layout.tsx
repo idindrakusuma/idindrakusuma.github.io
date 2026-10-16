@@ -50,14 +50,16 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     title: `${SITE.name} — ${SITE.role}`,
     description: SITE.description,
-    images: [{ url: '/profile.jpg', width: 800, height: 800, alt: SITE.name }],
+    // Drawn by scripts/generate-og-images.mjs. Routes that set their own
+    // (/blog, /projects, every post) replace it; any other inherits it.
+    images: [{ url: '/og/home.jpg', width: 1200, height: 630, alt: `${SITE.name} — ${SITE.role}` }],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     creator: '@idindrakusuma',
     title: `${SITE.name} — ${SITE.role}`,
     description: SITE.description,
-    images: ['/profile.jpg'],
+    images: ['/og/home.jpg'],
   },
 };
 

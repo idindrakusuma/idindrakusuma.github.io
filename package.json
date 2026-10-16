@@ -6,12 +6,12 @@
   "scripts": {
     "preinstall": "node scripts/only-pnpm.mjs",
     "dev": "next dev",
-    "build": "oxlint --deny-warnings && next build",
+    "build": "oxlint --deny-warnings && node scripts/generate-og-images.mjs && next build",
     "start": "next start",
     "lint": "oxlint --deny-warnings",
     "typecheck": "tsc --noEmit",
     "new-post": "node scripts/new-post.mjs",
-    "assets": "pnpm assets:logos && pnpm assets:profile && pnpm assets:favicon && pnpm assets:mark && pnpm assets:posts && pnpm assets:redirects",
+    "assets": "pnpm assets:logos && pnpm assets:profile && pnpm assets:favicon && pnpm assets:mark && pnpm assets:posts && pnpm assets:redirects && pnpm assets:og",
     "assets:logos": "node scripts/prepare-company-logos.mjs",
     "assets:profile": "node scripts/optimize-profile.mjs",
     "assets:favicon": "node scripts/generate-favicon.mjs",
@@ -19,6 +19,7 @@
     "assets:posts": "node scripts/prepare-post-images.mjs",
     "assets:thumbnail": "node scripts/generate-post-thumbnail.mjs",
     "assets:redirects": "node scripts/generate-redirects.mjs",
+    "assets:og": "node scripts/generate-og-images.mjs",
     "test": "node --experimental-strip-types --no-warnings --test netlify/claps/*.test.mts"
   },
   "dependencies": {

@@ -32,6 +32,7 @@ pnpm for months while the committed lockfile was npm's.
 | `pnpm new-post` | Scaffold a new blog post |
 | `pnpm assets:posts` | Vendor blog images and measure them |
 | `pnpm assets:thumbnail` | Draw a thumbnail for a post that has no image |
+| `pnpm assets:og` | Draw the link-preview cards for `/`, `/blog` and `/projects` (also run by `pnpm build`) |
 
 ## Linting
 
