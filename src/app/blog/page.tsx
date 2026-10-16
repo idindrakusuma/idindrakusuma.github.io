@@ -16,6 +16,23 @@ export const metadata: Metadata = {
   description:
     'Tutorials, engineering notes and a few career stories — written mostly in Bahasa Indonesia.',
   alternates: { canonical: '/blog' },
+  // Set in full, not left to the layout: Next merges metadata one top-level
+  // key at a time, so a page without its own would show the homepage's card.
+  openGraph: {
+    type: 'website',
+    siteName: SITE.name,
+    url: `${SITE.url}/blog/`,
+    title: `Blog — ${SITE.name}`,
+    description: 'Tutorials, engineering notes and a few career stories — written mostly in Bahasa Indonesia.',
+    images: [{ url: '/og/blog.jpg', width: 1200, height: 630, alt: `Blog — ${SITE.name}` }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    creator: '@idindrakusuma',
+    title: `Blog — ${SITE.name}`,
+    description: 'Tutorials, engineering notes and a few career stories — written mostly in Bahasa Indonesia.',
+    images: ['/og/blog.jpg'],
+  },
 };
 
 /**
