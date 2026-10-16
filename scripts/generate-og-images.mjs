@@ -108,18 +108,40 @@ const pageCard = ({ eyebrow, first, second, lede, url, art, artWidth }) =>
     ]),
   ]);
 
-/** Every company on the Experience timeline, newest first, as on the homepage. */
-const COMPANIES = ['bytedance', 'tokopedia', 'invitato', 'ruangguru', 'suara-merdeka', 'udinus'];
+/**
+ * The companies on the homepage card, newest first. ByteDance and TikTok Shop
+ * are one employer on the timeline but two names a reader knows; the
+ * university is left off, as education rather than a company.
+ */
+const COMPANIES = ['bytedance', 'tiktok', 'tokopedia', 'invitato', 'ruangguru', 'suara-merdeka'];
+
+/**
+ * TikTok has no logo in public/logos (the timeline shows ByteDance's), so its
+ * mark is drawn from assets/logos/tiktok.svg — Simple Icons, CC0 — in white on
+ * the brand's black tile.
+ */
+async function tiktokLogo() {
+  const path = (await readFile(join(root, 'assets', 'logos', 'tiktok.svg'), 'utf8')).match(/ d="([^"]+)"/)[1];
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="-6 -6 36 36"><rect x="-6" y="-6" width="36" height="36" fill="#000"/><path d="${path}" fill="#fff"/></svg>`;
+  return sharp(Buffer.from(svg)).png().toBuffer();
+}
+
 const companyLogos = await Promise.all(
   COMPANIES.map(async (name) => {
-    const file = join(root, 'public', 'logos', 'companies', `${name}.webp`);
-    return `data:image/png;base64,${(await sharp(file).resize(96, 96, { fit: 'contain', background: '#ffffff' }).png().toBuffer()).toString('base64')}`;
+    const png =
+      name === 'tiktok'
+        ? await tiktokLogo()
+        : await sharp(join(root, 'public', 'logos', 'companies', `${name}.webp`))
+            .resize(96, 96, { fit: 'contain', background: '#ffffff' })
+            .png()
+            .toBuffer();
+    return `data:image/png;base64,${png.toString('base64')}`;
   }),
 );
 
 /**
  * The homepage card's right half: the hero's code card — the role and where —
- * over the logos of every company on the timeline, so the card says what the
+ * over the logos of the companies worked with, so the card says what the
  * page does rather than leaving the space to the glow.
  */
 const codeCard = () =>
