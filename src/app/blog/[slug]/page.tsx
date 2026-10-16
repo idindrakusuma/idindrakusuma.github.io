@@ -13,12 +13,13 @@ import BlogIllustration from '@/components/BlogIllustration';
 import BlogChrome from '@/components/BlogChrome';
 import Footer from '@/components/Footer';
 import ImageLightbox from '@/components/ImageLightbox';
+import JsonLd from '@/components/JsonLd';
 import PostActions from '@/components/PostActions';
 import Reveal from '@/components/Reveal';
 import TableOfContents, { FloatingTableOfContents } from '@/components/TableOfContents';
 import { mdxComponents } from '@/components/mdx-components';
-import { formatDate, getNextPost, getPost, getPostBody, getPosts, getTranslations, summarise } from '@/lib/posts';
-import { SITE } from '@/lib/site-data';
+import { formatDate, getNextPost, getPost, getPostBody, getPosts, getTranslations, postDescription, postInstant } from '@/lib/posts';
+import { SCHEMA_IDS, SITE } from '@/lib/site-data';
 import { remarkMermaid } from '@/lib/mermaid';
 import { rehypeGallery } from '@/lib/gallery';
 import { rehypeTableLabels } from '@/lib/table-labels';
@@ -63,7 +64,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   const post = await getPost(slug);
   if (!post) return {};
 
-  const description = post.description ?? summarise(post.excerpt);
+  const description = postDescription(post);
   const images = shareImage(slug, post.thumbnail, post.title, post.draft);
   // Each language is its own URL and canonical to itself; hreflang tells search
   // engines the others exist, with the original as x-default.
@@ -91,8 +92,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
       ...(others.length > 0 ? { alternateLocale: others.map((t) => ogLocale(t.lang)) } : {}),
       title: post.title,
       description,
-      publishedTime: new Date(post.date).toISOString(),
-      ...(post.updated ? { modifiedTime: new Date(post.updated).toISOString() } : {}),
+      publishedTime: postInstant(post.date).toISOString(),
+      ...(post.updated ? { modifiedTime: postInstant(post.updated).toISOString() } : {}),
       images,
     },
     // Set in full, not left to the layout: Next merges metadata one top-level
@@ -161,8 +162,40 @@ export default async function PostPage({ params }: PostPageProps) {
     },
   });
 
+  // An article, by the Person the homepage declares, on its WebSite. A post in
+  // two languages names the other as its translation, either way round.
+  const url = `${SITE.url}/blog/${slug}/`;
+  const image = shareImage(slug, post.thumbnail, post.title, post.draft)[0];
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': `${url}#article`,
+    headline: post.title,
+    description: postDescription(post),
+    url,
+    mainEntityOfPage: url,
+    datePublished: postInstant(post.date).toISOString(),
+    dateModified: postInstant(post.updated ?? post.date).toISOString(),
+    inLanguage: post.lang,
+    articleSection: post.category,
+    ...(post.tags.length > 0 ? { keywords: post.tags.join(', ') } : {}),
+    ...(image ? { image: `${SITE.url}${image.url}` } : {}),
+    // The id ties it to the homepage's Person; the name rides along because
+    // Google reads an article's author name from the article itself and does
+    // not follow the id to find it.
+    author: { '@id': SCHEMA_IDS.person, '@type': 'Person', name: SITE.name },
+    publisher: { '@id': SCHEMA_IDS.person },
+    isPartOf: { '@id': SCHEMA_IDS.website },
+    ...(post.translationOf
+      ? { translationOfWork: { '@id': `${SITE.url}/blog/${post.translationOf}/#article` } }
+      : others.length > 0
+        ? { workTranslation: others.map((t) => ({ '@id': `${SITE.url}/blog/${t.slug}/#article` })) }
+        : {}),
+  };
+
   return (
     <>
+      <JsonLd data={structuredData} />
       <BlogBackdrop single />
       <div className="relative z-1">
         <BlogChrome back={{ href: '/blog', label: 'All writing' }} trailing="Blog" />
@@ -198,7 +231,7 @@ export default async function PostPage({ params }: PostPageProps) {
                 <Reveal immediate className="font-mono text-faint mb-5 flex flex-wrap items-center gap-2.5 text-[12.5px]">
                   <span className="text-primary tracking-[.04em] uppercase">{post.category}</span>
                   <span aria-hidden="true">·</span>
-                  <time dateTime={new Date(post.date).toISOString()}>{formatDate(post.date)}</time>
+                  <time dateTime={postInstant(post.date).toISOString()}>{formatDate(post.date)}</time>
                   <span aria-hidden="true">·</span>
                   <span>{post.readingMinutes} min read</span>
                 </Reveal>
@@ -346,7 +379,7 @@ function PostDate({ label, iso }: { label: string; iso: string }) {
   return (
     <span className="flex flex-col">
       <span className="font-mono text-faint text-[11px] tracking-[.06em] uppercase">{label}</span>
-      <time dateTime={new Date(iso).toISOString()} className="text-muted text-[13px] whitespace-nowrap">
+      <time dateTime={postInstant(iso).toISOString()} className="text-muted text-[13px] whitespace-nowrap">
         {formatDate(iso)}
       </time>
     </span>

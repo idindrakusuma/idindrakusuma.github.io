@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     creator: '@idindrakusuma',
     title: `${SITE.name} — ${SITE.role}`,
     description: SITE.description,
-    images: ['/og/home.jpg'],
+    images: [{ url: '/og/home.jpg', alt: `${SITE.name} — ${SITE.role}` }],
   },
 };
 

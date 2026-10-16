@@ -75,6 +75,19 @@ export function formatDate(iso: string): string {
 }
 
 /**
+ * A post's date as an instant. Frontmatter writes local Jakarta time with no
+ * zone ('2026-10-15 18:59:18'), and `new Date` would read that in whatever
+ * zone the build machine runs in — UTC on Netlify, +07 on a laptop — so the
+ * same post would publish different timestamps depending on where it was
+ * built. A zoneless date is pinned to WIB here; one that names its zone keeps it.
+ */
+export function postInstant(date: string): Date {
+  const local = date.trim().match(/^(\d{4}-\d{2}-\d{2})(?:[ T](\d{2}:\d{2}(?::\d{2})?))?$/);
+  if (!local) return new Date(date);
+  return new Date(`${local[1]}T${local[2] ?? '00:00'}${local[2]?.length === 5 ? ':00' : ''}+07:00`);
+}
+
+/**
  * A post's excerpt is its full opening paragraph, which is longer than a meta
  * description should be. Cut at a word boundary for the tags that need it; the
  * page itself still shows the whole thing.
@@ -83,6 +96,11 @@ export function summarise(text: string, max = 155): string {
   if (text.length <= max) return text;
   const cut = text.slice(0, max);
   return `${cut.slice(0, cut.lastIndexOf(' ')).replace(/[.,;:]$/, '')}…`;
+}
+
+/** The description search results and previews show: the post's own, or its excerpt cut to length. */
+export function postDescription(post: Post): string {
+  return post.description ?? summarise(post.excerpt);
 }
 
 /** ~200 words a minute, floored at one. */

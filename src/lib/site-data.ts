@@ -24,6 +24,30 @@ export const SITE = {
   description: `${YEARS_EXPERIENCE}+ years building end-to-end — from top-traffic commerce frontends to Go services and AI-native tooling. Currently at ByteDance, previously Tokopedia.`,
 } as const;
 
+/**
+ * The schema.org ids the homepage's structured data declares, so every other
+ * page's can point at the same Person and WebSite rather than restate them.
+ */
+export const SCHEMA_IDS = {
+  person: `${SITE.url}/#person`,
+  website: `${SITE.url}/#website`,
+} as const;
+
+/**
+ * The title and description of each index route, set once: the page metadata,
+ * its link-preview card and its structured data all read these.
+ */
+export const PAGES = {
+  blog: {
+    title: `Blog — ${SITE.name}`,
+    description: 'Tutorials, engineering notes and a few career stories — written mostly in Bahasa Indonesia.',
+  },
+  projects: {
+    title: `Projects — ${SITE.name}`,
+    description: 'Things built on the side — live, and yours to open and try.',
+  },
+} as const;
+
 export type Section = { id: string; label: string };
 
 /**
